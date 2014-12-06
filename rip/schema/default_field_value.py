@@ -1,0 +1,1 @@
+DEFAULT_FIELD_VALUE = object()
