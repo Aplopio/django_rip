@@ -1,0 +1,1 @@
+from tests.integration_tests.test_person_resource import *
