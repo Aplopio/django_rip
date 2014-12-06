@@ -1,0 +1,4 @@
+wheel==0.23.0
+django
+six==1.8.0
+simplejson==3.6.5
