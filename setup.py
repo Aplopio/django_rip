@@ -8,16 +8,24 @@ except ImportError:
     from distutils.core import setup
 from pip.req import parse_requirements
 
+
 class PyTest(Command):
     user_options = []
+
     def initialize_options(self):
-        pass
+        import subprocess
+
+        return_code = subprocess.call(
+            ['pip', 'install', '-r' 'test-requirements.txt'])
+        if return_code != 0:
+            raise SystemExit(return_code)
 
     def finalize_options(self):
         pass
 
     def run(self):
-        import sys,subprocess
+        import sys, subprocess
+
         errno = subprocess.call([sys.executable, 'runtests.py'])
         raise SystemExit(errno)
 
@@ -25,9 +33,10 @@ class PyTest(Command):
 readme = open('README.rst').read()
 history = open('HISTORY.rst').read().replace('.. :changelog:', '')
 
-requirements= [str(ir.req) for ir in parse_requirements('requirements.txt')]
+requirements = [str(ir.req) for ir in parse_requirements('requirements.txt')]
 
-test_requirements = [str(ir.req) for ir in parse_requirements('requirements.txt')]
+test_requirements = [str(ir.req) for ir in
+                     parse_requirements('test-requirements.txt')]
 
 setup(
     name='rip',
@@ -41,7 +50,7 @@ setup(
         'rip',
     ],
     package_dir={'rip':
-                 'rip'},
+                     'rip'},
     include_package_data=True,
     install_requires=requirements,
     license="BSD",
@@ -59,7 +68,7 @@ setup(
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
     ],
-    cmdclass = {'test': PyTest},
+    tests_require=test_requirements,
+    cmdclass={'test': PyTest},
     test_suite='tests',
-    tests_require=test_requirements
 )
