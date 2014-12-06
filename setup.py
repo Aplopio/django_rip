@@ -45,7 +45,7 @@ setup(
     long_description=readme + '\n\n' + history,
     author='Aplopio developers',
     author_email='devs@aplopio.com',
-    url='https://github.com/uttamk/rip',
+    url='https://github.com/aplopio/rip',
     packages=[
         'rip',
     ],
