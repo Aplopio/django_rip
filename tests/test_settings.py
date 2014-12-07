@@ -1,5 +1,5 @@
 """
-Django settings for job_distribution_service project.
+Django settings.
 
 For more information on this file, see
 https://docs.djangoproject.com/en/1.7/topics/settings/
