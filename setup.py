@@ -3,7 +3,7 @@
 
 
 try:
-    from setuptools import setup, Command
+    from setuptools import setup, Command, find_packages
 except ImportError:
     from distutils.core import setup
 from pip.req import parse_requirements
@@ -41,16 +41,13 @@ test_requirements = [str(ir.req) for ir in
 setup(
     name='rip',
     version='0.0.1',
-    description='A python fframework for writing restful apis.',
+    description='A python framework for writing restful apis.',
     long_description=readme + '\n\n' + history,
     author='Aplopio developers',
     author_email='devs@aplopio.com',
     url='https://github.com/aplopio/rip',
-    packages=[
-        'rip',
-    ],
-    package_dir={'rip':
-                     'rip'},
+    package_dir={'rip': 'rip'},
+    packages=find_packages(),
     include_package_data=True,
     install_requires=requirements,
     license="BSD",
