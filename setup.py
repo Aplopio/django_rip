@@ -41,7 +41,7 @@ test_requirements = [str(ir.req) for ir in
 setup(
     name='rip',
     version='0.0.1',
-    description='A python framework for writing restful apis.',
+    description='A python framework for writing restful APIs.',
     long_description=readme + '\n\n' + history,
     author='Aplopio developers',
     author_email='devs@aplopio.com',
