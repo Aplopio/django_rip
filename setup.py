@@ -33,10 +33,13 @@ class PyTest(Command):
 readme = open('README.rst').read()
 history = open('HISTORY.rst').read().replace('.. :changelog:', '')
 
-requirements = [str(ir.req) for ir in parse_requirements('requirements.txt')]
+requirements = ['django>=1.4',
+                'six==1.8.0',
+                'simplejson==3.6.5']
 
-test_requirements = [str(ir.req) for ir in
-                     parse_requirements('test-requirements.txt')]
+test_requirements = ['mock==1.0.1',
+                     'pytest==2.6.4',
+                     'pyhamcrest==1.8.1']
 
 setup(
     name='rip',
@@ -58,14 +61,9 @@ setup(
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'Natural Language :: English',
-        "Programming Language :: Python :: 2",
-        'Programming Language :: Python :: 2.6',
-        'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.3',
-        'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 2.7'
     ],
     tests_require=test_requirements,
     cmdclass={'test': PyTest},
-    test_suite='tests',
+    test_suite='tests'
 )
