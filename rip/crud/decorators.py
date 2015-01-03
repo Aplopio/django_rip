@@ -3,7 +3,7 @@ from rip.crud.crud_actions import CrudActions
 from rip.response import Response
 
 
-def validate_method(func):
+def validate_action(func):
     def wrapper(self, request):
         action = CrudActions.resolve_action(func.__name__)
         request.context_params['crud_action'] = action

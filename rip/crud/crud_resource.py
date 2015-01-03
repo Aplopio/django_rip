@@ -1,4 +1,4 @@
-from rip.crud.decorators import validate_method
+from rip.crud.decorators import validate_action
 from rip.generic_steps.default_authentication import \
     DefaultAuthentication
 from rip.generic_steps.default_request_params_validation import \
@@ -103,37 +103,37 @@ class CrudResource(object):
             return False
         return True
 
-    @validate_method
+    @validate_action
     def read_detail(self, request):
         pipeline = crud_pipeline_factory.read_detail_pipeline(
             configuration=self.configuration)
         return pipeline(request=request)
 
-    @validate_method
+    @validate_action
     def update_detail(self, request):
         pipeline = crud_pipeline_factory.update_detail_pipeline(
             configuration=self.configuration)
         return pipeline(request=request)
 
-    @validate_method
+    @validate_action
     def read_list(self, request):
         pipeline = crud_pipeline_factory.read_list_pipeline(
             configuration=self.configuration)
         return pipeline(request=request)
 
-    @validate_method
+    @validate_action
     def create_detail(self, request):
         pipeline = crud_pipeline_factory.create_detail_pipeline(
             configuration=self.configuration)
         return pipeline(request=request)
 
-    @validate_method
+    @validate_action
     def delete_detail(self, request):
         pipeline = crud_pipeline_factory.delete_detail_pipeline(
             configuration=self.configuration)
         return pipeline(request=request)
 
-    @validate_method
+    @validate_action
     def get_aggregates(self, request):
         pipeline = crud_pipeline_factory.get_aggregates_pipeline(
             configuration=self.configuration)
