@@ -1,8 +1,8 @@
+from rip.crud.decorators import validate_method
 from rip.generic_steps.default_authentication import \
     DefaultAuthentication
 from rip.generic_steps.default_request_params_validation import \
     DefaultRequestParamsValidation
-from rip.response import Response
 from rip.crud.crud_actions import CrudActions
 from rip.generic_steps.default_authorization import \
     DefaultAuthorization
@@ -18,7 +18,6 @@ from rip.generic_steps.default_schema_serializer import \
     DefaultEntitySerializer
 from rip.generic_steps.default_schema_validation import \
     DefaultSchemaValidation
-from rip import error_types
 from rip.crud import crud_pipeline_factory
 
 
@@ -99,79 +98,43 @@ class CrudResource(object):
         super(CrudResource, self).__init__()
         self._setup_configuration()
 
-    def _is_action_allowed(self, action_name):
+    def is_action_allowed(self, action_name):
         if action_name not in self.allowed_actions:
             return False
         return True
 
+    @validate_method
     def read_detail(self, request):
-        action = CrudActions.READ_DETAIL
-        request.context_params['crud_action'] = action
-
-        if not self._is_action_allowed(action):
-            return Response(
-                is_success=False, reason=error_types.MethodNotAllowed)
-
         pipeline = crud_pipeline_factory.read_detail_pipeline(
             configuration=self.configuration)
         return pipeline(request=request)
 
+    @validate_method
     def update_detail(self, request):
-        action = CrudActions.UPDATE_DETAIL
-        request.context_params['crud_action'] = action
-
-        if not self._is_action_allowed(action):
-            return Response(
-                is_success=False, reason=error_types.MethodNotAllowed)
-
         pipeline = crud_pipeline_factory.update_detail_pipeline(
             configuration=self.configuration)
         return pipeline(request=request)
 
+    @validate_method
     def read_list(self, request):
-        action = CrudActions.READ_LIST
-        request.context_params['crud_action'] = action
-
-        if not self._is_action_allowed(action):
-            return Response(
-                is_success=False, reason=error_types.MethodNotAllowed)
-
         pipeline = crud_pipeline_factory.read_list_pipeline(
             configuration=self.configuration)
         return pipeline(request=request)
 
+    @validate_method
     def create_detail(self, request):
-        action = CrudActions.CREATE_DETAIL
-        request.context_params['crud_action'] = action
-
-        if not self._is_action_allowed(action):
-            return Response(
-                is_success=False, reason=error_types.MethodNotAllowed)
-
         pipeline = crud_pipeline_factory.create_detail_pipeline(
             configuration=self.configuration)
         return pipeline(request=request)
 
+    @validate_method
     def delete_detail(self, request):
-        action = CrudActions.DELETE_DETAIL
-        request.context_params['crud_action'] = action
-
-        if not self._is_action_allowed(action):
-            return Response(
-                is_success=False, reason=error_types.MethodNotAllowed)
-
         pipeline = crud_pipeline_factory.delete_detail_pipeline(
             configuration=self.configuration)
         return pipeline(request=request)
 
+    @validate_method
     def get_aggregates(self, request):
-        action = CrudActions.GET_AGGREGATES
-        request.context_params['crud_action'] = action
-
-        if not self._is_action_allowed(action):
-            return Response(
-                is_success=False, reason=error_types.MethodNotAllowed)
-
         pipeline = crud_pipeline_factory.get_aggregates_pipeline(
             configuration=self.configuration)
 

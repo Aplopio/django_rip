@@ -50,25 +50,6 @@ class TestCrudResourceConstruction(unittest.TestCase):
         assert isinstance(resource.configuration['entity_actions'],
                           DefaultEntityActions)
 
-    def test_return_response_if_method_is_not_allowed(self):
-        custom_auth = MagicMock()
-        request = MagicMock()
-
-        class DefaultTestResource(CrudResource):
-            schema_cls = self.schema
-            authentication_cls = custom_auth
-            allowed_actions=[
-                    CrudActions.READ_LIST,
-                    CrudActions.READ_DETAIL
-                ]
-
-
-        test_resource = DefaultTestResource()
-        response = test_resource.delete_detail(request)
-
-        assert_that(response.is_success, equal_to(False))
-        assert_that(response.reason, equal_to(error_types.MethodNotAllowed))
-
     @patch.object(crud_pipeline_factory, 'read_detail_pipeline')
     def test_read_detail(self, mock_create_pipeline):
         custom_auth = MagicMock()
@@ -131,3 +112,22 @@ class TestCrudResourceConstruction(unittest.TestCase):
         test_resource.delete_detail(request)
 
         pipeline.assert_called_once_with(request=request)
+
+class TestMethodNotAllowed(unittest.TestCase):
+
+    def setUp(self):
+        class TestResource(CrudResource):
+            schema_cls = MagicMock()
+            allowed_actions = ()
+
+        self.test_resource = TestResource()
+
+    def assert_forbidden_response(self, response):
+        assert not response.is_success
+        assert response.reason == error_types.MethodNotAllowed
+
+    def test_forbidden_response_if_methods_not_allowed(self):
+        request = MagicMock()
+        for action in CrudActions.get_all_actions():
+            response = getattr(self.test_resource, action)(request=request)
+            self.assert_forbidden_response(response)
