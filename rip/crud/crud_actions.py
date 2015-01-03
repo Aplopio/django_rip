@@ -5,6 +5,7 @@ class CrudActions(object):
     CREATE_DETAIL = 'create_detail'
     DELETE_DETAIL = 'delete_detail'
     UPDATE_DETAIL = 'update_detail'
+    PUT_DETAIL = 'put_detail'
     _reverse_dictionary = None
 
     @classmethod
@@ -27,6 +28,7 @@ class CrudActions(object):
             cls.CREATE_DETAIL,
             cls.DELETE_DETAIL,
             cls.UPDATE_DETAIL,
+            cls.PUT_DETAIL
         )
 
 

@@ -16,8 +16,19 @@ class TestActionResolver(unittest.TestCase):
         mock_api = MagicMock()
         mock_resource = MagicMock()
         mock_api.resolve_resource.return_value = mock_resource
-        mock_resource.update_detail = expected_action =MagicMock()
+        mock_resource.update_detail = expected_action = MagicMock()
 
+        action = action_resolver.resolve_action(mock_http_request, api=mock_api,
+                                                url='foo/1')
+        assert_that(action, equal_to(expected_action))
+
+    def test_resolve_put_action_on_api(self):
+        mock_http_request = MagicMock()
+        mock_http_request.method = 'PUT'
+        mock_api = MagicMock()
+        mock_resource = MagicMock()
+        mock_api.resolve_resource.return_value = mock_resource
+        mock_resource.put_detail = expected_action = MagicMock()
 
         action = action_resolver.resolve_action(mock_http_request, api=mock_api,
                                                 url='foo/1')
@@ -29,7 +40,7 @@ class TestActionResolver(unittest.TestCase):
         mock_api = MagicMock()
         mock_resource = MagicMock()
         mock_api.resolve_resource.return_value = mock_resource
-        mock_resource.delete_detail = expected_delete_action =MagicMock()
+        mock_resource.delete_detail = expected_delete_action = MagicMock()
 
         action = action_resolver.resolve_action(mock_http_request, api=mock_api,
                                                 url='foo/1')
@@ -41,7 +52,7 @@ class TestActionResolver(unittest.TestCase):
         mock_api = MagicMock()
         mock_resource = MagicMock()
         mock_api.resolve_resource.return_value = mock_resource
-        mock_resource.create_detail = expected_create_action =MagicMock()
+        mock_resource.create_detail = expected_create_action = MagicMock()
 
         action = action_resolver.resolve_action(mock_http_request, api=mock_api,
                                                 url='foo')
@@ -51,7 +62,7 @@ class TestActionResolver(unittest.TestCase):
         mock_http_request = MagicMock()
         mock_http_request.method = 'DELETE'
         mock_api = MagicMock(
-            spec_set=[])  # ensures any attribute access will raise Attribute error
+            spec_set=[])
 
         action = action_resolver.resolve_action(mock_http_request, api=mock_api,
                                                 url='foo')

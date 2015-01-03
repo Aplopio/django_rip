@@ -1,7 +1,5 @@
 import unittest
 
-from hamcrest.core import assert_that
-from hamcrest.core.core.isequal import equal_to
 from mock import MagicMock, patch
 
 from rip.api_schema import ApiSchema
@@ -113,8 +111,27 @@ class TestCrudResourceConstruction(unittest.TestCase):
 
         pipeline.assert_called_once_with(request=request)
 
-class TestMethodNotAllowed(unittest.TestCase):
+    @patch.object(crud_pipeline_factory, 'put_detail_pipeline')
+    def test_put_detail(self, put_detail_pipeline):
+        pipeline = MagicMock()
+        expected_response = MagicMock()
+        request = MagicMock()
+        put_detail_pipeline.return_value = pipeline
+        pipeline.return_value = expected_response
 
+        class DefaultTestResource(CrudResource):
+            schema_cls = self.schema
+            authentication_cls = MagicMock()
+            allowed_actions = [CrudActions.PUT_DETAIL]
+
+        test_resource = DefaultTestResource()
+        response = test_resource.put_detail(request=request)
+
+        assert response == expected_response
+        pipeline.assert_called_once_with(request=request)
+
+
+class TestMethodNotAllowed(unittest.TestCase):
     def setUp(self):
         class TestResource(CrudResource):
             schema_cls = MagicMock()
