@@ -270,7 +270,7 @@ class TestCrudPipelineFactory(unittest.TestCase):
 
         assert_that(pipeline, equal_to(expected_pipeline))
         compose_pipeline.assert_called_once_with(
-            name=CrudActions.UPDATE_DETAIL,
+            name=CrudActions.PUT_DETAIL,
             pipeline=[
                 authentication.authenticate,
                 clean_data_for_read_detail,

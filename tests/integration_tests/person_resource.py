@@ -127,6 +127,7 @@ class PersonResource(CrudResource):
     allowed_actions = [CrudActions.READ_LIST,
                        CrudActions.READ_DETAIL,
                        CrudActions.UPDATE_DETAIL,
+                       CrudActions.PUT_DETAIL,
                        CrudActions.CREATE_DETAIL,
                        CrudActions.DELETE_DETAIL,
                        CrudActions.GET_AGGREGATES]

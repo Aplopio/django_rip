@@ -66,7 +66,7 @@ def put_detail_pipeline(configuration):
     response_converter = configuration['response_converter']
 
     put_detail = pipeline_composer.compose_pipeline(
-        name=CrudActions.UPDATE_DETAIL,
+        name=CrudActions.PUT_DETAIL,
         pipeline=[
             authentication.authenticate,
             data_cleaner.clean_data_for_read_detail,
