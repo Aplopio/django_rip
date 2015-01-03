@@ -6,16 +6,17 @@ from rip import error_types
 
 
 class DefaultSchemaValidation(object):
-
     def __init__(self, schema_cls):
         self.schema_cls = schema_cls
 
     def _get_fields_to_validate_data(self, request, data):
         action = request.context_params['crud_action']
         non_read_only_fields = self.schema_cls.non_readonly_fields()
-        if action in (CrudActions.UPDATE_DETAIL, CrudActions.PUT_DETAIL):
+        if action == CrudActions.UPDATE_DETAIL:
             updatable_fields = self.schema_cls.updatable_fields()
             field_names = set(data).intersection(set(updatable_fields))
+        elif action == CrudActions.PUT_DETAIL:
+            field_names = self.schema_cls.updatable_fields()
         elif action == CrudActions.CREATE_DETAIL:
             field_names = non_read_only_fields.keys()
         else:

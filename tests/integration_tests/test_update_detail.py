@@ -37,10 +37,10 @@ class UpdateCrudResourceIntegrationTest(PersonResourceBaseTestCase):
             request, expected_entity,
             **expected_update_kwargs)
 
-    def test_should_update_fields_when_nullable_fields_not_present(self):
+    def test_success_when_nullable_fields_set_to_none(self):
         resource = PersonResource()
         entity_actions = resource.configuration['entity_actions']
-        expected_entity = PersonEntity(name='John', email="div@kar.com",
+        expected_entity = PersonEntity(name='John', email=None,
                                        phone='1234',
                                        address=None, company=None,
                                        nick_names=['Johnny', 'Papa'])
@@ -55,7 +55,29 @@ class UpdateCrudResourceIntegrationTest(PersonResourceBaseTestCase):
         assert_that(response.is_success, equal_to(True))
         expected_data = expected_entity.__dict__
         expected_data.update(friends=[])
+        expected_data.update(email=None)
         assert_that(response.data, equal_to(expected_data))
+
+    def test_success_when_one_required_fields_are_not_present(self):
+        resource = PersonResource()
+        entity_actions = resource.configuration['entity_actions']
+        expected_entity = PersonEntity(email=None,
+                                       phone='1234',
+                                       address=None, company=None,
+                                       nick_names=['Johnny', 'Papa'])
+
+        data = expected_entity.__dict__
+        expected_entity.name = 'John'
+        expected_entity.friends = []
+        entity_actions.get_entity_list.return_value = [expected_entity]
+        entity_actions.update_entity.return_value = expected_entity
+        request = request_factory.get_request(user=object(),
+                                              data=data)
+
+        response = resource.update_detail(request)
+
+        assert_that(response.is_success, equal_to(True))
+        assert_that(response.data, equal_to(expected_entity.__dict__))
 
     def test_update_when_non_nullable_fields_are_set_to_none(self):
         resource = PersonResource()

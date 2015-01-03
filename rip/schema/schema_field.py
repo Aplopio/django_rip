@@ -39,7 +39,7 @@ class SchemaField(BaseField):
 
         if value == DEFAULT_FIELD_VALUE:
             return ValidationResult(is_success=True)
-        if value == None and self.nullable:
+        if value is None and self.nullable:
             return ValidationResult(is_success=True)
 
         errors = self.validator.validate_data(request, value)
