@@ -55,25 +55,30 @@ class FriendSchema(ApiSchema):
 
 
 class PersonEntityActions(DefaultEntityActions):
-    get_entity_list = mock.MagicMock()
-    get_entity_list_total_count = mock.MagicMock()
-    get_entity_aggregates = mock.MagicMock()
-    update_entity = mock.MagicMock()
-    create_entity = mock.MagicMock()
-    delete_entity = mock.MagicMock()
+    @classmethod
+    def set_mocks(cls):
+        cls.get_entity_list = mock.MagicMock()
+        cls.get_entity_list_total_count = mock.MagicMock()
+        cls.get_entity_aggregates = mock.MagicMock()
+        cls.update_entity = mock.MagicMock()
+        cls.create_entity = mock.MagicMock()
+        cls.delete_entity = mock.MagicMock()
 
 
 class CompanyEntityActions(DefaultEntityActions):
-    get_entity_list = mock.MagicMock()
-    get_entity_list_total_count = mock.MagicMock()
-    update_entity = mock.MagicMock()
+    @classmethod
+    def set_mocks(cls):
+        cls.get_entity_list = mock.MagicMock()
+        cls.get_entity_list_total_count = mock.MagicMock()
+        cls.update_entity = mock.MagicMock()
 
 
 class FriendEntityActions(DefaultEntityActions):
-    get_entity_list = mock.MagicMock()
-    update_entity = mock.MagicMock()
-    get_entity_list_total_count = mock.MagicMock()
-
+    @classmethod
+    def set_mocks(cls):
+        cls.get_entity_list = mock.MagicMock()
+        cls.update_entity = mock.MagicMock()
+        cls.get_entity_list_total_count = mock.MagicMock()
 
 class CompanyResource(CrudResource):
     filter_by_fields = {'name': (EQUALS), 'person_name': (EQUALS)}
