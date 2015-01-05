@@ -9,7 +9,6 @@ from rip.schema.default_field_value import \
 
 
 class TestEmailField(unittest.TestCase):
-
     def test_validate_returns_error_if_required_and_value_is_default(self):
         email_field = EmailField(required=True)
 
@@ -47,3 +46,10 @@ class TestEmailField(unittest.TestCase):
         assert_that(result_1.is_success, equal_to(True))
         assert_that(result_2.is_success, equal_to(True))
         assert_that(result_3.is_success, equal_to(True))
+
+    def test_validate_returns_true_if_field_is_nullable_and_value_none(self):
+        email_field = EmailField(nullable=True)
+
+        result = email_field.validate(request=None, value=None)
+
+        assert_that(result.is_success, equal_to(True))

@@ -1,7 +1,5 @@
 import unittest
 
-from hamcrest.core import assert_that
-from hamcrest.core.core.isequal import equal_to
 from mock import MagicMock, patch
 
 from rip.api_schema import ApiSchema
@@ -49,25 +47,6 @@ class TestCrudResourceConstruction(unittest.TestCase):
                           default_authentication.DefaultAuthentication)
         assert isinstance(resource.configuration['entity_actions'],
                           DefaultEntityActions)
-
-    def test_return_response_if_method_is_not_allowed(self):
-        custom_auth = MagicMock()
-        request = MagicMock()
-
-        class DefaultTestResource(CrudResource):
-            schema_cls = self.schema
-            authentication_cls = custom_auth
-            allowed_actions=[
-                    CrudActions.READ_LIST,
-                    CrudActions.READ_DETAIL
-                ]
-
-
-        test_resource = DefaultTestResource()
-        response = test_resource.delete_detail(request)
-
-        assert_that(response.is_success, equal_to(False))
-        assert_that(response.reason, equal_to(error_types.MethodNotAllowed))
 
     @patch.object(crud_pipeline_factory, 'read_detail_pipeline')
     def test_read_detail(self, mock_create_pipeline):
@@ -131,3 +110,41 @@ class TestCrudResourceConstruction(unittest.TestCase):
         test_resource.delete_detail(request)
 
         pipeline.assert_called_once_with(request=request)
+
+    @patch.object(crud_pipeline_factory, 'create_or_update_detail_pipeline')
+    def test_create_or_update_detail(self, create_or_update_detail_pipeline):
+        pipeline = MagicMock()
+        expected_response = MagicMock()
+        request = MagicMock()
+        create_or_update_detail_pipeline.return_value = pipeline
+        pipeline.return_value = expected_response
+
+        class DefaultTestResource(CrudResource):
+            schema_cls = self.schema
+            authentication_cls = MagicMock()
+            allowed_actions = [CrudActions.CREATE_OR_UPDATE_DETAIL]
+
+        test_resource = DefaultTestResource()
+        response = test_resource.create_or_update_detail(request=request)
+
+        assert response == expected_response
+        pipeline.assert_called_once_with(request=request)
+
+
+class TestMethodNotAllowed(unittest.TestCase):
+    def setUp(self):
+        class TestResource(CrudResource):
+            schema_cls = MagicMock()
+            allowed_actions = ()
+
+        self.test_resource = TestResource()
+
+    def assert_forbidden_response(self, response):
+        assert not response.is_success
+        assert response.reason == error_types.MethodNotAllowed
+
+    def test_forbidden_response_if_methods_not_allowed(self):
+        request = MagicMock()
+        for action in CrudActions.get_all_actions():
+            response = getattr(self.test_resource, action)(request=request)
+            self.assert_forbidden_response(response)

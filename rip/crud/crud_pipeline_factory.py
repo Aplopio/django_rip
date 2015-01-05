@@ -36,7 +36,7 @@ def update_detail_pipeline(configuration):
     post_action_hooks = configuration['post_action_hooks']
     response_converter = configuration['response_converter']
 
-    update_detail_pipeline = pipeline_composer.compose_pipeline(
+    pipeline = pipeline_composer.compose_pipeline(
         name=CrudActions.UPDATE_DETAIL,
         pipeline=[
             authentication.authenticate,
@@ -52,7 +52,36 @@ def update_detail_pipeline(configuration):
             response_converter.convert_serialized_data_to_response
         ])
 
-    return update_detail_pipeline
+    return pipeline
+
+
+def create_or_update_detail_pipeline(configuration):
+    entity_actions = configuration['entity_actions']
+    authentication = configuration['authentication']
+    authorization = configuration['authorization']
+    schema_validation = configuration['schema_validation']
+    serializer = configuration['serializer']
+    data_cleaner = configuration['data_cleaner']
+    post_action_hooks = configuration['post_action_hooks']
+    response_converter = configuration['response_converter']
+
+    pipeline = pipeline_composer.compose_pipeline(
+        name=CrudActions.CREATE_OR_UPDATE_DETAIL,
+        pipeline=[
+            authentication.authenticate,
+            data_cleaner.clean_data_for_read_detail,
+            data_cleaner.clean_data_for_update_detail,
+            schema_validation.validate_request_data,
+            entity_actions.read_detail,
+            authorization.authorize_update_detail,
+            serializer.serialize_detail_pre_update,
+            entity_actions.update_detail,
+            serializer.serialize_detail,
+            post_action_hooks.update_detail_hook,
+            response_converter.convert_serialized_data_to_response
+        ])
+
+    return pipeline
 
 
 def read_list_pipeline(configuration):
@@ -65,7 +94,7 @@ def read_list_pipeline(configuration):
     post_action_hooks = configuration['post_action_hooks']
     response_converter = configuration['response_converter']
 
-    read_list_pipeline = pipeline_composer.compose_pipeline(
+    pipeline = pipeline_composer.compose_pipeline(
         name=CrudActions.READ_LIST,
         pipeline=[
             authentication.authenticate,
@@ -78,7 +107,7 @@ def read_list_pipeline(configuration):
             response_converter.convert_serialized_data_to_response
         ])
 
-    return read_list_pipeline
+    return pipeline
 
 
 def create_detail_pipeline(configuration):
@@ -91,7 +120,7 @@ def create_detail_pipeline(configuration):
     post_action_hooks = configuration['post_action_hooks']
     response_converter = configuration['response_converter']
 
-    create_detail_pipeline = pipeline_composer.compose_pipeline(
+    pipeline = pipeline_composer.compose_pipeline(
         name=CrudActions.CREATE_DETAIL,
         pipeline=[
             authentication.authenticate,
@@ -104,7 +133,7 @@ def create_detail_pipeline(configuration):
             response_converter.convert_serialized_data_to_response
         ])
 
-    return create_detail_pipeline
+    return pipeline
 
 
 def delete_detail_pipeline(configuration):
@@ -115,7 +144,7 @@ def delete_detail_pipeline(configuration):
     post_action_hooks = configuration['post_action_hooks']
     response_converter = configuration['response_converter']
 
-    delete_detail_pipeline = pipeline_composer.compose_pipeline(
+    pipeline = pipeline_composer.compose_pipeline(
         name=CrudActions.DELETE_DETAIL,
         pipeline=[
             authentication.authenticate,
@@ -127,7 +156,7 @@ def delete_detail_pipeline(configuration):
             response_converter.convert_to_simple_response
         ])
 
-    return delete_detail_pipeline
+    return pipeline
 
 
 def get_aggregates_pipeline(configuration):
@@ -140,7 +169,7 @@ def get_aggregates_pipeline(configuration):
     post_action_hooks = configuration['post_action_hooks']
     response_converter = configuration['response_converter']
 
-    get_aggregates_pipeline = pipeline_composer.compose_pipeline(
+    pipeline = pipeline_composer.compose_pipeline(
         name=CrudActions.GET_AGGREGATES,
         pipeline=[
             authentication.authenticate,
@@ -153,4 +182,4 @@ def get_aggregates_pipeline(configuration):
             response_converter.convert_serialized_data_to_response
         ])
 
-    return get_aggregates_pipeline
+    return pipeline

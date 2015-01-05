@@ -27,6 +27,9 @@ class ListField(BaseField):
             return validation_result
 
         value = value if value not in (DEFAULT_FIELD_VALUE, None) else []
+        if self.nullable and value is None:
+            return ValidationResult(is_success=True)
+
         for item in value:
             validation_result = self.field.validate(request, item)
             if not validation_result.is_success:
