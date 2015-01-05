@@ -154,7 +154,7 @@ class CrudResource(object):
         """
         Implements the Read Detail (read an object)
 
-        maps to GET /api/objects/:id/ in url semantics
+        maps to GET /api/objects/:id/ in rest semantics
         :param request: rip.Request
         :return: rip.Response
         """
@@ -167,7 +167,7 @@ class CrudResource(object):
         """
         Implements the Update Detail (partially update an object)
 
-        maps to PATCH /api/object/:id/ in url semantics
+        maps to PATCH /api/object/:id/ in rest semantics
         :param request: rip.Request
         :return: rip.Response
         """
@@ -180,7 +180,7 @@ class CrudResource(object):
         """
         Implements the List read (get a list of objects)
 
-        maps to GET /api/objects/ in url semantics
+        maps to GET /api/objects/ in rest semantics
         :param request: rip.Request
         :return: rip.Response
         """
@@ -206,7 +206,7 @@ class CrudResource(object):
         """
         Implements the Delete Detail (delete an object)
 
-        maps to DELETE /api/object_name/:id/ in url semantics
+        maps to DELETE /api/object_name/:id/ in rest semantics
         :param request: rip.Request
         :return: rip.Response
         """
@@ -219,7 +219,7 @@ class CrudResource(object):
         """
         Implements the Get aggregates (total number of objects filtered)
 
-        maps to PATCH /api/object_name/get_aggregates/ in url semantics
+        maps to PATCH /api/object_name/get_aggregates/ in rest semantics
         :param request: rip.Request
         :return: rip.Response
         """
@@ -233,7 +233,7 @@ class CrudResource(object):
         """
        Implements Create/Update an object completely given an id
 
-       maps to PUT /api/object/:id in url semantics
+       maps to PUT /api/object/:id in rest semantics
        :param request: rip.Request
        :return: rip.Response
        """
