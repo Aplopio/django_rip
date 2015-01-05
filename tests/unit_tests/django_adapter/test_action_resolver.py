@@ -28,7 +28,7 @@ class TestActionResolver(unittest.TestCase):
         mock_api = MagicMock()
         mock_resource = MagicMock()
         mock_api.resolve_resource.return_value = mock_resource
-        mock_resource.put_detail = expected_action = MagicMock()
+        mock_resource.create_or_update_detail = expected_action = MagicMock()
 
         action = action_resolver.resolve_action(mock_http_request, api=mock_api,
                                                 url='foo/1')

@@ -38,6 +38,6 @@ class TestAllActions(unittest.TestCase):
         assert CrudActions.READ_LIST in all_actions
         assert CrudActions.CREATE_DETAIL in all_actions
         assert CrudActions.UPDATE_DETAIL in all_actions
-        assert CrudActions.PUT_DETAIL in all_actions
+        assert CrudActions.CREATE_OR_UPDATE_DETAIL in all_actions
         assert CrudActions.DELETE_DETAIL in all_actions
         assert CrudActions.GET_AGGREGATES in all_actions

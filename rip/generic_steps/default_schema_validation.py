@@ -15,7 +15,7 @@ class DefaultSchemaValidation(object):
         if action == CrudActions.UPDATE_DETAIL:
             updatable_fields = self.schema_cls.updatable_fields()
             field_names = set(data).intersection(set(updatable_fields))
-        elif action == CrudActions.PUT_DETAIL:
+        elif action == CrudActions.CREATE_OR_UPDATE_DETAIL:
             field_names = self.schema_cls.updatable_fields()
         elif action == CrudActions.CREATE_DETAIL:
             field_names = non_read_only_fields.keys()

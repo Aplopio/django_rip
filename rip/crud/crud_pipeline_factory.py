@@ -55,7 +55,7 @@ def update_detail_pipeline(configuration):
     return pipeline
 
 
-def put_detail_pipeline(configuration):
+def create_or_update_detail_pipeline(configuration):
     entity_actions = configuration['entity_actions']
     authentication = configuration['authentication']
     authorization = configuration['authorization']
@@ -65,8 +65,8 @@ def put_detail_pipeline(configuration):
     post_action_hooks = configuration['post_action_hooks']
     response_converter = configuration['response_converter']
 
-    put_detail = pipeline_composer.compose_pipeline(
-        name=CrudActions.PUT_DETAIL,
+    pipeline = pipeline_composer.compose_pipeline(
+        name=CrudActions.CREATE_OR_UPDATE_DETAIL,
         pipeline=[
             authentication.authenticate,
             data_cleaner.clean_data_for_read_detail,
@@ -81,7 +81,7 @@ def put_detail_pipeline(configuration):
             response_converter.convert_serialized_data_to_response
         ])
 
-    return put_detail
+    return pipeline
 
 
 def read_list_pipeline(configuration):

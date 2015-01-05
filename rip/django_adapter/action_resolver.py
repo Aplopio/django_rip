@@ -1,8 +1,10 @@
-method_to_action_mapping = {'GET': 'read',
-                            'POST': 'create',
-                            'PATCH': 'update',
-                            'DELETE': 'delete',
-                            'PUT': 'put'}
+method_to_action_mapping = {
+    'GET': 'read',
+    'POST': 'create',
+    'PATCH': 'update',
+    'DELETE': 'delete',
+    'PUT': 'create_or_update'
+}
 
 
 def is_detail_url(http_request, url):

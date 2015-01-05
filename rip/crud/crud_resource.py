@@ -229,16 +229,16 @@ class CrudResource(object):
         return pipeline(request=request)
 
     @validate_action
-    def put_detail(self, request):
+    def create_or_update_detail(self, request):
         """
-       Implements Put Detail (Create/Update an object completely given an id)
+       Implements Create/Update an object completely given an id
 
        maps to PUT /api/object/:id in url semantics
        :param request: rip.Request
        :return: rip.Response
        """
 
-        pipeline = crud_pipeline_factory.put_detail_pipeline(
+        pipeline = crud_pipeline_factory.create_or_update_detail_pipeline(
             configuration=self.configuration)
 
         return pipeline(request=request)

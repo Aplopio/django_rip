@@ -223,7 +223,7 @@ class TestCrudPipelineFactory(unittest.TestCase):
                 convert_serialized_data_to_response])
 
     @mock_patch.object(pipeline_composer, 'compose_pipeline')
-    def test_put_detail_pipeline_has_all_steps_in_the_right_order(
+    def test_create_or_update_detail_pipeline_has_all_steps_in_the_right_order(
             self,
             compose_pipeline):
         entity_actions = MagicMock()
@@ -266,11 +266,11 @@ class TestCrudPipelineFactory(unittest.TestCase):
 
         compose_pipeline.return_value = expected_pipeline = MagicMock()
 
-        pipeline = crud_pipeline_factory.put_detail_pipeline(configuration)
+        pipeline = crud_pipeline_factory.create_or_update_detail_pipeline(configuration)
 
         assert_that(pipeline, equal_to(expected_pipeline))
         compose_pipeline.assert_called_once_with(
-            name=CrudActions.PUT_DETAIL,
+            name=CrudActions.CREATE_OR_UPDATE_DETAIL,
             pipeline=[
                 authentication.authenticate,
                 clean_data_for_read_detail,

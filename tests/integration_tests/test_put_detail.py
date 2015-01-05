@@ -23,7 +23,7 @@ class PutCrudResourceIntegrationTest(PersonResourceBaseTestCase):
         request = request_factory.get_request(user=object(),
                                               data=expected_entity.__dict__)
 
-        response = resource.put_detail(request)
+        response = resource.create_or_update_detail(request)
 
         assert_that(response.is_success, equal_to(True))
         expected_data = expected_entity.__dict__
@@ -50,7 +50,7 @@ class PutCrudResourceIntegrationTest(PersonResourceBaseTestCase):
         request = request_factory.get_request(user=object(),
                                               data=expected_entity.__dict__)
 
-        response = resource.put_detail(request)
+        response = resource.create_or_update_detail(request)
 
         assert_that(response.is_success, equal_to(True))
         expected_data = expected_entity.__dict__
@@ -71,7 +71,7 @@ class PutCrudResourceIntegrationTest(PersonResourceBaseTestCase):
         request = request_factory.get_request(user=object(),
                                               data=expected_entity.__dict__)
 
-        response = resource.put_detail(request)
+        response = resource.create_or_update_detail(request)
 
         assert_that(response.is_success, equal_to(False))
         assert_that(response.reason, equal_to(error_types.InvalidData))
@@ -88,7 +88,7 @@ class PutCrudResourceIntegrationTest(PersonResourceBaseTestCase):
         request = request_factory.get_request(user=object(),
                                               data=expected_entity.__dict__)
 
-        response = resource.put_detail(request)
+        response = resource.create_or_update_detail(request)
 
         assert_that(response.is_success, equal_to(False))
         assert_that(response.reason, equal_to(error_types.InvalidData))
