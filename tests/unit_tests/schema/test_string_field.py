@@ -67,6 +67,7 @@ class TestCharField(TestCase):
         result = string_field.validate(request=None, value="")
 
         assert result.is_success is False
+        assert result.reason == "This field is required"
 
     def test_should_return_true_when_blank_is_false_and_value_is_not_blank(
             self):

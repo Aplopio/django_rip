@@ -5,7 +5,8 @@ from tests import request_factory
 from tests.integration_tests.person_base_test_case import \
     PersonResourceBaseTestCase
 from tests.integration_tests.person_resource import (
-    PersonResource, PersonEntity, BlankTestResource)
+    PersonResource, PersonEntity,)
+from tests.integration_tests.blank_test_resource import BlankTestResource
 
 
 class CreateCrudResourceIntegrationTest(PersonResourceBaseTestCase):
@@ -57,7 +58,6 @@ class CreateCrudResourceIntegrationTest(PersonResourceBaseTestCase):
 
         assert response.is_success is False
         assert response.data['name'] == 'This field is required'
-
 
     def test_create_with_null_for_non_nullable_field(self):
         resource = PersonResource()
