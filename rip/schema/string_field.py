@@ -9,24 +9,27 @@ from rip.schema.validation_result import \
 class StringField(BaseField):
     field_type = unicode
 
-    def __init__(self,
-                 max_length=256,
-                 required=False,
-                 field_type=FieldTypes.DEFAULT,
-                 nullable=True,
-                 entity_attribute=None,
-                 show_in_list=True):
+    def __init__(
+            self, max_length=256, required=False,
+            field_type=FieldTypes.DEFAULT, nullable=True,
+            entity_attribute=None, show_in_list=True,
+            blank=True):
+
         self.max_length = max_length
-        super(StringField, self).__init__(required=required, field_type=field_type,
-                                        nullable=nullable,
-                                        entity_attribute=entity_attribute,
-                                        show_in_list=show_in_list)
+        self.blank = blank
+        super(StringField, self).__init__(
+            required=required, field_type=field_type, nullable=nullable,
+            entity_attribute=entity_attribute, show_in_list=show_in_list)
 
     def validate(self, request, value):
         validation_result = super(StringField, self).validate(request, value)
 
         if not validation_result.is_success:
             return validation_result
+
+        if self.blank is False and not value:
+            return ValidationResult(
+                is_success=False, reason='This field is required')
 
         if value == DEFAULT_FIELD_VALUE:
             return ValidationResult(is_success=True)
