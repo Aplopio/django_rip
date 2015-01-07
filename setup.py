@@ -43,7 +43,7 @@ test_requirements = ['mock==1.0.1',
 
 setup(
     name='rip',
-    version='0.0.1',
+    version='0.0.3',
     description='A python framework for writing restful APIs.',
     long_description=readme + '\n\n' + history,
     author='Aplopio developers',
