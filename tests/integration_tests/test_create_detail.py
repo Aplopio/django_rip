@@ -4,7 +4,8 @@ from mock import patch
 from tests import request_factory
 from tests.integration_tests.person_base_test_case import \
     PersonResourceBaseTestCase
-from tests.integration_tests.person_resource import PersonResource, PersonEntity
+from tests.integration_tests.person_resource import (
+    PersonResource, PersonEntity, BlankTestResource)
 
 
 class CreateCrudResourceIntegrationTest(PersonResourceBaseTestCase):
@@ -46,6 +47,17 @@ class CreateCrudResourceIntegrationTest(PersonResourceBaseTestCase):
 
         assert_that(response.is_success, equal_to(False))
         assert_that(response.data, has_entry('name', 'This field is required'))
+
+    def test_create_with_blank_fields(self):
+        resource = BlankTestResource()
+        request = request_factory.get_request(user=object(),
+                                              data={'name': ''})
+
+        response = resource.create_detail(request)
+
+        assert response.is_success is False
+        assert response.data['name'] == 'This field is required'
+
 
     def test_create_with_null_for_non_nullable_field(self):
         resource = PersonResource()

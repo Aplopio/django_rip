@@ -132,3 +132,18 @@ class PersonResource(CrudResource):
                        CrudActions.DELETE_DETAIL,
                        CrudActions.GET_AGGREGATES]
     entity_actions_cls = PersonEntityActions
+
+
+class BlankTestSchema(ApiSchema):
+    name = StringField(blank=False)
+
+
+class BlankTestResource(CrudResource):
+    schema_cls = BlankTestSchema
+    allowed_actions = [
+        CrudActions.READ_LIST,
+        CrudActions.READ_DETAIL,
+        CrudActions.CREATE_OR_UPDATE_DETAIL,
+        CrudActions.CREATE_DETAIL,
+    ]
+    entity_actions_cls = PersonEntityActions

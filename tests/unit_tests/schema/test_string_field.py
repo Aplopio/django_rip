@@ -53,3 +53,25 @@ class TestCharField(TestCase):
         result = string_field.validate(request=None, value=None)
 
         assert_that(result.is_success, equal_to(True))
+
+    def test_should_return_true_when_blank_is_true_and_value_is_blank(self):
+        string_field = StringField()
+
+        result = string_field.validate(request=None, value="")
+
+        assert result.is_success is True
+
+    def test_should_return_false_when_blank_is_false_and_value_is_blank(self):
+        string_field = StringField(blank=False)
+
+        result = string_field.validate(request=None, value="")
+
+        assert result.is_success is False
+
+    def test_should_return_true_when_blank_is_false_and_value_is_not_blank(
+            self):
+        string_field = StringField(blank=False)
+
+        result = string_field.validate(request=None, value="asd")
+
+        assert result.is_success is True
