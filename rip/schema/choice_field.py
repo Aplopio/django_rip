@@ -12,6 +12,29 @@ class ChoiceField(BaseField):
         """Pass list of allowed values.
 
         :param choices: `list` or `tuple` or `set` of values.
+
+        Usage:
+        -----
+        >>>choice_field = ChoiceField(choices=(1, 2))
+        >>>result = choice_field.validate(request=None, value=3)
+        >>>result.is_success
+        False
+
+        >>>result = choice_field.validate(request=None, value=1)
+        >>>result.is_success
+        True
+
+        >>>choice_field = ChoiceField(choices=[1, 2], required=True)
+        >>>from rip.schema.default_field_value import DEFAULT_FIELD_VALUE
+        >>>result = choice_field.validate(request=None, value=DEFAULT_FIELD_VALUE)
+        >>>assert result.is_success
+        False
+        >>>result.reason
+        'This field is required'
+
+        >>>result = choice_field.validate(request=None, value=1)
+        >>>result.is_success
+        True
         """
         super(ChoiceField, self).__init__(
             required=required, field_type=field_type,
@@ -32,14 +55,14 @@ class ChoiceField(BaseField):
     def validate(self, request, value):
         validation_result = super(ChoiceField, self).validate(request, value)
 
+        if not validation_result.is_success:
+            return validation_result
+
         # Check it is possible to do validate.
         result = self._validate_choices_type()
 
         if not result.is_success:
             return result
-
-        if not validation_result.is_success:
-            return validation_result
 
         if value in self.choices:
             return ValidationResult(is_success=True)

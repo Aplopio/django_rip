@@ -3,6 +3,7 @@
 from unittest.case import TestCase
 
 from rip.schema.fields import ChoiceField
+from rip.schema.default_field_value import DEFAULT_FIELD_VALUE
 
 
 class Foo:
@@ -53,9 +54,10 @@ class TestChoiceField(TestCase):
     def test_check_required_field_when_value_is_empty(self):
         choice_field = ChoiceField(choices=[1, 2], required=True)
 
-        result = choice_field.validate(request=None, value=None)
+        result = choice_field.validate(request=None, value=DEFAULT_FIELD_VALUE)
 
         assert result.is_success is False
+        assert result.reason == 'This field is required'
 
     def test_check_required_field_when_value_is_present(self):
         choice_field = ChoiceField(choices=[1, 2], required=True)
