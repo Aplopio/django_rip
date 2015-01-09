@@ -33,7 +33,7 @@ class PyTest(Command):
 readme = open('README.rst').read()
 history = open('HISTORY.rst').read().replace('.. :changelog:', '')
 
-requirements = ['django>=1.4',
+requirements = ['django==1.4.16',
                 'six==1.8.0',
                 'simplejson==3.6.5']
 
