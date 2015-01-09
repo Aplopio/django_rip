@@ -58,7 +58,7 @@ class ChoiceField(BaseField):
         if not validation_result.is_success:
             return validation_result
 
-        # Check it is possible to do validate.
+        # Check it is possible to do validation.
         result = self._validate_choices_type()
 
         if not result.is_success:
