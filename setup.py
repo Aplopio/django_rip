@@ -33,13 +33,12 @@ class PyTest(Command):
 readme = open('README.rst').read()
 history = open('HISTORY.rst').read().replace('.. :changelog:', '')
 
-requirements = ['django==1.4.16',
-                'six==1.8.0',
-                'simplejson==3.6.5']
+install_reqs = parse_requirements('requirements.txt')
+test_reqs = parse_requirements('test-requirements.txt')
 
-test_requirements = ['mock==1.0.1',
-                     'pytest==2.6.4',
-                     'pyhamcrest==1.8.1']
+requirements = [str(ir.req) for ir in install_reqs]
+
+test_requirements = [str(ir.req) for ir in test_reqs]
 
 setup(
     name='rip',
