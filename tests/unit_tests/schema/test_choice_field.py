@@ -2,8 +2,6 @@
 
 from unittest.case import TestCase
 
-import pytest
-
 from rip.schema.fields import ChoiceField
 
 
@@ -46,5 +44,22 @@ class TestChoiceField(TestCase):
         assert result.is_success is False
 
     def test_pass_invalid_choices(self):
-        with pytest.raises(TypeError):
-            ChoiceField(choices='petromax lighte than venuma')
+        choice_field = ChoiceField(choices='petromax lighte than venuma')
+
+        result = choice_field.validate(request=None, value='than')
+
+        assert result.is_success is False
+
+    def test_check_required_field_when_value_is_empty(self):
+        choice_field = ChoiceField(choices=[1, 2], required=True)
+
+        result = choice_field.validate(request=None, value=None)
+
+        assert result.is_success is False
+
+    def test_check_required_field_when_value_is_present(self):
+        choice_field = ChoiceField(choices=[1, 2], required=True)
+
+        result = choice_field.validate(request=None, value=1)
+
+        assert result.is_success is True

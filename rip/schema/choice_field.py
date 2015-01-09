@@ -17,19 +17,26 @@ class ChoiceField(BaseField):
             required=required, field_type=field_type,
             entity_attribute=entity_attribute)
 
-        self._validate_choices_type(choices)
         self.choices = choices
 
-    def _validate_choices_type(self, choices):
+    def _validate_choices_type(self):
         allowed_types = (list, tuple, set, )
         # Prohibit user from giving any data type in choices attribute
         msg = u"choices: {} should of any one of the type {}".format(
-            choices, allowed_types)
-        if not isinstance(choices, allowed_types):
-            raise TypeError(msg)
+            self.choices, allowed_types)
+
+        if not isinstance(self.choices, allowed_types):
+            return ValidationResult(is_success=False, reason=msg)
+        return ValidationResult(is_success=True)
 
     def validate(self, request, value):
         validation_result = super(ChoiceField, self).validate(request, value)
+
+        # Check it is possible to do validate.
+        result = self._validate_choices_type()
+
+        if not result.is_success:
+            return result
 
         if not validation_result.is_success:
             return validation_result
