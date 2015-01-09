@@ -11,3 +11,4 @@ from resource_uri_field import ResourceUriField
 from schema_field import SchemaField
 from string_field import StringField
 from sub_resource_field import SubResourceField
+from choice_field import ChoiceField
