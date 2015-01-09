@@ -4,6 +4,8 @@ import six
 
 from rip.schema.default_field_value import DEFAULT_FIELD_VALUE
 from rip.schema.validation_result import ValidationResult
+
+
 class FieldTypes(object):
     READONLY = 'readonly'
     DEFAULT = 'default'
