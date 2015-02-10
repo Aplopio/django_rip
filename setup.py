@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-
 try:
     from setuptools import setup, Command, find_packages
 except ImportError:
     from distutils.core import setup
+import pip
 from pip.req import parse_requirements
 
 
@@ -33,8 +33,10 @@ class PyTest(Command):
 readme = open('README.rst').read()
 history = open('HISTORY.rst').read().replace('.. :changelog:', '')
 
-install_reqs = parse_requirements('requirements.txt')
-test_reqs = parse_requirements('test-requirements.txt')
+install_reqs = parse_requirements(
+    'requirements.txt', session=pip.download.PipSession())
+test_reqs = parse_requirements(
+    'test-requirements.txt', session=pip.download.PipSession())
 
 requirements = [str(ir.req) for ir in install_reqs]
 
