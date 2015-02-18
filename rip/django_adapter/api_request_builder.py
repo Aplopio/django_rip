@@ -30,7 +30,7 @@ def _resolve_user(http_request):
 
 def build_request_data(request_body, request_meta):
     content_types = request_meta.get('CONTENT_TYPE', '').split(";")
-    if 'application/json' in content_types:
+    if request_body and 'application/json' in content_types:
         try:
             request_data = simplejson.loads(request_body)
         except JSONDecodeError, e:
