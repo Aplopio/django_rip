@@ -117,6 +117,6 @@ class TestBuildApiRequest(unittest.TestCase):
     def test_build_request_data_when_request_body_is_emtpty(self):
         # the call
         request_data = api_request_builder.build_request_data(
-            request_body='', request_meta='')
+            request_body='', request_meta={})
 
         assert request_data == {}
