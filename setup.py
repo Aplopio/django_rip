@@ -33,14 +33,8 @@ class PyTest(Command):
 readme = open('README.rst').read()
 history = open('HISTORY.rst').read().replace('.. :changelog:', '')
 
-install_reqs = parse_requirements(
-    'requirements.txt', session=pip.download.PipSession())
-test_reqs = parse_requirements(
-    'test-requirements.txt', session=pip.download.PipSession())
-
-requirements = [str(ir.req) for ir in install_reqs]
-
-test_requirements = [str(ir.req) for ir in test_reqs]
+with open('requirements.txt') as f:
+    requirements = [l.strip() for l in f.readlines()]
 
 setup(
     name='rip',
@@ -64,7 +58,6 @@ setup(
         'Natural Language :: English',
         'Programming Language :: Python :: 2.7'
     ],
-    tests_require=test_requirements,
     cmdclass={'test': PyTest},
     test_suite='tests'
 )
