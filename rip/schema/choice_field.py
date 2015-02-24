@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from rip.schema.default_field_value import DEFAULT_FIELD_VALUE
 
 from rip.schema.base_field import BaseField, FieldTypes
 from rip.schema.validation_result import ValidationResult
@@ -57,6 +58,8 @@ class ChoiceField(BaseField):
 
         if not validation_result.is_success:
             return validation_result
+        if value == DEFAULT_FIELD_VALUE:
+            return ValidationResult(is_success=True)
 
         # Check it is possible to do validation.
         result = self._validate_choices_type()
