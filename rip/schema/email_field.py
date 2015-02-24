@@ -34,6 +34,8 @@ class EmailField(StringField):
             return validation_result
         if self.nullable and value is None:
             return ValidationResult(is_success=True)
+        if value == DEFAULT_FIELD_VALUE:
+            return ValidationResult(is_success=True)
 
         if not EmailValidator().validate(email=value):
             return ValidationResult(
