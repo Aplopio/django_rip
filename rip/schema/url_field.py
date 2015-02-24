@@ -39,6 +39,8 @@ class UrlField(StringField):
             return ValidationResult(is_success=True)
         if value == DEFAULT_FIELD_VALUE:
             return ValidationResult(is_success=True)
+        if not self.required and not value:
+            return ValidationResult(is_success=True)
 
         if not UrlValidator().validate(url=value):
             return ValidationResult(
