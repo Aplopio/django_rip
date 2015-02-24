@@ -1,4 +1,5 @@
 import re
+import urlparse
 
 from rip.schema.string_field import StringField
 from rip.schema.default_field_value import DEFAULT_FIELD_VALUE
@@ -21,6 +22,8 @@ class UrlValidator(object):
 
     def validate(self, url):
         if url != DEFAULT_FIELD_VALUE and url:
+            url = u'http://{}'.format(url) if \
+                not urlparse.urlparse(url).scheme else url
             if self.regex.search(url):
                 return True
         return False
