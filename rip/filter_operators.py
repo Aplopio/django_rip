@@ -2,11 +2,12 @@
 EQUALS = 'equals'
 GT = 'gt'
 LT = 'lt'
+IN = 'in'
 
 OPERATOR_SEPARATOR = '__'
 REVERSE_ORDER = '-'
 
-ALL_OPERATORS = {EQUALS: 1, GT: 1, LT: 1}
+ALL_OPERATORS = {EQUALS: 1, GT: 1, LT: 1, IN: 1}
 
 
 def split_to_field_and_filter_type(filter_name):
