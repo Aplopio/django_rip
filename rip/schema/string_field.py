@@ -13,10 +13,11 @@ class StringField(BaseField):
             self, max_length=256, required=False,
             field_type=FieldTypes.DEFAULT, nullable=True,
             entity_attribute=None, show_in_list=True,
-            blank=True):
+            blank=True, trim=False):
 
         self.max_length = max_length
         self.blank = blank
+        self.trim = trim
         super(StringField, self).__init__(
             required=required, field_type=field_type, nullable=nullable,
             entity_attribute=entity_attribute, show_in_list=show_in_list)
@@ -44,3 +45,15 @@ class StringField(BaseField):
                                     reason=u'Maxlength of {} exceeded' \
                                     .format(self.max_length))
         return ValidationResult(is_success=True)
+
+    def clean(self, request, value):
+        value = super(StringField, self).clean(request, value)
+        if self.trim is True:
+            return value.strip()
+        elif self.trim:
+            return value.strip(self.trim)
+        else:
+            return value
+
+
+
