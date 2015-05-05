@@ -85,8 +85,19 @@ class TestCharField(TestCase):
         assert result == ' asd '
 
     def test_should_strip_value(self):
-        string_filed = StringField(trim=True)
+        string_field = StringField(trim=True)
 
-        result = string_filed.clean(request=None, value=' asd ')
+        result = string_field.clean(request=None, value=' asd ')
 
         assert result == 'asd'
+
+    def test_should_strip_value_for_given_characters(self):
+        string_field = StringField(trim=' ')
+
+        result = string_field.clean(request=None, value=' asd ')
+
+        assert result == 'asd'
+
+
+
+

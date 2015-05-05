@@ -48,6 +48,12 @@ class StringField(BaseField):
 
     def clean(self, request, value):
         value = super(StringField, self).clean(request, value)
-        return value.strip() if self.trim else value
-    
+        if self.trim is True:
+            return value.strip()
+        elif self.trim:
+            return value.strip(self.trim)
+        else:
+            return value
+
+
 
