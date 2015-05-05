@@ -76,3 +76,17 @@ class TestCharField(TestCase):
         result = string_field.validate(request=None, value="asd")
 
         assert result.is_success is True
+
+    def test_should_not_strip_value(self):
+        string_field = StringField()
+
+        result = string_field.clean(request=None, value=" asd ")
+
+        assert result == ' asd '
+
+    def test_should_strip_value(self):
+        string_filed = StringField(trim=True)
+
+        result = string_filed.clean(request=None, value=' asd ')
+
+        assert result == 'asd'
