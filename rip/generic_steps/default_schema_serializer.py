@@ -52,8 +52,14 @@ class DefaultEntitySerializer(object):
                 serialized_value = field_override(request, entity)
             else:
                 entity_attribute = field.entity_attribute or field_name
-                serialized_value = attribute_getter.get_attribute(
-                    entity, entity_attribute)
+
+                try:
+                    serialized_value = attribute_getter.get_attribute(
+                        entity, entity_attribute)
+                except AttributeError as ex:
+                    if field.required:
+                        raise ex
+                    continue
 
             serialized[field_name] = field.serialize(request, serialized_value)
         return serialized
