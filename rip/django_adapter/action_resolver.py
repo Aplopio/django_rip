@@ -1,3 +1,5 @@
+from rip.view.view_resource import ViewResource
+
 method_to_action_mapping = {
     'GET': 'read',
     'POST': 'create',
@@ -31,12 +33,16 @@ def resolve_action(http_request, url, api):
     try:
         resource = api.resolve_resource(url)
         endpoint = determine_end_point(http_request, url)
-        if endpoint == 'aggregates':
-            resource_action = 'get_aggregates'
+        if isinstance(resource, ViewResource):
+            action = resource.read
         else:
-            resource_action = "%s_%s" % (
-                method_to_action_mapping.get(http_request.method), endpoint)
-        action = getattr(resource, resource_action)
+            if endpoint == 'aggregates':
+                resource_action = 'get_aggregates'
+            else:
+                resource_action = "%s_%s" % (
+                    method_to_action_mapping.get(http_request.method), endpoint)
+            action = getattr(resource, resource_action)
+
         return action
     except AttributeError:
         return None
