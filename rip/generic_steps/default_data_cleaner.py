@@ -73,7 +73,7 @@ class DefaultRequestCleaner(object):
             request_filters['aggregate_by'] = \
                 [self._get_attribute_name(field_name)
                  for field_name in aggregate_by]
-            
+
         return request_filters
 
     def clean_data_for_read_detail(self, request):
@@ -116,6 +116,11 @@ class DefaultRequestCleaner(object):
         request.context_params['data'] = self.clean(request,
                                                     data)
         request = self.clean_data_for_read_detail(request)
+        return request
+
+    def clean_data_for_view_read(self, request):
+        request_filters = self.clean_request_params(request)
+        request.context_params['request_filters'] = request_filters
         return request
 
     def clean(self, request, data):
