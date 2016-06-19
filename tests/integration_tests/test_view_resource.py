@@ -13,6 +13,7 @@ from rip.schema.string_field import StringField
 from rip.view.default_view_authorization import DefaultViewAuthorization
 from rip.view.view_resource import ViewResource
 from tests import request_factory
+from tests.utils import patch_class_field
 
 
 class DummySchema(ApiSchema):
@@ -41,22 +42,7 @@ class DummyResource(ViewResource):
     authentication_cls = DummyAuthentication
 
 
-def patch_allowed_actions(resource_cls, value):
-    def outer_wrapper(func):
-        def wrapper(*args, **kwargs):
-            old_allowed_actions = resource_cls.allowed_actions
-            resource_cls.allowed_actions = value
-            try:
-                return func(*args, **kwargs)
-            finally:
-                resource_cls.allowed_actions = old_allowed_actions
-
-        return wrapper
-
-    return outer_wrapper
-
-
-class TestViewResourceActions(unittest.TestCase):
+class TestViewResource(unittest.TestCase):
     def test_view_returns_value(self):
         resource = DummyResource()
 
@@ -97,9 +83,10 @@ class TestViewResourceActions(unittest.TestCase):
         assert_that(response.reason, equal_to(error_types.AuthenticationFailed))
         assert_that(response.data, equal_to({'foo': 'bar'}))
 
-    @patch_allowed_actions(DummyResource, [])
+    @patch_class_field(DummyResource, 'allowed_actions', [])
     def test_when_method_not_allowed(self):
         response = DummyResource().read(request=request_factory.get_request(user=object()))
 
         assert_that(response.is_success, equal_to(False))
         assert_that(response.reason, equal_to(error_types.MethodNotAllowed))
+
