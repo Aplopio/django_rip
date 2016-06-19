@@ -7,6 +7,7 @@ from mock import patch
 from rip import error_types
 from rip.api_schema import ApiSchema
 from rip.default_view_actions import DefaultViewActions
+from rip.filter_operators import EQUALS, GT, LT
 from rip.generic_steps.default_authentication import DefaultAuthentication
 from rip.response import Response
 from rip.schema.string_field import StringField
@@ -90,3 +91,27 @@ class TestViewResource(unittest.TestCase):
         assert_that(response.is_success, equal_to(False))
         assert_that(response.reason, equal_to(error_types.MethodNotAllowed))
 
+    @patch.object(DummyViewActions, 'view')
+    @patch_class_field(DummyResource, 'filter_by_fields', {'foo': (EQUALS,)})
+    def test_with_equals_filter(self, mock_view):
+        mock_view.return_value = {'name': 'foo'}
+        request = request_factory.get_request(user=object(), request_params={'foo': 'bar'})
+        response = DummyResource().read(request=request)
+
+        assert_that(response.is_success, equal_to(True))
+        assert_that(response.data, equal_to({'name': 'foo'}))
+        mock_view.assert_called_once_with(request, **({'foo': 'bar'}))
+
+    @patch.object(DummyViewActions, 'view')
+    @patch_class_field(DummyResource, 'filter_by_fields', {'foo': (LT, GT), 'bar': (GT, LT)})
+    def test_with_gt_lt_filter(self, mock_view):
+        mock_view.return_value = {'name': 'foo'}
+        request = request_factory.get_request(user=object(),
+                                              request_params={'foo__gt': 'bar',
+                                                              'bar__lt': 'foo'})
+
+        response = DummyResource().read(request=request)
+
+        assert_that(response.is_success, equal_to(True))
+        assert_that(response.data, equal_to({'name': 'foo'}))
+        mock_view.assert_called_once_with(request, **({'foo__gt': 'bar', 'bar__lt': 'foo'}))

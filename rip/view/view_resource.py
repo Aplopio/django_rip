@@ -1,6 +1,7 @@
 from rip.default_view_actions import DefaultViewActions
 from rip.generic_steps.default_authentication import \
     DefaultAuthentication
+from rip.generic_steps.default_data_cleaner import DefaultRequestCleaner
 from rip.generic_steps.default_post_action_hooks import \
     DefaultPostActionHooks
 from rip.generic_steps.default_response_converter import \
@@ -55,6 +56,7 @@ class ViewResource(object):
     post_action_hooks_cls = DefaultPostActionHooks
     response_converter_cls = DefaultResponseConverter
     serializer_cls = DefaultEntitySerializer
+    data_cleaner_cls = DefaultRequestCleaner
 
     def _setup_configuration(self):
         """
@@ -76,6 +78,7 @@ class ViewResource(object):
         response_converter = self.response_converter_cls(
             schema_cls=self.schema_cls)
         serializer = self.serializer_cls(schema_cls=self.schema_cls)
+        data_cleaner = self.data_cleaner_cls(schema_cls=self.schema_cls)
 
         self.configuration.update(dict(
             authentication=authentication,
@@ -84,6 +87,7 @@ class ViewResource(object):
             view_actions=view_actions,
             post_action_hooks=post_action_hooks,
             response_converter=response_converter,
+            data_cleaner=data_cleaner,
             serializer=serializer))
 
     def __new__(cls, *args, **kwargs):
