@@ -1,4 +1,3 @@
-from rip.default_view_actions import DefaultViewActions
 from rip.generic_steps.default_authentication import \
     DefaultAuthentication
 from rip.generic_steps.default_data_cleaner import DefaultRequestCleaner
@@ -10,9 +9,10 @@ from rip.generic_steps.default_schema_serializer import \
     DefaultEntitySerializer
 from rip.generic_steps.default_schema_validation import \
     DefaultSchemaValidation
+from rip.generic_steps.default_view_actions import DefaultViewActions
+from rip.generic_steps.default_view_authorization import DefaultViewAuthorization
 from rip.view import view_pipeline_factory
 from rip.view.decorators import validate_view_action
-from rip.view.default_view_authorization import DefaultViewAuthorization
 from rip.view.view_actions import ViewActions
 
 

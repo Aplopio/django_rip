@@ -6,12 +6,12 @@ from mock import patch
 
 from rip import error_types
 from rip.api_schema import ApiSchema
-from rip.default_view_actions import DefaultViewActions
 from rip.filter_operators import EQUALS, GT, LT
 from rip.generic_steps.default_authentication import DefaultAuthentication
+from rip.generic_steps.default_view_actions import DefaultViewActions
+from rip.generic_steps.default_view_authorization import DefaultViewAuthorization
 from rip.response import Response
 from rip.schema.string_field import StringField
-from rip.view.default_view_authorization import DefaultViewAuthorization
 from rip.view.view_resource import ViewResource
 from tests import request_factory
 from tests.utils import patch_class_field
