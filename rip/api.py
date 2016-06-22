@@ -1,3 +1,6 @@
+from rip.view.view_resource import ViewResource
+
+
 class Api(object):
     def __init__(self, name, version='v1'):
         self.name = name
@@ -11,6 +14,9 @@ class Api(object):
             raise AttributeError(
                 '{endpoint} already registered for another resource/action'.
                 format(endpoint=endpoint))
+        elif isinstance(resource, ViewResource):
+            self.resources[endpoint] = resource
+            self.resources_lookup[endpoint] = (endpoint, resource)
         elif endpoint.split('/')[-1] != resource.configuration['schema_cls'].\
                 _meta.schema_name:
             # This is a requirement to ensure resource_uri calculation and
@@ -31,9 +37,13 @@ class Api(object):
     def resolve_resource(self, url):
         url_parts = url.split('/')[::2]
         lookup = self.resources_lookup.get("/".join(url_parts))
+        if not lookup:
+            lookup = self.resources_lookup.get(url)
         return lookup[1] if lookup else None
 
     def resolve_endpoint(self, url):
         url_parts = url.split('/')[::2]
         lookup = self.resources_lookup.get("/".join(url_parts))
+        if not lookup:
+            lookup = self.resources_lookup.get(url)
         return lookup[0] if lookup else None
