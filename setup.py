@@ -38,7 +38,7 @@ with open('requirements.txt') as f:
 
 setup(
     name='rip',
-    version='0.0.93',
+    version='0.0.95',
     description='A python framework for writing restful APIs.',
     long_description=readme + '\n\n' + history,
     author='Aplopio developers',
