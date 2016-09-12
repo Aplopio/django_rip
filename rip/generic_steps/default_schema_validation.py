@@ -27,6 +27,10 @@ class DefaultSchemaValidation(object):
     def validate_data(self, request, data):
         errors = {}
         fields_to_validate = self._get_fields_to_validate_data(request, data)
+
+        if data is not None and type(data) != dict:
+            return "This item should be an object."
+
         for field_name, field in fields_to_validate.items():
             validation_result = field.validate(
                 request,

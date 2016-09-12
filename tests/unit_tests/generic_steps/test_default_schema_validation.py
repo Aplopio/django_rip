@@ -92,6 +92,17 @@ class TestSchemaFullValidation(unittest.TestCase):
         assert_that(len(response.data), equal_to(2))
         assert_that(response.data, has_items('name', 'country'))
 
+    def test_input_data_is_not_a_dict(self):
+        data = 'stupid random data'
+        request = request_factory.get_request(
+            data=data,
+            context_params={'crud_action': CrudActions.UPDATE_DETAIL})
+
+        response = self.validation.validate_request_data(request)
+
+        assert_that(response.is_success, equal_to(False))
+        assert_that(response.reason, equal_to(error_types.InvalidData))
+
 
     def test_validate_schema_fields(self):
         pass
