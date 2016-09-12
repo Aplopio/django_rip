@@ -30,6 +30,10 @@ class ListField(BaseField):
         if self.nullable and value is None:
             return ValidationResult(is_success=True)
 
+        if type(value) != list:
+            return ValidationResult(is_success=False,
+                                    reason="This field should be an array.")
+
         for item in value:
             validation_result = self.field.validate(request, item)
             if not validation_result.is_success:

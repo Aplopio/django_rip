@@ -18,6 +18,13 @@ class TestValidateListField(unittest.TestCase):
 
         assert not result.is_success
 
+    def test_return_failure_if_value_is_not_a_list(self):
+        field = ListField(field=StringField(), nullable=False)
+
+        result = field.validate(request=None, value='blah')
+
+        assert not result.is_success
+
     def test_return_success_if_validation_passes(self):
 
         field = ListField(field=StringField(), nullable=True)
