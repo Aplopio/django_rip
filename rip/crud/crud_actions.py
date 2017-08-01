@@ -19,18 +19,6 @@ class CrudActions(object):
         cls_attr = cls._get_reverse_dictionary()[name]
         return getattr(cls, cls_attr)
 
-    @classmethod
-    def get_all_actions(cls):
-        return (
-            cls.GET_AGGREGATES,
-            cls.READ_LIST,
-            cls.READ_DETAIL,
-            cls.CREATE_DETAIL,
-            cls.DELETE_DETAIL,
-            cls.UPDATE_DETAIL,
-            cls.CREATE_OR_UPDATE_DETAIL
-        )
-
 
 def _build_reverse_dictionary(cls):
     return {v: k for k, v in cls.__dict__.items() if

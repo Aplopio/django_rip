@@ -2,9 +2,9 @@ import unittest
 
 from mock import MagicMock
 
+from django_adapter.crud_resource import CrudResource
 from rip.api import Api
 from rip.api_schema import ApiSchema
-from rip.crud.crud_resource import CrudResource
 from rip.pipeline_composer import PipelineComposer
 from rip.request import Request
 from rip.schema.string_field import StringField

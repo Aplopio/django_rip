@@ -1,8 +1,8 @@
+from rip import error_types
 from rip.crud.crud_actions import CrudActions
 from rip.response import Response
 from rip.schema.default_field_value import \
     DEFAULT_FIELD_VALUE
-from rip import error_types
 
 
 class DefaultSchemaValidation(object):

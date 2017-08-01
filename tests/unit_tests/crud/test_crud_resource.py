@@ -2,9 +2,10 @@ import unittest
 
 from mock import MagicMock, patch
 
-from rip.api_schema import ApiSchema
-from rip.crud.crud_resource import CrudResource, CrudActions, \
+from django_adapter.crud_resource import CrudResource, CrudActions, \
     crud_pipeline_factory
+from rip import error_types
+from rip.api_schema import ApiSchema
 from rip.generic_steps import default_authentication
 from rip.generic_steps.default_entity_actions import \
     DefaultEntityActions
@@ -12,7 +13,6 @@ from rip.pipeline_composer import PipelineComposer
 from rip.schema.boolean_field import \
     BooleanField
 from rip.schema.string_field import StringField
-from rip import error_types
 
 
 class TestCrudResourceConstruction(unittest.TestCase):

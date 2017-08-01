@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from rip.schema.string_field import StringField
+from django_adapter.crud_resource import CrudResource
 from rip.api_schema import ApiSchema
-from rip.crud.crud_resource import CrudResource
 from rip.crud.crud_actions import CrudActions
 from rip.generic_steps.default_entity_actions import DefaultEntityActions
+from rip.schema.string_field import StringField
 
 
 class BlankTestSchema(ApiSchema):

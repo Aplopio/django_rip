@@ -1,9 +1,8 @@
-from rip.crud.decorators import validate_action
+from django_adapter.decorators import validate_action
+from rip.crud import crud_pipeline_factory
+from rip.crud.crud_actions import CrudActions
 from rip.generic_steps.default_authentication import \
     DefaultAuthentication
-from rip.generic_steps.default_request_params_validation import \
-    DefaultRequestParamsValidation
-from rip.crud.crud_actions import CrudActions
 from rip.generic_steps.default_authorization import \
     DefaultAuthorization
 from rip.generic_steps.default_data_cleaner import \
@@ -12,13 +11,14 @@ from rip.generic_steps.default_entity_actions import \
     DefaultEntityActions
 from rip.generic_steps.default_post_action_hooks import \
     DefaultPostActionHooks
+from rip.generic_steps.default_request_params_validation import \
+    DefaultRequestParamsValidation
 from rip.generic_steps.default_response_converter import \
     DefaultResponseConverter
 from rip.generic_steps.default_schema_serializer import \
     DefaultEntitySerializer
 from rip.generic_steps.default_schema_validation import \
     DefaultSchemaValidation
-from rip.crud import crud_pipeline_factory
 
 
 class CrudResource(object):

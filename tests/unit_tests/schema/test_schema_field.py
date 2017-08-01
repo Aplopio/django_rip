@@ -10,8 +10,8 @@ from rip.crud.crud_actions import CrudActions
 from rip.generic_steps.default_schema_serializer import DefaultEntitySerializer
 from rip.generic_steps.default_schema_validation import \
     DefaultSchemaValidation
-from rip.schema.string_field import StringField
 from rip.schema.schema_field import SchemaField
+from rip.schema.string_field import StringField
 from rip.schema.validation_result import \
     ValidationResult
 from tests import request_factory

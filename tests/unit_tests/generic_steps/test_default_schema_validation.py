@@ -5,15 +5,15 @@ from hamcrest.core.core.isequal import equal_to
 from hamcrest.library.collection.issequence_containing import has_item, \
     has_items
 
+from rip import error_types
 from rip.api_schema import ApiSchema
 from rip.crud.crud_actions import CrudActions
 from rip.generic_steps.default_schema_validation import \
     DefaultSchemaValidation
 from rip.schema.boolean_field import \
     BooleanField
-from rip.schema.string_field import StringField
 from rip.schema.schema_field import SchemaField
-from rip import error_types
+from rip.schema.string_field import StringField
 from tests import request_factory
 
 
