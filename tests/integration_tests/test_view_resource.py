@@ -4,15 +4,15 @@ from hamcrest.core import assert_that
 from hamcrest.core.core.isequal import equal_to
 from mock import patch
 
-from rip import error_types
-from rip.api_schema import ApiSchema
-from rip.filter_operators import EQUALS, GT, LT
+from django_adapter.view.view_resource import ViewResource
+from rip.generic_steps import error_types
 from rip.generic_steps.default_authentication import DefaultAuthentication
 from rip.generic_steps.default_view_actions import DefaultViewActions
 from rip.generic_steps.default_view_authorization import DefaultViewAuthorization
+from rip.generic_steps.filter_operators import EQUALS, GT, LT
 from rip.response import Response
+from rip.schema.api_schema import ApiSchema
 from rip.schema.string_field import StringField
-from rip.view.view_resource import ViewResource
 from tests import request_factory
 from tests.utils import patch_class_field
 

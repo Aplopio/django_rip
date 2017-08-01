@@ -6,7 +6,7 @@ from mock import MagicMock
 from mock import patch as mock_patch
 
 from rip import pipeline_composer
-from rip.crud import crud_pipeline_factory
+from rip.crud import crud_pipeline_factory, pipeline_composer
 from rip.crud.crud_actions import CrudActions
 
 

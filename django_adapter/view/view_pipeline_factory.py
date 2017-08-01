@@ -1,4 +1,4 @@
-from rip import pipeline_composer
+from rip.crud import pipeline_composer
 from rip.crud.crud_actions import CrudActions
 
 

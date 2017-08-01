@@ -1,5 +1,5 @@
-from rip import error_types
 from rip.crud.crud_actions import CrudActions
+from rip.generic_steps import error_types
 from rip.response import Response
 
 

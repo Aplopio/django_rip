@@ -4,7 +4,7 @@ import simplejson
 from mock import MagicMock
 
 from django_adapter import django_response_builder
-from rip import error_types
+from rip.generic_steps import error_types
 from rip.response import Response
 
 

@@ -1,9 +1,9 @@
 import unittest
 
-from rip.api_schema import ApiSchema
 from rip.generic_steps.default_schema_serializer import \
     DefaultEntitySerializer
 from rip.request import Request
+from rip.schema.api_schema import ApiSchema
 from rip.schema.boolean_field import \
     BooleanField
 from rip.schema.string_field import StringField

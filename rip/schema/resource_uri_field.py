@@ -1,6 +1,6 @@
+from django_adapter import url_constructor
 from rip.schema.base_field import FieldTypes
 from rip.schema.string_field import StringField
-from rip import url_constructor
 
 
 class ResourceUriField(StringField):

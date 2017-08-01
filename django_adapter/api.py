@@ -1,4 +1,4 @@
-from rip.view.view_resource import ViewResource
+from django_adapter.view.view_resource import ViewResource
 
 
 class Api(object):

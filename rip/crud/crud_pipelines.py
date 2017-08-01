@@ -1,4 +1,4 @@
-from rip import pipeline_composer
+from rip.crud import pipeline_composer
 from rip.crud.crud_actions import CrudActions
 from rip.generic_steps.default_authentication import DefaultAuthentication
 from rip.generic_steps.default_authorization import DefaultAuthorization

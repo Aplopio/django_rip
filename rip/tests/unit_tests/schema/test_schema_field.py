@@ -5,11 +5,11 @@ from hamcrest.core.core.isequal import equal_to
 from hamcrest.core.core.isinstanceof import instance_of
 from hamcrest.library.collection.isdict_containing import has_entry
 
-from rip.api_schema import ApiSchema
 from rip.crud.crud_actions import CrudActions
 from rip.generic_steps.default_schema_serializer import DefaultEntitySerializer
 from rip.generic_steps.default_schema_validation import \
     DefaultSchemaValidation
+from rip.schema.api_schema import ApiSchema
 from rip.schema.schema_field import SchemaField
 from rip.schema.string_field import StringField
 from rip.schema.validation_result import \

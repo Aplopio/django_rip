@@ -1,6 +1,6 @@
 from hamcrest import assert_that, equal_to, has_item
 
-from rip import error_types
+from rip.generic_steps import error_types
 from tests import request_factory
 from tests.integration_tests.person_base_test_case import \
     PersonResourceBaseTestCase

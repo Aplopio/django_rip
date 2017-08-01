@@ -1,10 +1,10 @@
 import unittest
 
-from rip.api_schema import ApiSchema
+from rip.schema.api_schema import ApiSchema
 from rip.schema.boolean_field import \
     BooleanField
-from rip.schema.string_field import StringField
 from rip.schema.email_field import EmailField
+from rip.schema.string_field import StringField
 
 
 class TestApiSchemaConstruction(unittest.TestCase):

@@ -1,13 +1,13 @@
 import mock
 
 from django_adapter.crud_resource import CrudResource
-from rip.api_schema import ApiSchema
 from rip.crud.crud_actions import CrudActions
-from rip.filter_operators import EQUALS
 from rip.generic_steps.default_authorization import \
     DefaultAuthorization
 from rip.generic_steps.default_entity_actions import \
     DefaultEntityActions
+from rip.generic_steps.filter_operators import EQUALS
+from rip.schema.api_schema import ApiSchema
 from rip.schema.base_field import FieldTypes
 from rip.schema.email_field import EmailField
 from rip.schema.integer_field import IntegerField

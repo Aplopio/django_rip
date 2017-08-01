@@ -1,9 +1,9 @@
 from rip import filter_operators
+from rip.generic_steps import error_types, filter_operators
 from rip.response import Response
-from rip import error_types
-
 
 SPECIAL_FILTERS = ['offset', 'limit', 'aggregate_by', 'order_by']
+
 
 class DefaultRequestParamsValidation(object):
     def __init__(self, schema_cls, filter_by_fields, order_by_fields, aggregate_by_fields):

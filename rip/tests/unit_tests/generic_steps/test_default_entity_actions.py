@@ -2,10 +2,10 @@ import unittest
 
 from mock import MagicMock
 
-from rip.error_types import ObjectNotFound, \
-    MultipleObjectsFound
 from rip.generic_steps.default_entity_actions import \
     DefaultEntityActions
+from rip.generic_steps.error_types import ObjectNotFound, \
+    MultipleObjectsFound
 from rip.response import Response
 
 

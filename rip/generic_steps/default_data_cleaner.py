@@ -1,5 +1,5 @@
-from rip import filter_operators
 from rip.crud.crud_actions import CrudActions
+from rip.generic_steps import filter_operators
 
 
 class DefaultRequestCleaner(object):

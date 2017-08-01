@@ -1,5 +1,5 @@
+from rip.generic_steps import error_types
 from rip.response import Response
-from rip import error_types
 
 
 def authenticate(request):

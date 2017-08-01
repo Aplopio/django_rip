@@ -3,8 +3,8 @@ import unittest
 from mock import MagicMock
 from mock import patch as mock_patch
 
-from rip import pipeline_composer
-from rip.pipeline_composer import PipelineComposer
+from rip.crud import pipeline_composer
+from rip.crud.pipeline_composer import PipelineComposer
 from rip.request import Request
 from rip.response import Response
 

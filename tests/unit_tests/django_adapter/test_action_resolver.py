@@ -5,8 +5,8 @@ from mock import MagicMock
 
 from django_adapter import action_resolver
 from django_adapter.crud_resource import CrudResource
-from rip.api_schema import ApiSchema
-from rip.view.view_resource import ViewResource
+from django_adapter.view.view_resource import ViewResource
+from rip.schema.api_schema import ApiSchema
 
 __all__ = ["TestActionResolver"]
 

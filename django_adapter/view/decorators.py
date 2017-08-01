@@ -1,6 +1,6 @@
-from rip import error_types
+from django_adapter.view.view_actions import ViewActions
+from rip.generic_steps import error_types
 from rip.response import Response
-from rip.view.view_actions import ViewActions
 
 
 def validate_view_action(func):

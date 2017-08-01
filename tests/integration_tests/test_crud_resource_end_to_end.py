@@ -7,12 +7,12 @@ from hamcrest.core.core.isequal import equal_to
 from mock import MagicMock
 
 from django_adapter import create_http_handler
+from django_adapter.api import Api
 from django_adapter.crud_resource import CrudResource
-from rip.api import Api
-from rip.api_schema import ApiSchema
 from rip.generic_steps.default_authentication import DefaultAuthentication
 from rip.generic_steps.default_authorization import DefaultAuthorization
 from rip.generic_steps.default_entity_actions import DefaultEntityActions
+from rip.schema.api_schema import ApiSchema
 from rip.schema.string_field import StringField
 
 

@@ -2,8 +2,9 @@
 serializes an entity or a list of entities to response data
 """
 
-from rip import filter_operators, attribute_getter
+from rip import filter_operators
 from rip.crud.crud_actions import CrudActions
+from rip.generic_steps import attribute_getter, filter_operators
 
 
 class DefaultEntitySerializer(object):

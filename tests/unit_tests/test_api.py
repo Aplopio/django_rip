@@ -2,13 +2,13 @@ import unittest
 
 from mock import MagicMock
 
+from django_adapter.api import Api
 from django_adapter.crud_resource import CrudResource
-from rip.api import Api
-from rip.api_schema import ApiSchema
-from rip.pipeline_composer import PipelineComposer
+from django_adapter.view.view_resource import ViewResource
+from rip.crud.pipeline_composer import PipelineComposer
 from rip.request import Request
+from rip.schema.api_schema import ApiSchema
 from rip.schema.string_field import StringField
-from rip.view.view_resource import ViewResource
 
 
 class TestApi(unittest.TestCase):

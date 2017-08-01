@@ -4,8 +4,7 @@ import simplejson
 from django.http import HttpResponseNotFound, HttpResponseForbidden, \
     HttpResponse, HttpResponseBadRequest
 
-from rip import error_types
-
+from rip.generic_steps import error_types
 
 http_status_code_mapping = dict(
     GET=200,
