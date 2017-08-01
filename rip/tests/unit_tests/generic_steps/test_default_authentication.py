@@ -4,7 +4,6 @@ from hamcrest.core import assert_that
 from hamcrest.core.core.isequal import equal_to
 from mock import MagicMock
 
-from rip import error_types
 from rip.generic_steps import default_authentication, error_types
 from rip.request import Request
 

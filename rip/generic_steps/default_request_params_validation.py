@@ -1,4 +1,3 @@
-from rip import filter_operators
 from rip.generic_steps import error_types, filter_operators
 from rip.response import Response
 

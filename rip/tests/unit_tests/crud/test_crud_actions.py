@@ -27,17 +27,3 @@ class TestResolveAction(unittest.TestCase):
     def test_should_get_aggregates(self):
         assert CrudActions.resolve_action(
             'get_aggregates') == CrudActions.GET_AGGREGATES
-
-
-class TestAllActions(unittest.TestCase):
-    def test_should_get_all_actions(self):
-        all_actions = CrudActions.get_all_actions()
-
-        assert len(all_actions) == 7
-        assert CrudActions.READ_DETAIL in all_actions
-        assert CrudActions.READ_LIST in all_actions
-        assert CrudActions.CREATE_DETAIL in all_actions
-        assert CrudActions.UPDATE_DETAIL in all_actions
-        assert CrudActions.CREATE_OR_UPDATE_DETAIL in all_actions
-        assert CrudActions.DELETE_DETAIL in all_actions
-        assert CrudActions.GET_AGGREGATES in all_actions

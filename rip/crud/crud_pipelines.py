@@ -13,7 +13,7 @@ from rip.generic_steps.default_schema_serializer import DefaultEntitySerializer
 from rip.generic_steps.default_schema_validation import DefaultSchemaValidation
 
 
-class ConfigManager(object):
+class PipelineConfig(object):
     def __init__(
             self, schema_cls, authentication_cls=DefaultAuthentication,
             authorization_cls=DefaultAuthorization,
