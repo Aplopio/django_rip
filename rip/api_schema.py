@@ -1,6 +1,5 @@
 import six
 from rip.schema.base_field import BaseField, FieldTypes
-from rip.schema.sub_resource_field import SubResourceField
 
 
 class ApiSchemaOptions(object):
@@ -86,12 +85,6 @@ class ApiSchema(six.with_metaclass(ApiSchemaMetaClass)):
         return {field_name: field for field_name, field in
                 cls._meta.fields.items()
                 if field.field_type == FieldTypes.DEFAULT}
-
-    @classmethod
-    def sub_resource_fields(cls):
-        return {field_name: field for field_name, field in
-                cls._meta.fields.items()
-                if isinstance(field, SubResourceField)}
 
     @classmethod
     def list_fields(cls):

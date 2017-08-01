@@ -6,9 +6,9 @@ from hamcrest.core import assert_that
 from hamcrest.core.core.isequal import equal_to
 from mock import MagicMock, patch
 
-from rip.django_adapter import django_response_builder, \
+from django_adapter import api_request_builder
+from django_adapter import django_response_builder, \
     action_resolver, django_http_handler
-from rip.django_adapter import api_request_builder
 
 
 class DjangoHttpHandler(unittest.TestCase):

@@ -1,13 +1,13 @@
 """
 creates an api request given a django http request object
 """
-from django import conf
 import simplejson
+from django import conf
+from simplejson import JSONDecodeError
 
-from rip.django_adapter import \
+from django_adapter import \
     metadata_factory
 from rip.request import Request
-from simplejson import JSONDecodeError
 
 
 def _build_request_params(http_request, breadcrumb_filters):

@@ -1,11 +1,11 @@
-from functools import partial
 import json
+from functools import partial
 
 from django.http import HttpResponseNotAllowed, HttpResponseNotFound, HttpResponseBadRequest
 
-from rip.django_adapter import django_response_builder, \
+from django_adapter import api_request_builder
+from django_adapter import django_response_builder, \
     action_resolver
-from rip.django_adapter import api_request_builder
 
 
 def handle_api_call(http_request, url, api):

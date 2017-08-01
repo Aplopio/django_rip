@@ -1,12 +1,13 @@
 import unittest
+
 from  django import conf
 from hamcrest import assert_that
 from hamcrest.core.core.isequal import equal_to
 from hamcrest.library.collection.isdict_containing import has_entry
 from mock import MagicMock, patch
 
-from rip.django_adapter import metadata_factory
-from rip.django_adapter import api_request_builder
+from django_adapter import api_request_builder
+from django_adapter import metadata_factory
 
 
 class TestBuildApiRequest(unittest.TestCase):

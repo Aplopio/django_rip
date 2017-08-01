@@ -6,9 +6,9 @@ from hamcrest.core.assert_that import assert_that
 from hamcrest.core.core.isequal import equal_to
 from mock import MagicMock
 
+from django_adapter import create_http_handler
 from rip.api import Api
 from rip.api_schema import ApiSchema
-from rip.django_adapter.django_http_handler import create_http_handler
 from rip.generic_steps.default_authentication import DefaultAuthentication
 from rip.generic_steps.default_view_actions import DefaultViewActions
 from rip.generic_steps.default_view_authorization import DefaultViewAuthorization

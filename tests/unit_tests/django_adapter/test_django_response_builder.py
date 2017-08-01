@@ -1,11 +1,11 @@
 import unittest
 
-from mock import MagicMock
 import simplejson
+from mock import MagicMock
 
-from rip.django_adapter import django_response_builder
-from rip.response import Response
+from django_adapter import django_response_builder
 from rip import error_types
+from rip.response import Response
 
 
 class TestDjangoResponseBuilder(unittest.TestCase):

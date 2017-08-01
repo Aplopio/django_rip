@@ -3,9 +3,9 @@ import unittest
 from hamcrest import assert_that, equal_to
 from mock import MagicMock
 
+from django_adapter import action_resolver
 from rip.api_schema import ApiSchema
 from rip.crud.crud_resource import CrudResource
-from rip.django_adapter import action_resolver
 from rip.view.view_resource import ViewResource
 
 __all__ = ["TestActionResolver"]

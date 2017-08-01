@@ -2,7 +2,6 @@ from rip.response import Response
 
 
 class DefaultResponseConverter(object):
-
     def __init__(self, schema_cls):
         self.schema_cls = schema_cls
 
