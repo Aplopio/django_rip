@@ -1,7 +1,8 @@
-from rip.view import view_pipeline_factory
-from rip.view.view_actions import ViewActions
+from django_adapter.view import view_pipeline_factory
+
 
 from django_adapter.view.decorators import validate_view_action
+from django_adapter.view.view_actions import ViewActions
 from rip.generic_steps.default_authentication import \
     DefaultAuthentication
 from rip.generic_steps.default_data_cleaner import DefaultRequestCleaner
