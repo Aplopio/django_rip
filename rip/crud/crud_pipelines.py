@@ -8,7 +8,7 @@ from rip.generic_steps.default_post_action_hooks import DefaultPostActionHooks
 from rip.generic_steps.default_request_params_validation import \
     DefaultRequestParamsValidation
 from rip.generic_steps.default_response_converter import \
-    DefaultResponseConverter
+    DefaultResponseConstructor
 from rip.generic_steps.default_schema_serializer import DefaultEntitySerializer
 from rip.generic_steps.default_schema_validation import DefaultSchemaValidation
 
@@ -22,7 +22,7 @@ class PipelineConfig(object):
             data_cleaner_cls=DefaultRequestCleaner,
             entity_actions_cls=DefaultEntityActions,
             post_action_hooks_cls=DefaultPostActionHooks,
-            response_converter_cls=DefaultResponseConverter,
+            response_converter_cls=DefaultResponseConstructor,
             serializer_cls=DefaultEntitySerializer,
             filter_by_fields=None,
             order_by_fields=None,

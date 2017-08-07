@@ -21,15 +21,6 @@ class ResourceUriField(StringField):
             entity_attribute=entity_attribute)
         self.of_type = of_type
 
-    def _get_url_parts(self, entity_name, value, parent_bread_crumbs):
-        all_bread_crumbs = parent_bread_crumbs[:]
-        all_bread_crumbs.append([entity_name, value])
-        return reduce(lambda url_parts,
-                             resource_tuple: url_parts + [unicode(val)
-                                                          for val
-                                                          in resource_tuple],
-                      all_bread_crumbs, [])
-
     def serialize(self, request, value):
         schema = self.of_type or self.schema_cls
         schema_name = schema._meta.schema_name

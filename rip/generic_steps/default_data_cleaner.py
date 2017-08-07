@@ -16,7 +16,6 @@ class DefaultRequestCleaner(object):
             cleaned_field_name = field_obj.entity_attribute or field_name
         return cleaned_field_name
 
-
     def _get_filter_value(self, request, field_name, value, filter_type):
         from rip.schema.schema_field import SchemaField
         from rip.schema.list_field import ListField

@@ -50,7 +50,8 @@ class DefaultEntityActions(object):
         count_request_filters.pop('offset', None)
         count_request_filters.pop('limit', None)
         count_request_filters.pop('order_by', None)
-        total_count_getter = get_total_count_fn or self.get_entity_list_total_count
+        total_count_getter = get_total_count_fn or \
+                             self.get_entity_list_total_count
         total_count = total_count_getter(request, **count_request_filters)
 
         request.context_params[self.entity_list_total_count_property_name] = \
