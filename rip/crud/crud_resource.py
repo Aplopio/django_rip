@@ -88,7 +88,7 @@ class CrudResource(object):
         if action_name not in self.allowed_actions:
             return Response(
                 is_success=False, reason=error_types.MethodNotAllowed)
-        crud_pipeline = self.pipelines[action_name]()
+        crud_pipeline = self.pipelines[action_name]
         return crud_pipeline(request)
 
     def get_read_detail_pipeline(self):
