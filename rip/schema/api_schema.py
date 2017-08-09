@@ -54,15 +54,6 @@ class ApiSchemaMetaClass(type):
 
 
 class ApiSchema(six.with_metaclass(ApiSchemaMetaClass)):
-    def __new__(cls, *args, **kwargs):
-
-        if not hasattr(cls._meta, 'schema_name'):
-            raise TypeError(
-                'Missing meta property `schema_name` on Schema `{schema_cls}`'
-                .format(schema_cls=cls.__name__))
-
-        obj = super(ApiSchema, cls).__new__(cls, *args, **kwargs)
-        return obj
 
     def __init__(self, **kwargs):
         for key, value in kwargs.items():

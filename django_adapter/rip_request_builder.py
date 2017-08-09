@@ -5,12 +5,12 @@ import simplejson
 from django import conf
 from simplejson import JSONDecodeError
 
-from django_adapter import \
-    metadata_factory
+from rip.generic_steps import error_types
 from rip.request import Request
+from rip.response import Response
 
 
-def _build_request_params(http_request, breadcrumb_filters):
+def _build_request_params(http_request, url_kwargs):
     request_params = {}
     for key in http_request.GET:
         value = http_request.GET.getlist(key)
@@ -18,7 +18,7 @@ def _build_request_params(http_request, breadcrumb_filters):
             value = value[0]
         request_params[key] = value
 
-    request_params.update(breadcrumb_filters)
+    request_params.update(url_kwargs)
     return request_params
 
 
@@ -28,31 +28,30 @@ def _resolve_user(http_request):
         else None
 
 
-def build_request_data(request_body, request_meta):
+def _build_request_data(request_body, request_meta):
     content_types = request_meta.get('CONTENT_TYPE', '').split(";")
     if request_body and 'application/json' in content_types:
-        try:
-            request_data = simplejson.loads(request_body)
-        except JSONDecodeError, e:
-            return {'error_message': e.message}
+        request_data = simplejson.loads(request_body)
     else:
         request_data = {}
     return request_data
 
 
-def build_request(http_request, url, api, request_data, request_body):
-    endpoint = api.resolve_endpoint(url)
-    breadcrumb_filters = metadata_factory.api_breadcrumb_filters(url, endpoint)
-    parent_breadcrumbs = metadata_factory.api_breadcrumbs(url, endpoint)
+def build_rip_request_or_response(http_request, url_kwargs):
+    request_body = http_request.read()
+    try:
+        request_data = _build_request_data(request_body, http_request.META)
+    except JSONDecodeError:
+        return Response(is_success=False, reason=error_types.InvalidData,
+                        data={'error_message': 'Invalid JSON data'})
+
     return Request(
         user=_resolve_user(http_request),
-        request_params=_build_request_params(http_request, breadcrumb_filters),
+        request_params=_build_request_params(http_request, url_kwargs),
         context_params={'protocol': 'http',
-                        'url': url,
-                        'api_name': api.name,
-                        'api_version': api.version,
                         'timezone': conf.settings.TIME_ZONE,
-                        'api_breadcrumbs': parent_breadcrumbs},
+                        },
         data=request_data,
         request_headers=http_request.META,
-        request_body=request_body)
+        request_body=request_body
+    )

@@ -27,14 +27,14 @@ http_response_mapping = {
 }
 
 
-def build_http_response(http_request, response):
-    if response.is_success:
+def build_http_response(http_request, rip_response):
+    if rip_response.is_success:
         return HttpResponse(
             status=http_status_code_mapping[http_request.method],
-            content=simplejson.dumps(response.data),
+            content=simplejson.dumps(rip_response.data),
             content_type='application/json')
         # return a successful response
     else:
-        response_cls = http_response_mapping[response.reason]
-        return response_cls(content=simplejson.dumps(response.data),
+        response_cls = http_response_mapping[rip_response.reason]
+        return response_cls(content=simplejson.dumps(rip_response.data),
                             content_type="application/json")
