@@ -1,4 +1,4 @@
-from django_adapter.default_url_generator import UrlTypes
+from django_adapter.url_types import UrlTypes
 from rip.schema.base_field import FieldTypes
 from rip.schema.string_field import StringField
 from django.urls import reverse
