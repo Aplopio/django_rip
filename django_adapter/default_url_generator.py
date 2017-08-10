@@ -1,12 +1,7 @@
 import re
 from django.conf.urls import url
+from django_adapter.url_types import UrlTypes
 from rip.crud.crud_actions import CrudActions
-
-
-class UrlTypes(object):
-    detail_url = 'detail'
-    list_url = 'list'
-    aggregates_url = 'aggregates'
 
 
 class DefaultUrlGenerator(object):
