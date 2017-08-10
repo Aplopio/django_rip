@@ -1,116 +1,77 @@
 import unittest
-
-from  django import conf
-from hamcrest import assert_that
-from hamcrest.core.core.isequal import equal_to
-from hamcrest.library.collection.isdict_containing import has_entry
+from django import conf
 from mock import MagicMock, patch
+from django.test.client import RequestFactory
 
-from django_adapter import api_request_builder
+from django_adapter.default_rip_request_builder import DefaultRipRequestBuilder
+from rip.request import Request
+import os
+os.environ['DJANGO_SETTINGS_MODULE'] = 'tests.test_settings'
 
 
 class TestBuildApiRequest(unittest.TestCase):
+
     def setUp(self):
-        import os
-        os.environ['DJANGO_SETTINGS_MODULE'] = 'tests.test_settings'
-    @patch.object(conf, 'settings')
-    def test_create_request_with_right_request_params(self,
-                                                      parent_breadcrumbs_from,
-                                                      breadcrumb_filters,
-                                                      settings):
-        http_request = MagicMock()
-        mock_api = MagicMock()
-        mock_api.name = 'api_name'
-        mock_api.version = '1.0.0.1'
-        mock_user = http_request.user
-        request_body = MagicMock()
-        http_request.user.is_anonymous.return_value = False
-        breadcrumb_filters.return_value = expected_req_params = {'bar': 'baz'}
-
-        request = api_request_builder.build_request(http_request=http_request,
-                                                    url='candidates',
-                                                    api=mock_api,
-                                                    request_data={},
-                                                    request_body=request_body)
-        assert_that(request.user, equal_to(mock_user))
-        assert_that(request.request_params, equal_to(expected_req_params))
-
+        self.factory = RequestFactory()
 
     @patch.object(conf, 'settings')
-    def test_create_request_with_right_context_params(self,
-                                                      parent_breadcrumbs_from,
-                                                      api_breadcrumb_filters,
-                                                      settings):
-        http_request = MagicMock()
-        mock_api = MagicMock()
-        mock_api.name = 'api_name'
-        mock_api.version = '1.0.0.1'
+    def test_create_request_with_right_request_params(self, settings):
+        http_request = self.factory.get('/someurl?getkey=getvalue')
+        http_request.user = mock_user = MagicMock()
         http_request.user.is_anonymous.return_value = False
-        request_body = MagicMock()
+        url_kwargs = {'key': 'value'}
+        request_builder = DefaultRipRequestBuilder(
+            http_request=http_request, url_kwargs=url_kwargs)
+
+        request = request_builder.build_rip_request_or_response()
+
+        assert isinstance(request, Request)
+        assert request.request_params == {'key': 'value', 'getkey': 'getvalue'}
+
+    @patch.object(conf, 'settings')
+    def test_create_request_with_right_context_params(self, settings):
+        http_request = self.factory.get('/someurl?getkey=getvalue')
+        http_request.user = mock_user = MagicMock()
+        http_request.user.is_anonymous.return_value = False
+        url_kwargs = {'key': 'value'}
         settings.TIME_ZONE = expected_timezone = MagicMock()
 
-        request = api_request_builder.build_request(http_request=http_request,
-                                                    url='candidates',
-                                                    api=mock_api,
-                                                    request_data={},
-                                                    request_body=request_body)
+        request_builder = DefaultRipRequestBuilder(
+            http_request=http_request, url_kwargs=url_kwargs)
+        request = request_builder.build_rip_request_or_response()
 
-        assert_that(request.context_params, has_entry('protocol', 'http'))
-        assert_that(request.context_params, has_entry('url', 'candidates'))
-        assert_that(request.context_params,
-                    has_entry('timezone', expected_timezone))
-        assert_that(request.context_params,
-                    has_entry('api_version', mock_api.version))
-        assert_that(request.context_params,
-                    has_entry('api_name', mock_api.name))
+        assert request.context_params.get('protocol', 'http')
+        assert request.context_params.get('timezone', expected_timezone)
 
     @patch.object(conf, 'settings')
-    def test_create_request_with_anonymous_user(self,
-                                                parent_breadcrumbs_from,
-                                                api_breadcrumb_filters,
-                                                settings):
-        http_request = MagicMock()
-        mock_api = MagicMock()
+    def test_create_request_with_anonymous_user(self, settings):
+        http_request = self.factory.get('/someurl?getkey=getvalue')
+        http_request.user = mock_user = MagicMock()
         http_request.user.is_anonymous.return_value = True
-        request_body = MagicMock()
-        request = api_request_builder.build_request(http_request=http_request,
-                                                    url='candidates',
-                                                    api=mock_api,
-                                                    request_data={},
-                                                    request_body=request_body)
-        assert_that(request.user, equal_to(None))
 
+        request_builder = DefaultRipRequestBuilder(
+            http_request=http_request, url_kwargs={})
+        request = request_builder.build_rip_request_or_response()
+
+        assert request.user is None
 
     def test_create_request_with_custom_headers(self):
         http_request = MagicMock()
-        mock_api = MagicMock()
         meta = dict(HTTP_CUSTOM_HEADER='custom_value')
         http_request.META = meta
-        request_body = MagicMock()
-        request = api_request_builder.build_request(http_request=http_request,
-                                                    url='candidates',
-                                                    api=mock_api,
-                                                    request_data={},
-                                                    request_body=request_body)
-        assert_that(request.request_headers, has_entry('HTTP_CUSTOM_HEADER',
-                                                       'custom_value'))
 
+        request_builder = DefaultRipRequestBuilder(
+            http_request=http_request, url_kwargs={})
+        request = request_builder.build_rip_request_or_response()
+
+        assert request.request_headers.get('HTTP_CUSTOM_HEADER') == \
+            'custom_value'
 
     def test_create_request_with_request_body(self):
         http_request = MagicMock()
-        mock_api = MagicMock()
-        request_body = 'abcd'
-        request = api_request_builder.build_request(http_request=http_request,
-                                                    url='candidates',
-                                                    api=mock_api,
-                                                    request_data={},
-                                                    request_body=request_body)
-        assert_that(request.request_body, equal_to('abcd'))
+        request_body = http_request.read.return_value = 'abcd'
 
-
-    def test_build_request_data_when_request_body_is_emtpty(self):
-        # the call
-        request_data = api_request_builder._build_request_data(
-            request_body='', request_meta={})
-
-        assert request_data == {}
+        request_builder = DefaultRipRequestBuilder(
+            http_request=http_request, url_kwargs={})
+        request = request_builder.build_rip_request_or_response()
+        assert request.request_body == request_body
