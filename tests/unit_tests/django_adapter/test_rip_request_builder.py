@@ -7,7 +7,6 @@ from hamcrest.library.collection.isdict_containing import has_entry
 from mock import MagicMock, patch
 
 from django_adapter import api_request_builder
-from django_adapter import metadata_factory
 
 
 class TestBuildApiRequest(unittest.TestCase):
@@ -15,8 +14,6 @@ class TestBuildApiRequest(unittest.TestCase):
         import os
         os.environ['DJANGO_SETTINGS_MODULE'] = 'tests.test_settings'
     @patch.object(conf, 'settings')
-    @patch.object(metadata_factory, 'api_breadcrumb_filters')
-    @patch.object(metadata_factory, 'api_breadcrumbs')
     def test_create_request_with_right_request_params(self,
                                                       parent_breadcrumbs_from,
                                                       breadcrumb_filters,
@@ -40,8 +37,6 @@ class TestBuildApiRequest(unittest.TestCase):
 
 
     @patch.object(conf, 'settings')
-    @patch.object(metadata_factory, 'api_breadcrumb_filters')
-    @patch.object(metadata_factory, 'api_breadcrumbs')
     def test_create_request_with_right_context_params(self,
                                                       parent_breadcrumbs_from,
                                                       api_breadcrumb_filters,
@@ -70,8 +65,6 @@ class TestBuildApiRequest(unittest.TestCase):
                     has_entry('api_name', mock_api.name))
 
     @patch.object(conf, 'settings')
-    @patch.object(metadata_factory, 'api_breadcrumb_filters')
-    @patch.object(metadata_factory, 'api_breadcrumbs')
     def test_create_request_with_anonymous_user(self,
                                                 parent_breadcrumbs_from,
                                                 api_breadcrumb_filters,
@@ -117,7 +110,7 @@ class TestBuildApiRequest(unittest.TestCase):
 
     def test_build_request_data_when_request_body_is_emtpty(self):
         # the call
-        request_data = api_request_builder.build_request_data(
+        request_data = api_request_builder._build_request_data(
             request_body='', request_meta={})
 
         assert request_data == {}
