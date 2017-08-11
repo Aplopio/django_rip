@@ -1,7 +1,24 @@
 import re
 from django.conf.urls import url
+from django.urls import reverse
 from django_adapter.url_types import UrlTypes
 from rip.crud.crud_actions import CrudActions
+
+
+class DefaultUrlReverser(object):
+    def __init__(self, resource_name, url_type):
+        self.url_type = url_type
+        self.resource_name = resource_name
+
+    def _get_url_name(self):
+        return '{}-{}'.format(self.resource_name, self.url_type)
+
+    def reverse_to_url(self, value):
+        # url reverse can be an expensive operation in large projects.
+        # todo: Find a way to cache the results
+        url_name = self._get_url_name()
+        value = value if isinstance(value, list) else [value]
+        return reverse(url_name, args=value)
 
 
 class DefaultUrlGenerator(object):

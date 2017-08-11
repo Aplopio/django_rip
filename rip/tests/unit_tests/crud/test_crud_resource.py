@@ -2,9 +2,8 @@ import unittest
 
 from mock import MagicMock, patch
 
-from django_adapter.crud_resource import CrudResource, CrudActions, \
-    crud_pipeline_factory
-from rip import error_types
+from rip.crud.crud_actions import CrudActions
+from rip.crud.crud_resource import CrudResource
 from rip.crud.pipeline_composer import PipelineComposer
 from rip.generic_steps import default_authentication, error_types
 from rip.generic_steps.default_entity_actions import \
@@ -42,82 +41,69 @@ class TestCrudResourceConstruction(unittest.TestCase):
 
         resource = DefaultTestResource()
 
-        assert len(resource.configuration['allowed_actions']) == 2
-        assert isinstance(resource.configuration['authentication'],
+        assert len(resource.allowed_actions) == 2
+        assert isinstance(resource.request_authentication,
                           default_authentication.DefaultAuthentication)
-        assert isinstance(resource.configuration['entity_actions'],
-                          DefaultEntityActions)
+        assert isinstance(resource.entity_actions, DefaultEntityActions)
 
-    @patch.object(crud_pipeline_factory, 'read_detail_pipeline')
-    def test_read_detail(self, mock_create_pipeline):
-        custom_auth = MagicMock()
-        mock_create_pipeline.return_value = pipeline = MagicMock()
+    def test_read_detail(self):
         request = MagicMock()
 
         class DefaultTestResource(CrudResource):
             schema_cls = self.schema
-            authentication_cls = custom_auth
 
         test_resource = DefaultTestResource()
-        test_resource.read_detail(request)
+        test_resource.pipelines[CrudActions.READ_DETAIL] = \
+            pipeline = MagicMock()
+        test_resource.run_crud_action(CrudActions.READ_DETAIL, request)
 
-        pipeline.assert_called_once_with(request=request)
+        pipeline.assert_called_once_with(request)
 
-    @patch.object(crud_pipeline_factory, 'update_detail_pipeline')
-    def test_update_detail(self, mock_create_pipeline):
-        custom_auth = MagicMock()
-        mock_create_pipeline.return_value = pipeline = MagicMock()
+    def test_update_detail(self):
         request = MagicMock()
 
         class DefaultTestResource(CrudResource):
             schema_cls = self.schema
-            authentication_cls = custom_auth
             allowed_actions = [CrudActions.UPDATE_DETAIL]
 
         test_resource = DefaultTestResource()
-        test_resource.update_detail(request)
+        test_resource.pipelines[CrudActions.UPDATE_DETAIL] = \
+            pipeline = MagicMock()
+        test_resource.run_crud_action(CrudActions.UPDATE_DETAIL, request)
 
-        pipeline.assert_called_once_with(request=request)
+        pipeline.assert_called_once_with(request)
 
-    @patch.object(crud_pipeline_factory, 'create_detail_pipeline')
-    def test_create_detail(self, mock_create_pipeline):
-        custom_auth = MagicMock()
-        mock_create_pipeline.return_value = pipeline = MagicMock()
+    def test_create_detail(self):
         request = MagicMock()
 
         class DefaultTestResource(CrudResource):
             schema_cls = self.schema
-            authentication_cls = custom_auth
             allowed_actions = [CrudActions.CREATE_DETAIL]
 
         test_resource = DefaultTestResource()
-        test_resource.create_detail(request)
+        test_resource.pipelines[CrudActions.CREATE_DETAIL] = \
+            pipeline = MagicMock()
+        test_resource.run_crud_action(CrudActions.CREATE_DETAIL, request)
 
-        pipeline.assert_called_once_with(request=request)
+        pipeline.assert_called_once_with(request)
 
-    @patch.object(crud_pipeline_factory, 'delete_detail_pipeline')
-    def test_delete_detail(self, mock_delete_pipeline):
-        custom_auth = MagicMock()
-        mock_delete_pipeline.return_value = pipeline = MagicMock()
+    def test_delete_detail(self):
         request = MagicMock()
 
         class DefaultTestResource(CrudResource):
             schema_cls = self.schema
-            authentication_cls = custom_auth
             allowed_actions = [CrudActions.DELETE_DETAIL]
 
         test_resource = DefaultTestResource()
-        test_resource.delete_detail(request)
+        test_resource.pipelines[CrudActions.DELETE_DETAIL] = \
+            pipeline = MagicMock()
+        test_resource.run_crud_action(CrudActions.DELETE_DETAIL, request)
 
-        pipeline.assert_called_once_with(request=request)
+        pipeline.assert_called_once_with(request)
 
-    @patch.object(crud_pipeline_factory, 'create_or_update_detail_pipeline')
-    def test_create_or_update_detail(self, create_or_update_detail_pipeline):
-        pipeline = MagicMock()
+    def test_create_or_update_detail(self):
         expected_response = MagicMock()
         request = MagicMock()
-        create_or_update_detail_pipeline.return_value = pipeline
-        pipeline.return_value = expected_response
 
         class DefaultTestResource(CrudResource):
             schema_cls = self.schema
@@ -125,10 +111,15 @@ class TestCrudResourceConstruction(unittest.TestCase):
             allowed_actions = [CrudActions.CREATE_OR_UPDATE_DETAIL]
 
         test_resource = DefaultTestResource()
-        response = test_resource.create_or_update_detail(request=request)
+        test_resource.pipelines[CrudActions.CREATE_OR_UPDATE_DETAIL] = \
+            pipeline = MagicMock()
+        pipeline.return_value = expected_response
+
+        response = test_resource.run_crud_action(
+            CrudActions.CREATE_OR_UPDATE_DETAIL, request)
 
         assert response == expected_response
-        pipeline.assert_called_once_with(request=request)
+        pipeline.assert_called_once_with(request)
 
 
 class TestMethodNotAllowed(unittest.TestCase):
@@ -145,6 +136,10 @@ class TestMethodNotAllowed(unittest.TestCase):
 
     def test_forbidden_response_if_methods_not_allowed(self):
         request = MagicMock()
-        for action in CrudActions.get_all_actions():
-            response = getattr(self.test_resource, action)(request=request)
+        for action in [CrudActions.READ_DETAIL, CrudActions.READ_LIST,
+                       CrudActions.GET_AGGREGATES, CrudActions.CREATE_DETAIL,
+                       CrudActions.UPDATE_DETAIL, CrudActions.DELETE_DETAIL,
+                       CrudActions.CREATE_OR_UPDATE_DETAIL]:
+            response = self.test_resource.run_crud_action(
+                action, request=request)
             self.assert_forbidden_response(response)

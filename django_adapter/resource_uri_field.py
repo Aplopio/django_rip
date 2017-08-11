@@ -1,7 +1,7 @@
+from django_adapter.default_url_generator import DefaultUrlReverser
 from django_adapter.url_types import UrlTypes
 from rip.schema.base_field import FieldTypes
 from rip.schema.string_field import StringField
-from django.urls import reverse
 
 
 class ResourceUriField(StringField):
@@ -11,7 +11,8 @@ class ResourceUriField(StringField):
     def __init__(self, resource_name=None, entity_attribute=None,
                  url_type=UrlTypes.detail_url,
                  field_type=FieldTypes.READONLY,
-                 required=False, nullable=False):
+                 required=False, nullable=False,
+                 UrlReverser=DefaultUrlReverser):
         """
         :param resource_name: Name of a Resource Class that has been
         registered with a router
@@ -24,13 +25,10 @@ class ResourceUriField(StringField):
             entity_attribute=entity_attribute or ['id'])
         self.url_type = url_type
         self.resource_name = resource_name
+        self.url_reverser = UrlReverser(resource_name, url_type)
 
     def serialize(self, request, value):
-        # url reverse can be an expensive operation in large projects.
-        # todo: Find a way to cache the results
-        url_name = '{}-{}'.format(self.resource_name, self.url_type)
-        value = value if isinstance(value, list) else [value]
-        return reverse(url_name, args=value)
+        return self.url_reverser.reverse_to_url(value)
 
     def clean(self, request, value):
         if value is None:

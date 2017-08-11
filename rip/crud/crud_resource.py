@@ -80,8 +80,10 @@ class CrudResource(object):
             CrudActions.UPDATE_DETAIL: self.get_update_detail_pipeline(),
             CrudActions.READ_LIST: self.get_read_list_pipeline(),
             CrudActions.CREATE_DETAIL: self.get_create_detail_pipeline(),
-            CrudActions.CREATE_OR_UPDATE_DETAIL: self.get_create_or_update_detail_pipeline(),
-            CrudActions.GET_AGGREGATES: self.get_aggregates_pipeline()
+            CrudActions.CREATE_OR_UPDATE_DETAIL:
+                self.get_create_or_update_detail_pipeline(),
+            CrudActions.GET_AGGREGATES: self.get_aggregates_pipeline(),
+            CrudActions.DELETE_DETAIL: self.get_delete_detail_pipeline()
         }
 
     def run_crud_action(self, action_name, request):
@@ -170,7 +172,7 @@ class CrudResource(object):
         return PipelineComposer(
             name=CrudActions.CREATE_DETAIL, pipeline=create_detail_pipeline)
 
-    def delete_detail_pipeline(self):
+    def get_delete_detail_pipeline(self):
         delete_detail_pipeline = [
             self.request_authentication.authenticate,
             self.request_cleaner.clean_data_for_delete_detail,

@@ -36,15 +36,6 @@ class TestApiSchemaConstruction(unittest.TestCase):
         self.assertEqual(test_schema_obj.char, 'asdf')
         self.assertTrue(test_schema_obj.boolean)
 
-    def test_should_raise_exception_for_missing_name(self):
-        class NameLessSchema(ApiSchema):
-            email = EmailField(max_length=50)
-            char = StringField(required=True, max_length=100)
-            boolean = BooleanField()
-
-        self.assertRaises(TypeError, NameLessSchema,
-                          email='asdf', char='char', boolean='boolean')
-
     def test_should_inherit_fields(self):
         class NewSchema(self.TestSchema):
             new_field = EmailField(max_length=20)
