@@ -98,6 +98,7 @@ class PersonSchema(ApiSchema):
     email = EmailField(max_length=100, nullable=True)
     phone = StringField(max_length=10, field_type=FieldTypes.READONLY)
     address = SchemaField(of_type=AddressSchema, nullable=True)
+    company = StringField(show_in_list=False, nullable=True)
     nick_names = ListField(field=StringField())
 
 

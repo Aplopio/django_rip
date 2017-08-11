@@ -82,10 +82,9 @@ class CrudResourceCreateActionIntegrationTest(PersonResourceBaseTestCase):
 
         assert response.is_success
 
-        expected_update_kwargs = dict(name='John',
-                                      email="foo@bar.com",
-                                      address={'country': 'India'},
-                                      nick_names=['Johnny', 'Papa'])
+        expected_update_kwargs = expected_entity.__dict__.copy()
+        expected_update_kwargs.pop('phone')
+        expected_update_kwargs['address'].pop('city')
         create_person_entity.assert_called_once_with(
             request,
             **expected_update_kwargs)

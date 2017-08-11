@@ -30,13 +30,14 @@ class DefaultHttpResponseBuilder(object):
         }
 
     def build_http_response(self):
-        if rip_response.is_success:
+        if self.rip_response.is_success:
             return HttpResponse(
-                status=self.http_status_code_mapping[http_request.method],
-                content=simplejson.dumps(rip_response.data),
+                status=self.http_status_code_mapping[self.http_request.method],
+                content=simplejson.dumps(self.rip_response.data),
                 content_type='application/json')
             # return a successful response
         else:
-            response_cls = self.http_response_mapping[rip_response.reason]
-            return response_cls(content=simplejson.dumps(rip_response.data),
-                                content_type="application/json")
+            response_cls = self.http_response_mapping[self.rip_response.reason]
+            return response_cls(
+                content=simplejson.dumps(self.rip_response.data),
+                content_type="application/json")
