@@ -1,6 +1,4 @@
 from django.views import View
-from django_adapter import default_rip_action_resolver
-from django_adapter import default_rip_request_builder
 from django_adapter.default_http_response_builder import \
     DefaultHttpResponseBuilder
 from django_adapter.default_rip_action_resolver import DefaultRipActionResolver
