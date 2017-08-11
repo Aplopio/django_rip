@@ -1,4 +1,4 @@
-from django_adapter.default_url_generator import DefaultUrlGenerator
+from http_adapter.default_url_generator import DefaultUrlGenerator
 from django.template.defaultfilters import pluralize
 
 

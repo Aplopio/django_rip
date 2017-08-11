@@ -2,8 +2,8 @@ import json
 import unittest
 from mock import MagicMock
 
-from django_adapter.django_crud_resource import DjangoResource
-from django_adapter.url_types import UrlTypes
+from http_adapter.django_crud_resource import DjangoResource
+from http_adapter.url_types import UrlTypes
 from rip.generic_steps.default_entity_actions import DefaultEntityActions
 from rip.schema.api_schema import ApiSchema
 from rip.schema.string_field import StringField

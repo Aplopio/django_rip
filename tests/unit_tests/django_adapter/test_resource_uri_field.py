@@ -2,7 +2,7 @@ import unittest
 
 from mock import MagicMock
 
-from django_adapter.resource_uri_field import ResourceUriField
+from http_adapter.resource_uri_field import ResourceUriField
 from tests import request_factory
 
 

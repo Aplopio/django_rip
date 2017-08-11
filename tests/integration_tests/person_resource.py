@@ -1,6 +1,6 @@
 import mock
 
-from django_adapter.resource_uri_field import ResourceUriField
+from http_adapter.resource_uri_field import ResourceUriField
 from rip.crud.crud_actions import CrudActions
 from rip.crud.crud_resource import CrudResource
 from rip.generic_steps.default_entity_actions import \

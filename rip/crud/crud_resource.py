@@ -59,7 +59,8 @@ class CrudResource(object):
         self.request_authorization = self.RequestAuthorization(
             schema_cls=self.schema_cls)
         self.request_params_validation = self.RequestParamsValidation(
-            schema_cls=self.schema_cls, filter_by_fields=self.filter_by_fields,
+            schema_cls=self.schema_cls,
+            filter_by_fields=self.filter_by_fields,
             order_by_fields=self.order_by_fields,
             aggregate_by_fields=self.aggregate_by_fields)
         self.schema_validation = self.SchemaValidation(

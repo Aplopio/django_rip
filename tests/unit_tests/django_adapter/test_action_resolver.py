@@ -1,8 +1,8 @@
 import unittest
 from mock import MagicMock
 
-from django_adapter.default_rip_action_resolver import DefaultRipActionResolver
-from django_adapter.url_types import UrlTypes
+from http_adapter.default_rip_action_resolver import DefaultRipActionResolver
+from http_adapter.url_types import UrlTypes
 from rip.crud.crud_actions import CrudActions
 
 __all__ = ["TestDefaultRipActionResolver"]

@@ -1,8 +1,8 @@
 from django.views import View
-from django_adapter.default_http_response_builder import \
+from http_adapter.default_http_response_builder import \
     DefaultHttpResponseBuilder
-from django_adapter.default_rip_action_resolver import DefaultRipActionResolver
-from django_adapter.default_rip_request_builder import DefaultRipRequestBuilder
+from http_adapter.default_rip_action_resolver import DefaultRipActionResolver
+from http_adapter.default_rip_request_builder import DefaultRipRequestBuilder
 from rip.crud.crud_resource import CrudResource
 from rip.generic_steps import error_types
 from rip.response import Response

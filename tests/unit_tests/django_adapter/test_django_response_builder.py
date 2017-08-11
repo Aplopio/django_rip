@@ -3,7 +3,7 @@ import unittest
 import simplejson
 from mock import MagicMock
 
-from django_adapter.default_http_response_builder import \
+from http_adapter.default_http_response_builder import \
     DefaultHttpResponseBuilder
 from rip.generic_steps import error_types
 from rip.response import Response

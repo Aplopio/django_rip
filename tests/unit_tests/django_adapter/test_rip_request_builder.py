@@ -3,7 +3,7 @@ from django import conf
 from mock import MagicMock, patch
 from django.test.client import RequestFactory
 
-from django_adapter.default_rip_request_builder import DefaultRipRequestBuilder
+from http_adapter.default_rip_request_builder import DefaultRipRequestBuilder
 from rip.request import Request
 import os
 os.environ['DJANGO_SETTINGS_MODULE'] = 'tests.test_settings'

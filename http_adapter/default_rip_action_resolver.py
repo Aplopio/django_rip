@@ -1,4 +1,4 @@
-from django_adapter.url_types import UrlTypes
+from http_adapter.url_types import UrlTypes
 from rip.crud.crud_actions import CrudActions
 
 method_to_action_mapping = {
