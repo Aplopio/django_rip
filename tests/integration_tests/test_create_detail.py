@@ -1,13 +1,12 @@
-from hamcrest import assert_that, equal_to, has_entry
 from mock import patch
 
 from rip.crud.crud_actions import CrudActions
 from tests import request_factory
+from tests.integration_tests.blank_test_resource import BlankTestResource
 from tests.integration_tests.person_base_test_case import \
     PersonResourceBaseTestCase
 from tests.integration_tests.person_resource import (
     PersonResource, PersonEntity, )
-from tests.integration_tests.blank_test_resource import BlankTestResource
 
 
 class CrudResourceCreateActionIntegrationTest(PersonResourceBaseTestCase):
