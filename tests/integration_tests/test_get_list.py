@@ -1,5 +1,3 @@
-from hamcrest import assert_that, equal_to
-
 from rip.crud.crud_actions import CrudActions
 from rip.generic_steps import error_types
 from tests import request_factory

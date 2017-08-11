@@ -1,10 +1,4 @@
 import unittest
-
-from hamcrest.core import assert_that
-from hamcrest.core.core.isequal import equal_to
-from hamcrest.library.collection.issequence_containing import has_item, \
-    has_items
-
 from rip.crud.crud_actions import CrudActions
 from rip.generic_steps import error_types
 from rip.generic_steps.default_schema_validation import \
@@ -51,7 +45,7 @@ class TestSchemaFullValidation(unittest.TestCase):
             data=data,
             context_params={'crud_action': CrudActions.UPDATE_DETAIL})
         return_request = self.validation.validate_request_data(request)
-        assert_that(return_request, equal_to(request))
+        assert return_request == request
 
     def test_schema_validation_passes_with_required_fields(self):
         data = {
@@ -62,7 +56,7 @@ class TestSchemaFullValidation(unittest.TestCase):
             data=data,
             context_params={'crud_action': CrudActions.UPDATE_DETAIL})
         return_request = self.validation.validate_request_data(request)
-        assert_that(return_request, equal_to(request))
+        assert return_request == request
 
     def test_raises_bad_request_if_required_data_is_missing(self):
         data = {}
@@ -72,10 +66,11 @@ class TestSchemaFullValidation(unittest.TestCase):
 
         response = self.validation.validate_request_data(request)
 
-        assert_that(response.is_success, equal_to(False))
-        assert_that(response.reason, equal_to(error_types.InvalidData))
-        assert_that(len(response.data), equal_to(2))
-        assert_that(response.data, has_items('name', 'is_active'))
+        assert not response.is_success
+        assert response.reason == error_types.InvalidData
+        assert len(response.data) == 2
+        assert 'name' in response.data
+        assert 'is_active' in response.data
 
     def test_raises_bad_request_if_field_greater_than_max_length(self):
         data = {
@@ -87,10 +82,12 @@ class TestSchemaFullValidation(unittest.TestCase):
             data=data,
             context_params={'crud_action': CrudActions.UPDATE_DETAIL})
         response = self.validation.validate_request_data(request)
-        assert_that(response.is_success, equal_to(False))
-        assert_that(response.reason, equal_to(error_types.InvalidData))
-        assert_that(len(response.data), equal_to(2))
-        assert_that(response.data, has_items('name', 'country'))
+
+        assert not response.is_success
+        assert response.reason == error_types.InvalidData
+        assert len(response.data) == 2
+        assert 'name' in response.data
+        assert 'country' in response.data
 
     def test_input_data_is_not_a_dict(self):
         data = 'stupid random data'
@@ -100,12 +97,8 @@ class TestSchemaFullValidation(unittest.TestCase):
 
         response = self.validation.validate_request_data(request)
 
-        assert_that(response.is_success, equal_to(False))
-        assert_that(response.reason, equal_to(error_types.InvalidData))
-
-
-    def test_validate_schema_fields(self):
-        pass
+        assert not response.is_success
+        assert response.reason == error_types.InvalidData
 
 
 class TestSchemaPartialValidation(unittest.TestCase):
@@ -129,7 +122,8 @@ class TestSchemaPartialValidation(unittest.TestCase):
                                               context_params={
                                               'crud_action': CrudActions.UPDATE_DETAIL})
         return_request = self.validation.validate_request_data(request)
-        assert_that(return_request, equal_to(request))
+
+        assert return_request == request
 
     def test_schema_validation_fails_for_wrong_datatype(self):
         data = {
@@ -139,9 +133,5 @@ class TestSchemaPartialValidation(unittest.TestCase):
                                               context_params={
                                               'crud_action': CrudActions.UPDATE_DETAIL})
         response = self.validation.validate_request_data(request)
-        assert_that(response.is_success, equal_to(False))
-        assert_that(response.data, has_item('country'))
-
-
-if __name__ == '__main__':
-    unittest.main()
+        assert not response.is_success
+        assert 'country' in response.data

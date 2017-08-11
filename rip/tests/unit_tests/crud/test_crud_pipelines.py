@@ -1,13 +1,10 @@
 import unittest
 
-from hamcrest.core import assert_that
-from hamcrest.core.core.isequal import equal_to
 from mock import MagicMock
 from mock import patch as mock_patch
 
 from rip.crud import pipeline_composer, crud_pipelines
 from rip.crud.crud_actions import CrudActions
-from rip.crud.crud_pipelines import PipelineConfig
 
 
 class TestCrudPipelineFactory(unittest.TestCase):
@@ -104,7 +101,7 @@ class TestCrudPipelineFactory(unittest.TestCase):
 
         pipeline = crud_pipelines.read_list_pipeline(configuration)
 
-        assert_that(pipeline, equal_to(expected_pipeline))
+        assert pipeline == expected_pipeline
         compose_pipeline.assert_called_once_with(
             name=CrudActions.READ_LIST,
             pipeline=[
@@ -126,7 +123,8 @@ class TestCrudPipelineFactory(unittest.TestCase):
         configuration = self.configuration
         compose_pipeline.return_value = expected_pipeline = MagicMock()
         pipeline = crud_pipelines.read_detail_pipeline(configuration)
-        assert_that(pipeline, equal_to(expected_pipeline))
+
+        assert pipeline == expected_pipeline
         compose_pipeline.assert_called_once_with(
             name=CrudActions.READ_DETAIL,
             pipeline=[
@@ -149,7 +147,7 @@ class TestCrudPipelineFactory(unittest.TestCase):
 
         pipeline = crud_pipelines.delete_detail_pipeline(configuration)
 
-        assert_that(pipeline, equal_to(expected_pipeline))
+        assert pipeline == expected_pipeline
         compose_pipeline.assert_called_once_with(
             name=CrudActions.DELETE_DETAIL,
             pipeline=[
@@ -172,7 +170,7 @@ class TestCrudPipelineFactory(unittest.TestCase):
 
         pipeline = crud_pipelines.update_detail_pipeline(configuration)
 
-        assert_that(pipeline, equal_to(expected_pipeline))
+        assert pipeline == expected_pipeline
         compose_pipeline.assert_called_once_with(
             name=CrudActions.UPDATE_DETAIL,
             pipeline=[
@@ -198,7 +196,7 @@ class TestCrudPipelineFactory(unittest.TestCase):
 
         pipeline = crud_pipelines.create_or_update_detail_pipeline(configuration)
 
-        assert_that(pipeline, equal_to(expected_pipeline))
+        assert pipeline == expected_pipeline
         compose_pipeline.assert_called_once_with(
             name=CrudActions.CREATE_OR_UPDATE_DETAIL,
             pipeline=[
@@ -224,7 +222,7 @@ class TestCrudPipelineFactory(unittest.TestCase):
 
         pipeline = crud_pipelines.create_detail_pipeline(configuration)
 
-        assert_that(pipeline, equal_to(expected_pipeline))
+        assert pipeline == expected_pipeline
         compose_pipeline.assert_called_once_with(
             name=CrudActions.CREATE_DETAIL,
             pipeline=[
@@ -247,7 +245,7 @@ class TestCrudPipelineFactory(unittest.TestCase):
 
         pipeline = crud_pipelines.get_aggregates_pipeline(configuration)
 
-        assert_that(pipeline, equal_to(expected_pipeline))
+        assert pipeline == expected_pipeline
         compose_pipeline.assert_called_once_with(
             name=CrudActions.GET_AGGREGATES,
             pipeline=[
