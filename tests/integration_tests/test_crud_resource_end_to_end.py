@@ -2,7 +2,7 @@ import json
 import unittest
 from mock import MagicMock
 
-from django_adapter.django_crud_resource import DjangoCrudResource
+from django_adapter.django_crud_resource import DjangoResource
 from django_adapter.url_types import UrlTypes
 from rip.generic_steps.default_entity_actions import DefaultEntityActions
 from rip.schema.api_schema import ApiSchema
@@ -24,7 +24,7 @@ class DummyEntityActions(DefaultEntityActions):
         return 1
 
 
-class DummyViewResource(DjangoCrudResource):
+class DummyViewResource(DjangoResource):
     schema_cls = DummySchema
     EntityActions = DummyEntityActions
 

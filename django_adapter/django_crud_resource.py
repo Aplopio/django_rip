@@ -10,7 +10,7 @@ from rip.generic_steps import error_types
 from rip.response import Response
 
 
-class DjangoCrudResource(View, CrudResource):
+class DjangoResource(View, CrudResource):
     # todo: override the EntityActions to allow fetching Data from Models
 
     # resource_name is used by the router to construct the url name when

@@ -21,7 +21,7 @@ class DefaultRouter(object):
         """
         :param url_pattern: Ex: 'openings', 'jobs/{job_id}/apply.
             If not provided, it defaults to the resource_name
-        :param resource_cls: DjangoCrudResource class to be
+        :param resource_cls: DjangoResource class to be
             registered at the url_pattern
         :return: None
         """
