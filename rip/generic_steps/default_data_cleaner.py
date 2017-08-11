@@ -93,7 +93,8 @@ class DefaultRequestCleaner(object):
         action = request.context_params['crud_action']
         non_read_only_fields = self.schema_cls.non_readonly_fields()
 
-        if action in (CrudActions.UPDATE_DETAIL, CrudActions.CREATE_OR_UPDATE_DETAIL):
+        if action in (CrudActions.UPDATE_DETAIL,
+                      CrudActions.CREATE_OR_UPDATE_DETAIL):
             updatable_fields = self.schema_cls.updatable_fields()
             field_names = set(data).intersection(set(updatable_fields))
         elif action == CrudActions.CREATE_DETAIL:
@@ -124,7 +125,6 @@ class DefaultRequestCleaner(object):
 
     def clean(self, request, data):
         clean_data = {}
-
         fields_to_clean = self._get_fields_to_clean(request, data)
         for field_name, field_obj in fields_to_clean.items():
             if field_name in data:

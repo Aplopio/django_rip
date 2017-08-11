@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from django_adapter.crud_resource import CrudResource
+from django_adapter.django_crud_resource import DjangoCrudResource
 from rip.crud.crud_actions import CrudActions
 from rip.generic_steps.default_entity_actions import DefaultEntityActions
 from rip.schema.api_schema import ApiSchema
@@ -11,7 +11,7 @@ class BlankTestSchema(ApiSchema):
     name = StringField(blank=False)
 
 
-class BlankTestResource(CrudResource):
+class BlankTestResource(DjangoCrudResource):
     schema_cls = BlankTestSchema
     allowed_actions = [
         CrudActions.READ_LIST,
