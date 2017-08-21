@@ -95,6 +95,42 @@ class CrudResource(object):
         crud_pipeline = self.pipelines[action_name]
         return crud_pipeline(request)
 
+    def get_request_authentication(self):
+        return self.RequestAuthentication(schema_cls=self.schema_cls)
+
+    def get_request_authorization(self):
+        return self.RequestAuthorization(schema_cls=self.schema_cls)
+
+    def get_request_params_validation(self):
+        return self.RequestParamsValidation(
+            schema_cls=self.schema_cls, filter_by_fields=self.filter_by_fields,
+            order_by_fields=self.order_by_fields,
+            aggregate_by_fields=self.aggregate_by_fields)
+
+    def get_schema_validation(self):
+        return self.SchemaValidation(
+            schema_cls=self.schema_cls)
+
+    def get_request_cleaner(self):
+        return self.RequestCleaner(schema_cls=self.schema_cls)
+
+    def get_entity_actions(self):
+        return self.EntityActions(
+            schema_cls=self.schema_cls, default_offset=self.default_offset,
+            default_limit=self.default_limit)
+
+    def get_entity_serializer(self):
+        return self.EntitySerializer(
+            schema_cls=self.schema_cls)
+
+    def get_post_action_hooks(self):
+        return self.PostActionHooks(
+            schema_cls=self.schema_cls)
+
+    def get_response_constructor(self):
+        return self.ResponseConstructor(
+            schema_cls=self.schema_cls)
+
     def get_read_detail_pipeline(self):
         read_detail_pipeline = [
             self.request_authentication.authenticate,

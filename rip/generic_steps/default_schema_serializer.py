@@ -3,7 +3,8 @@ serializes an entity or a list of entities to response data
 """
 
 from rip.crud.crud_actions import CrudActions
-from rip.generic_steps import attribute_getter, filter_operators
+from rip.generic_steps import filter_operators
+from rip.generic_steps.attribute_getter import DefaultEntityAttributeManager
 
 
 class DefaultEntitySerializer(object):
@@ -13,7 +14,9 @@ class DefaultEntitySerializer(object):
     serialized_data_var = 'serialized_data'
     serialized_data_var_pre_update = 'serialized_data_pre_update'
 
-    def __init__(self, schema_cls):
+    def __init__(self, schema_cls,
+                 AttributeGetter=DefaultEntityAttributeManager):
+        self.AttributeGetter = AttributeGetter
         self.schema_cls = schema_cls
 
     def get_fields_to_serialize(self, request):
@@ -30,13 +33,12 @@ class DefaultEntitySerializer(object):
 
     def serialize_aggregated_entity(self, request, aggregate_entity):
         aggregate_by_fields = self.get_fields_to_serialize(request)
-
+        attribute_getter = self.AttributeGetter(entity=aggregate_entity)
         serialized = {}
         for field_name, field in aggregate_by_fields.items():
             field_attribute = field.entity_attribute or field_name
             serialized[field_name] = \
-                attribute_getter.get_attribute(aggregate_entity,
-                                               field_attribute)
+                attribute_getter.get_attribute(field_attribute)
         serialized['count'] = aggregate_entity['count']
         return serialized
 
@@ -44,6 +46,7 @@ class DefaultEntitySerializer(object):
         """
         @param: entity -> entity object returned by the entity_actions step
         """
+        attribute_getter = self.AttributeGetter(entity=entity)
         serialized = {}
         fields_to_serialize = self.get_fields_to_serialize(request)
         for field_name, field in fields_to_serialize.items():
@@ -55,7 +58,7 @@ class DefaultEntitySerializer(object):
 
                 try:
                     serialized_value = attribute_getter.get_attribute(
-                        entity, entity_attribute)
+                        entity_attribute)
                 except AttributeError as ex:
                     if field.required:
                         raise ex

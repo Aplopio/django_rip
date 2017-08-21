@@ -22,10 +22,6 @@ class DefaultEntityActions(object):
         default_limit = self.default_limit
         default_offset = self.default_offset
         limit = int(request_filters.get('limit', default_limit))
-        if limit == 0:
-            # for legacy reasons, if limit 0 is specified, we want to treat
-            # it like no limit
-            limit = None
         offset = int(request_filters.get('offset', default_offset))
         return dict(limit=limit, offset=offset)
 
@@ -40,19 +36,21 @@ class DefaultEntityActions(object):
         """
         request_filters = request.context_params.get(
             self.request_filters_property, {})
-        request_filters.update(**self.get_limit_and_offset(request_filters))
+        list_filters = request_filters.copy()
+        list_filters.pop('order_by', None)
+        list_filters.update(**self.get_limit_and_offset(request_filters))
         entity_list_getter = get_entity_list_fn or self.get_entity_list
-        entities = entity_list_getter(request, **request_filters)
+        entities = entity_list_getter(request, **list_filters)
         request.context_params[self.list_property_name] = entities
 
         # offset and limit don't make sense to get aggregates
-        count_request_filters = request_filters.copy()
-        count_request_filters.pop('offset', None)
-        count_request_filters.pop('limit', None)
-        count_request_filters.pop('order_by', None)
+        count_filters = request_filters.copy()
+        count_filters.pop('offset', None)
+        count_filters.pop('limit', None)
+        count_filters.pop('order_by', None)
         total_count_getter = get_total_count_fn or \
                              self.get_entity_list_total_count
-        total_count = total_count_getter(request, **count_request_filters)
+        total_count = total_count_getter(request, **count_filters)
 
         request.context_params[self.entity_list_total_count_property_name] = \
             total_count
@@ -127,7 +125,7 @@ class DefaultEntityActions(object):
     def update_entity(self, request, entity, **update_params):
         raise NotImplementedError
 
-    def get_entity_list(self, request, **kwargs):
+    def get_entity_list(self, request, limit, offset, **kwargs):
         raise NotImplementedError
 
     def get_entity_list_total_count(self, request, **kwargs):
