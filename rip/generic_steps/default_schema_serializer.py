@@ -14,8 +14,10 @@ class DefaultEntitySerializer(object):
     serialized_data_var = 'serialized_data'
     serialized_data_var_pre_update = 'serialized_data_pre_update'
 
-    def __init__(self, schema_cls,
+    def __init__(self, schema_cls, default_limit=None, default_offset=None,
                  AttributeGetter=DefaultEntityAttributeManager):
+        self.default_offset = default_offset
+        self.default_limit = default_limit
         self.AttributeGetter = AttributeGetter
         self.schema_cls = schema_cls
 
@@ -92,9 +94,11 @@ class DefaultEntitySerializer(object):
         serialized_objects = [self.serialize_entity(request, entity) for
                               entity in entity_list]
         request_filters = request.context_params.get('request_filters', {})
-        serialized_meta = {'offset': int(request_filters['offset']),
+        serialized_meta = {'offset': int(
+            request_filters.get('offset', self.default_offset)),
                            # handles null case. Legacy requirements
-                           'limit': int(request_filters['limit'] or 0),
+                           'limit': int(
+            request_filters.get('limit', self.default_limit)),
                            'total': request.context_params['total_count']}
 
         data = dict(meta=serialized_meta,

@@ -70,7 +70,9 @@ class CrudResource(object):
             schema_cls=self.schema_cls, default_offset=self.default_offset,
             default_limit=self.default_limit)
         self.entity_serializer = self.EntitySerializer(
-            schema_cls=self.schema_cls)
+            schema_cls=self.schema_cls,
+            default_limit=self.default_limit,
+            default_offset=self.default_offset)
         self.post_action_hooks = self.PostActionHooks(
             schema_cls=self.schema_cls)
         self.response_constructor = self.ResponseConstructor(
