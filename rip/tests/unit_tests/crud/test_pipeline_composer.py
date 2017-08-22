@@ -72,10 +72,3 @@ class TestPipelineComposer(unittest.TestCase):
 
         self.assertRaises(AssertionError, test_method, request)
 
-
-class TestComposePipeline(unittest.TestCase):
-    @mock_patch.object(pipeline_composer, 'PipelineComposer')
-    def test_compose_pipeline_calls_pipeline_composer(self, PipelineComposer):
-        pipeline_composer.compose_pipeline(name='asdf', pipeline=['asdf'])
-
-        PipelineComposer.assertCalledOnceWith(name='asdf', pipeline=['asdf'])

@@ -31,7 +31,3 @@ class PipelineComposer(object):
                 pipeline_name=self.name)
 
         return response
-
-
-def compose_pipeline(name, pipeline):
-    return PipelineComposer(name=name, pipeline=pipeline)
