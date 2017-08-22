@@ -3,6 +3,7 @@ from http_adapter.default_http_response_builder import \
     DefaultHttpResponseBuilder
 from http_adapter.default_rip_action_resolver import DefaultRipActionResolver
 from http_adapter.default_rip_request_builder import DefaultRipRequestBuilder
+from model_adapter.model_entity_actions import ModelEntityActions
 from rip.crud.crud_resource import CrudResource
 from rip.generic_steps import error_types
 from rip.response import Response
@@ -54,3 +55,14 @@ class DjangoResource(View, CrudResource):
         http_response_builder = self.HttpResponseBuilder(
             http_request, rip_response)
         return http_response_builder.build_http_response()
+
+
+class DjangoModelResource(DjangoResource):
+    EntityActions = ModelEntityActions
+    model_cls = None
+
+    def get_entity_actions(self):
+        return self.EntityActions(
+            model_cls=self.model_cls,
+            schema_cls=self.schema_cls, default_limit=self.default_limit,
+            default_offset=self.default_offset)
