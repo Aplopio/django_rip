@@ -132,6 +132,8 @@ class DefaultEntityActions(object):
         raise NotImplementedError
 
     def get_entity(self, request, **kwargs):
+        kwargs['limit'] = 1
+        kwargs['offset'] = 0
         entities = self.get_entity_list(request, **kwargs)
         if len(entities) == 0:
             return None
