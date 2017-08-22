@@ -1,22 +1,30 @@
 
+def _get_from_dict(obj, field_name):
+    try:
+        return obj[field_name]
+    except (KeyError, TypeError):
+        raise AttributeError(u'{} not in {}'.format(
+            field_name, obj))
+
+
+def _get_from_object(obj, field_name):
+    return getattr(obj, field_name)
+
+
 class DefaultEntityAttributeManager(object):
     def __init__(self, entity):
         self.entity = entity
 
-    def _get_from_dict(self, field_name):
-        try:
-            return self.entity[field_name]
-        except (KeyError, TypeError):
-            raise AttributeError(u'{} not in {}'.format(
-                field_name, self.entity))
-
-    def _get_from_object(self, field_name):
-        return getattr(self.entity, field_name)
-
     def _get_from_dict_or_object(self, field):
-        if isinstance(self.entity, dict):
-            return self._get_from_dict(field)
-        return self._get_from_object(field)
+        splits = field.split(".")
+        val = self.entity
+        for split in splits:
+            if isinstance(val, dict):
+                val = _get_from_dict(val, split)
+            else:
+                val = _get_from_object(val, split)
+        assert val != self.entity
+        return val
 
     def get_attribute(self, field_name):
         """
