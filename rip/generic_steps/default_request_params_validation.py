@@ -90,21 +90,23 @@ class DefaultRequestParamsValidation(object):
             if filter_name in special_filters:
                 continue
 
-            allowed_filter_types = allowed_filters[filter_name]
-            if not isinstance(allowed_filter_types, (list, tuple, set)):
-                allowed_filter_types = (allowed_filter_types,)
-
             field_name, filter_type = filter_operators. \
                 split_to_field_and_filter_type(filter_name)
             if field_name not in allowed_filters:
                 validation_errors.update(
                     {field_name: "Filtering not allowed"})
+                continue
+
+            allowed_filter_types = allowed_filters[filter_name]
+            if not isinstance(allowed_filter_types, (list, tuple, set)):
+                allowed_filter_types = (allowed_filter_types,)
 
             if field_name in allowed_filters and filter_type and \
                     filter_type not in allowed_filter_types:
                 validation_errors.update(
                     {field_name: "Operator {} on field {} not allowed".
                         format(filter_type, field_name)})
+                continue
 
         if validation_errors:
             return validation_errors
