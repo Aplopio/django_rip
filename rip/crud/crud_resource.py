@@ -54,29 +54,15 @@ class CrudResource(object):
     def __init__(self):
         super(CrudResource, self).__init__()
 
-        self.request_authentication = self.RequestAuthentication(
-            schema_cls=self.schema_cls)
-        self.request_authorization = self.RequestAuthorization(
-            schema_cls=self.schema_cls)
-        self.request_params_validation = self.RequestParamsValidation(
-            schema_cls=self.schema_cls,
-            filter_by_fields=self.filter_by_fields,
-            order_by_fields=self.order_by_fields,
-            aggregate_by_fields=self.aggregate_by_fields)
-        self.schema_validation = self.SchemaValidation(
-            schema_cls=self.schema_cls)
-        self.request_cleaner = self.RequestCleaner(schema_cls=self.schema_cls)
-        self.entity_actions = self.EntityActions(
-            schema_cls=self.schema_cls, default_offset=self.default_offset,
-            default_limit=self.default_limit)
-        self.entity_serializer = self.EntitySerializer(
-            schema_cls=self.schema_cls,
-            default_limit=self.default_limit,
-            default_offset=self.default_offset)
-        self.post_action_hooks = self.PostActionHooks(
-            schema_cls=self.schema_cls)
-        self.response_constructor = self.ResponseConstructor(
-            schema_cls=self.schema_cls)
+        self.request_authentication = self.get_request_authentication()
+        self.request_authorization = self.get_request_authorization()
+        self.request_params_validation = self.get_request_params_validation()
+        self.schema_validation = self.get_schema_validation()
+        self.request_cleaner = self.get_request_cleaner()
+        self.entity_actions = self.get_entity_actions()
+        self.entity_serializer = self.get_entity_serializer()
+        self.post_action_hooks = self.get_post_action_hooks()
+        self.response_constructor = self.get_response_constructor()
 
         self.pipelines = {
             CrudActions.READ_DETAIL: self.get_read_detail_pipeline(),
@@ -123,7 +109,9 @@ class CrudResource(object):
 
     def get_entity_serializer(self):
         return self.EntitySerializer(
-            schema_cls=self.schema_cls)
+            schema_cls=self.schema_cls,
+            default_limit=self.default_limit,
+            default_offset=self.default_offset)
 
     def get_post_action_hooks(self):
         return self.PostActionHooks(
