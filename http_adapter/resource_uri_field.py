@@ -12,7 +12,7 @@ class ResourceUriField(StringField):
                  url_type=UrlTypes.detail_url,
                  field_type=FieldTypes.READONLY,
                  required=False, nullable=False,
-                 UrlReverser=DefaultUrlReverser):
+                 url_reverser_cls=DefaultUrlReverser):
         """
         :param resource_name: Name of a Resource Class that has been
         registered with a router
@@ -25,7 +25,7 @@ class ResourceUriField(StringField):
             entity_attribute=entity_attribute or ['id'])
         self.url_type = url_type
         self.resource_name = resource_name
-        self.url_reverser = UrlReverser(resource_name, url_type)
+        self.url_reverser = url_reverser_cls(resource_name, url_type)
 
     def serialize(self, request, value):
         return self.url_reverser.reverse_to_url(value)

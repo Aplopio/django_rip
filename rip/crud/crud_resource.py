@@ -35,15 +35,15 @@ class CrudResource(object):
     default_offset = 0
     default_limit = 20
 
-    RequestAuthentication = DefaultAuthentication
-    RequestAuthorization = DefaultAuthorization
-    RequestParamsValidation = DefaultRequestParamsValidation
-    SchemaValidation = DefaultSchemaValidation
-    RequestCleaner = DefaultRequestCleaner
-    EntityActions = DefaultEntityActions
-    EntitySerializer = DefaultEntitySerializer
-    PostActionHooks = DefaultPostActionHooks
-    ResponseConstructor = DefaultResponseConstructor
+    request_authentication_cls = DefaultAuthentication
+    request_authorization_cls = DefaultAuthorization
+    request_params_validation_cls = DefaultRequestParamsValidation
+    schema_validation_cls = DefaultSchemaValidation
+    request_cleaner_cls = DefaultRequestCleaner
+    entity_actions_cls = DefaultEntityActions
+    entity_serializer_cls = DefaultEntitySerializer
+    post_action_hooks_cls = DefaultPostActionHooks
+    response_constructor_cls = DefaultResponseConstructor
 
     def __new__(cls, *args, **kwargs):
         if cls.schema_cls is None:
@@ -86,41 +86,41 @@ class CrudResource(object):
         return crud_pipeline(request)
 
     def get_request_authentication(self):
-        return self.RequestAuthentication(schema_cls=self.schema_cls)
+        return self.request_authentication_cls(schema_cls=self.schema_cls)
 
     def get_request_authorization(self):
-        return self.RequestAuthorization(schema_cls=self.schema_cls)
+        return self.request_authorization_cls(schema_cls=self.schema_cls)
 
     def get_request_params_validation(self):
-        return self.RequestParamsValidation(
+        return self.request_params_validation_cls(
             schema_cls=self.schema_cls, filter_by_fields=self.filter_by_fields,
             order_by_fields=self.order_by_fields,
             aggregate_by_fields=self.aggregate_by_fields)
 
     def get_schema_validation(self):
-        return self.SchemaValidation(
+        return self.schema_validation_cls(
             schema_cls=self.schema_cls)
 
     def get_request_cleaner(self):
-        return self.RequestCleaner(schema_cls=self.schema_cls)
+        return self.request_cleaner_cls(schema_cls=self.schema_cls)
 
     def get_entity_actions(self):
-        return self.EntityActions(
+        return self.entity_actions_cls(
             schema_cls=self.schema_cls, default_offset=self.default_offset,
             default_limit=self.default_limit)
 
     def get_entity_serializer(self):
-        return self.EntitySerializer(
+        return self.entity_serializer_cls(
             schema_cls=self.schema_cls,
             default_limit=self.default_limit,
             default_offset=self.default_offset)
 
     def get_post_action_hooks(self):
-        return self.PostActionHooks(
+        return self.post_action_hooks_cls(
             schema_cls=self.schema_cls)
 
     def get_response_constructor(self):
-        return self.ResponseConstructor(
+        return self.response_constructor_cls(
             schema_cls=self.schema_cls)
 
     def get_read_detail_pipeline(self):
