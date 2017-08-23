@@ -26,7 +26,7 @@ class DummyEntityActions(DefaultEntityActions):
 
 class DummyViewResource(DjangoResource):
     schema_cls = DummySchema
-    EntityActions = DummyEntityActions
+    entity_actions_cls = DummyEntityActions
 
 
 class DummyUser(object):

@@ -114,4 +114,4 @@ class PersonResource(CrudResource):
                        CrudActions.CREATE_DETAIL,
                        CrudActions.DELETE_DETAIL,
                        CrudActions.GET_AGGREGATES]
-    EntityActions = PersonEntityActions
+    entity_actions_cls = PersonEntityActions

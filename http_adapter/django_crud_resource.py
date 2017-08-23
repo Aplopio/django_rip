@@ -58,7 +58,7 @@ class DjangoResource(View, CrudResource):
 
 
 class DjangoModelResource(DjangoResource):
-    EntityActions = ModelEntityActions
+    entity_actions_cls = ModelEntityActions
     model_cls = None
 
     def get_entity_actions(self):
