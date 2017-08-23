@@ -18,9 +18,9 @@ class DjangoResource(View, CrudResource):
     # If not set, it will default to the name of the resource pluralized
 
     resource_name = None
-    HttpResponseBuilder = DefaultHttpResponseBuilder
-    RipRequestBuilder = DefaultRipRequestBuilder
-    RipActionResolver = DefaultRipActionResolver
+    http_response_builder_cls = DefaultHttpResponseBuilder
+    rip_request_builder_cls = DefaultRipRequestBuilder
+    rip_action_resolver_cls = DefaultRipActionResolver
 
     def __init__(self, **kwargs):
         View.__init__(self, **kwargs)
@@ -37,11 +37,11 @@ class DjangoResource(View, CrudResource):
         :return: http_response
         """
         url_type = url_kwargs.pop('url_type', None)
-        action_resolver = self.RipActionResolver(
+        action_resolver = self.rip_action_resolver_cls(
             http_request, url_type, url_kwargs)
         action_name = action_resolver.get_action_name()
 
-        rip_request_builder = self.RipRequestBuilder(http_request, url_kwargs)
+        rip_request_builder = self.rip_request_builder_cls(http_request, url_kwargs)
         rip_request = rip_request_builder.build_rip_request_or_response()
 
         if action_name is None:
@@ -52,7 +52,7 @@ class DjangoResource(View, CrudResource):
         else:
             rip_response = self.run_crud_action(action_name, rip_request)
 
-        http_response_builder = self.HttpResponseBuilder(
+        http_response_builder = self.http_response_builder_cls(
             http_request, rip_response)
         return http_response_builder.build_http_response()
 
@@ -62,7 +62,7 @@ class DjangoModelResource(DjangoResource):
     model_cls = None
 
     def get_entity_actions(self):
-        return self.EntityActions(
+        return self.entity_actions_cls(
             model_cls=self.model_cls,
             schema_cls=self.schema_cls, default_limit=self.default_limit,
             default_offset=self.default_offset)

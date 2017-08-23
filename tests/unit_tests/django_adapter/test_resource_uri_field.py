@@ -12,7 +12,7 @@ class TestResourceUriField(unittest.TestCase):
         UrlReverser.return_value = url_reverser = MagicMock()
         url_reverser.reverse_to_url = reverse_to_url = MagicMock()
 
-        field = ResourceUriField(UrlReverser=UrlReverser,
+        field = ResourceUriField(url_reverser_cls=UrlReverser,
                                  url_type='asdf', resource_name='dfg')
         field.schema_cls = schema_cls = MagicMock()
         request = request_factory.get_request()

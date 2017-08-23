@@ -15,10 +15,10 @@ class DefaultEntitySerializer(object):
     serialized_data_var_pre_update = 'serialized_data_pre_update'
 
     def __init__(self, schema_cls, default_limit=None, default_offset=None,
-                 AttributeGetter=DefaultEntityAttributeManager):
+                 attribute_getter_cls=DefaultEntityAttributeManager):
         self.default_offset = default_offset
         self.default_limit = default_limit
-        self.AttributeGetter = AttributeGetter
+        self.AttributeGetter = attribute_getter_cls
         self.schema_cls = schema_cls
 
     def get_fields_to_serialize(self, request):
