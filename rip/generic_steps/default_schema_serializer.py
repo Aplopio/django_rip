@@ -2,8 +2,9 @@
 serializes an entity or a list of entities to response data
 """
 
-from rip import filter_operators, attribute_getter
 from rip.crud.crud_actions import CrudActions
+from rip.generic_steps import filter_operators
+from rip.generic_steps.attribute_getter import DefaultEntityAttributeManager
 
 
 class DefaultEntitySerializer(object):
@@ -13,7 +14,11 @@ class DefaultEntitySerializer(object):
     serialized_data_var = 'serialized_data'
     serialized_data_var_pre_update = 'serialized_data_pre_update'
 
-    def __init__(self, schema_cls):
+    def __init__(self, schema_cls, default_limit=None, default_offset=None,
+                 AttributeGetter=DefaultEntityAttributeManager):
+        self.default_offset = default_offset
+        self.default_limit = default_limit
+        self.AttributeGetter = AttributeGetter
         self.schema_cls = schema_cls
 
     def get_fields_to_serialize(self, request):
@@ -30,13 +35,12 @@ class DefaultEntitySerializer(object):
 
     def serialize_aggregated_entity(self, request, aggregate_entity):
         aggregate_by_fields = self.get_fields_to_serialize(request)
-
+        attribute_getter = self.AttributeGetter(entity=aggregate_entity)
         serialized = {}
         for field_name, field in aggregate_by_fields.items():
             field_attribute = field.entity_attribute or field_name
             serialized[field_name] = \
-                attribute_getter.get_attribute(aggregate_entity,
-                                               field_attribute)
+                attribute_getter.get_attribute(field_attribute)
         serialized['count'] = aggregate_entity['count']
         return serialized
 
@@ -44,6 +48,7 @@ class DefaultEntitySerializer(object):
         """
         @param: entity -> entity object returned by the entity_actions step
         """
+        attribute_getter = self.AttributeGetter(entity=entity)
         serialized = {}
         fields_to_serialize = self.get_fields_to_serialize(request)
         for field_name, field in fields_to_serialize.items():
@@ -55,7 +60,7 @@ class DefaultEntitySerializer(object):
 
                 try:
                     serialized_value = attribute_getter.get_attribute(
-                        entity, entity_attribute)
+                        entity_attribute)
                 except AttributeError as ex:
                     if field.required:
                         raise ex
@@ -89,9 +94,11 @@ class DefaultEntitySerializer(object):
         serialized_objects = [self.serialize_entity(request, entity) for
                               entity in entity_list]
         request_filters = request.context_params.get('request_filters', {})
-        serialized_meta = {'offset': int(request_filters['offset']),
+        serialized_meta = {'offset': int(
+            request_filters.get('offset', self.default_offset)),
                            # handles null case. Legacy requirements
-                           'limit': int(request_filters['limit'] or 0),
+                           'limit': int(
+            request_filters.get('limit', self.default_limit)),
                            'total': request.context_params['total_count']}
 
         data = dict(meta=serialized_meta,

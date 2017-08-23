@@ -1,12 +1,13 @@
-from rip import filter_operators
+import collections
+from rip.generic_steps import error_types, filter_operators
 from rip.response import Response
-from rip import error_types
-
 
 SPECIAL_FILTERS = ['offset', 'limit', 'aggregate_by', 'order_by']
 
+
 class DefaultRequestParamsValidation(object):
-    def __init__(self, schema_cls, filter_by_fields, order_by_fields, aggregate_by_fields):
+    def __init__(self, schema_cls, filter_by_fields, order_by_fields,
+                 aggregate_by_fields):
         self.aggregate_by_fields = aggregate_by_fields
         self.order_by_fields = order_by_fields
         self.filter_by_fields = filter_by_fields
@@ -86,12 +87,26 @@ class DefaultRequestParamsValidation(object):
         special_filters = SPECIAL_FILTERS
         validation_errors = {}
         for filter_name in request_params:
+            if filter_name in special_filters:
+                continue
+
             field_name, filter_type = filter_operators. \
                 split_to_field_and_filter_type(filter_name)
-            if field_name not in allowed_filters and \
-                            field_name not in special_filters:
+            if field_name not in allowed_filters:
                 validation_errors.update(
                     {field_name: "Filtering not allowed"})
+                continue
+
+            allowed_filter_types = allowed_filters[filter_name]
+            if not isinstance(allowed_filter_types, (list, tuple, set)):
+                allowed_filter_types = (allowed_filter_types,)
+
+            if field_name in allowed_filters and filter_type and \
+                    filter_type not in allowed_filter_types:
+                validation_errors.update(
+                    {field_name: "Operator {} on field {} not allowed".
+                        format(filter_type, field_name)})
+                continue
 
         if validation_errors:
             return validation_errors

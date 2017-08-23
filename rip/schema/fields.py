@@ -5,11 +5,7 @@ from email_field import EmailField
 from id_field import IdField
 from integer_field import IntegerField
 from list_field import ListField
-from list_sub_resource_field import ListSubResourceField
-from resource_link_field import ResourceLinkField
-from resource_uri_field import ResourceUriField
 from schema_field import SchemaField
 from string_field import StringField
-from sub_resource_field import SubResourceField
 from choice_field import ChoiceField
 from url_field import UrlField

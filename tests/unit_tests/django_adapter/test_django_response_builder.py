@@ -1,11 +1,12 @@
 import unittest
 
-from mock import MagicMock
 import simplejson
+from mock import MagicMock
 
-from rip.django_adapter import django_response_builder
+from http_adapter.default_http_response_builder import \
+    DefaultHttpResponseBuilder
+from rip.generic_steps import error_types
 from rip.response import Response
-from rip import error_types
 
 
 class TestDjangoResponseBuilder(unittest.TestCase):
@@ -14,8 +15,9 @@ class TestDjangoResponseBuilder(unittest.TestCase):
                             reason=error_types.AuthenticationFailed,
                             data={'asdf': 1121})
         http_request = MagicMock()
-        http_response = django_response_builder.build_http_response(
+        django_response_builder = DefaultHttpResponseBuilder(
             http_request, response)
+        http_response = django_response_builder.build_http_response()
         self.assertEqual(http_response.status_code, 401)
         self.assertEqual(http_response.content,
                          simplejson.dumps({'asdf': 1121}))
@@ -25,12 +27,10 @@ class TestDjangoResponseBuilder(unittest.TestCase):
                             reason=error_types.InvalidData,
                             data={'defg': 1121})
         http_request = MagicMock()
-        http_response = django_response_builder.build_http_response(
+        django_response_builder = DefaultHttpResponseBuilder(
             http_request, response)
+        http_response = django_response_builder.build_http_response()
+
         self.assertEqual(http_response.status_code, 400)
         self.assertEqual(http_response.content,
                          simplejson.dumps({'defg': 1121}))
-
-
-if __name__ == '__main__':
-    unittest.main()

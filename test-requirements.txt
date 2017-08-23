@@ -1,4 +1,3 @@
 -r requirements.txt
 mock==1.0.1
 pytest==2.6.4
-pyhamcrest==1.8.1

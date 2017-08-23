@@ -1,24 +1,20 @@
-from rip.crud.decorators import validate_action
-from rip.generic_steps.default_authentication import \
-    DefaultAuthentication
+from functools import partial
+
+from rip.crud.crud_actions import CrudActions
+from rip.crud.pipeline_composer import PipelineComposer
+from rip.generic_steps import error_types
+from rip.generic_steps.default_authentication import DefaultAuthentication
+from rip.generic_steps.default_authorization import DefaultAuthorization
+from rip.generic_steps.default_data_cleaner import DefaultRequestCleaner
+from rip.generic_steps.default_entity_actions import DefaultEntityActions
+from rip.generic_steps.default_post_action_hooks import DefaultPostActionHooks
 from rip.generic_steps.default_request_params_validation import \
     DefaultRequestParamsValidation
-from rip.crud.crud_actions import CrudActions
-from rip.generic_steps.default_authorization import \
-    DefaultAuthorization
-from rip.generic_steps.default_data_cleaner import \
-    DefaultRequestCleaner
-from rip.generic_steps.default_entity_actions import \
-    DefaultEntityActions
-from rip.generic_steps.default_post_action_hooks import \
-    DefaultPostActionHooks
 from rip.generic_steps.default_response_converter import \
-    DefaultResponseConverter
-from rip.generic_steps.default_schema_serializer import \
-    DefaultEntitySerializer
-from rip.generic_steps.default_schema_validation import \
-    DefaultSchemaValidation
-from rip.crud import crud_pipeline_factory
+    DefaultResponseConstructor
+from rip.generic_steps.default_schema_serializer import DefaultEntitySerializer
+from rip.generic_steps.default_schema_validation import DefaultSchemaValidation
+from rip.response import Response
 
 
 class CrudResource(object):
@@ -27,40 +23,11 @@ class CrudResource(object):
     in a pipeline
     If your resource confirms to the basic CRUD actions in Rest,
     then inherit from this class
-    Usually you don't have to override methods because steps can be overridden
-    in the configuration attributes
-
-    An example:
-    class Tweet(CrudResource):
-    schema_cls = TweetSchema
-    allowed_actions= [CrudActions.READ_LIST,
-                        CrudActions.READ_DETAIL,
-                        CrudActions.UPDATE_DETAIL,
-                        CrudActions.CREATE_DETAIL,
-                        CrudActions.DELETE_DETAIL] # list of allowed actions
-    entity_actions_cls = TweetEntityActions # A mandatory hook class
-                                            # that has methods for actions on
-                                            #entities
-
-    serializer_cls = TweetEntitySerializer # A hook class
-                                           # for serializing entity to json
-
-    authentication_cls = TweetAuthentication # A hook class that authenticates
-                                             # a request.
-                                             # Default: it checks
-                                             # if a valid user is present on the
-                                             # request
-
-    authorization_cls = TweetAuthorization # A hook class
-                                           # that controls access to entities
-                                           # Default: there is no authorization
-
-    allowed_filters = {'id': (EQUALS)}     # allowed filters on entity
-    default_limit = 20                     # page limit for get_list
-    default_offset = 0                     # default page offset for get_list
-
     """
+
     schema_cls = None
+    # By default only allow Read actions. Subclasses are expected
+    # to override this to allow update/delete etc.
     allowed_actions = [CrudActions.READ_DETAIL, CrudActions.READ_LIST]
     filter_by_fields = {}
     order_by_fields = []
@@ -68,61 +35,15 @@ class CrudResource(object):
     default_offset = 0
     default_limit = 20
 
-    authentication_cls = DefaultAuthentication
-    authorization_cls = DefaultAuthorization
-    request_params_validation_cls = DefaultRequestParamsValidation
-    schema_validation_cls = DefaultSchemaValidation
-    data_cleaner_cls = DefaultRequestCleaner
-    entity_actions_cls = DefaultEntityActions
-    post_action_hooks_cls = DefaultPostActionHooks
-    response_converter_cls = DefaultResponseConverter
-    serializer_cls = DefaultEntitySerializer
-
-    def _setup_configuration(self):
-        """
-        All steps are accepted as classes. Instantiate them with the right
-        configuration and set them in a local property.
-        """
-        self.configuration = dict(
-            schema_cls=self.schema_cls,
-            allowed_actions=self.allowed_actions,
-            filter_by_fields=self.filter_by_fields,
-            order_by_fields=self.order_by_fields,
-            aggregate_by_fields=self.aggregate_by_fields,
-            default_offset=self.default_offset,
-            default_limit=self.default_limit)
-
-        authentication = self.authentication_cls(schema_cls=self.schema_cls)
-        authorization = self.authorization_cls(schema_cls=self.schema_cls)
-        request_params_validation = self.request_params_validation_cls(
-            schema_cls=self.schema_cls,
-            filter_by_fields=self.filter_by_fields,
-            order_by_fields=self.order_by_fields,
-            aggregate_by_fields=self.aggregate_by_fields
-        )
-        schema_validation = self.schema_validation_cls(
-            schema_cls=self.schema_cls)
-        data_cleaner = self.data_cleaner_cls(schema_cls=self.schema_cls)
-        entity_actions = self.entity_actions_cls(
-            schema_cls=self.schema_cls,
-            default_limit=self.default_limit,
-            default_offset=self.default_offset)
-        post_action_hooks = self.post_action_hooks_cls(
-            schema_cls=self.schema_cls)
-        response_converter = self.response_converter_cls(
-            schema_cls=self.schema_cls)
-        serializer = self.serializer_cls(schema_cls=self.schema_cls)
-
-        self.configuration.update(dict(
-            authentication=authentication,
-            authorization=authorization,
-            request_params_validation=request_params_validation,
-            schema_validation=schema_validation,
-            data_cleaner=data_cleaner,
-            entity_actions=entity_actions,
-            post_action_hooks=post_action_hooks,
-            response_converter=response_converter,
-            serializer=serializer))
+    RequestAuthentication = DefaultAuthentication
+    RequestAuthorization = DefaultAuthorization
+    RequestParamsValidation = DefaultRequestParamsValidation
+    SchemaValidation = DefaultSchemaValidation
+    RequestCleaner = DefaultRequestCleaner
+    EntityActions = DefaultEntityActions
+    EntitySerializer = DefaultEntitySerializer
+    PostActionHooks = DefaultPostActionHooks
+    ResponseConstructor = DefaultResponseConstructor
 
     def __new__(cls, *args, **kwargs):
         if cls.schema_cls is None:
@@ -134,111 +55,189 @@ class CrudResource(object):
 
     def __init__(self):
         super(CrudResource, self).__init__()
-        self._setup_configuration()
 
-    def is_action_allowed(self, action_name):
-        """
-        Returns if a particular action is allowed on the resource
-        as set in the allowed_actions attribute
+        self.request_authentication = self.get_request_authentication()
+        self.request_authorization = self.get_request_authorization()
+        self.request_params_validation = self.get_request_params_validation()
+        self.schema_validation = self.get_schema_validation()
+        self.request_cleaner = self.get_request_cleaner()
+        self.entity_actions = self.get_entity_actions()
+        self.entity_serializer = self.get_entity_serializer()
+        self.post_action_hooks = self.get_post_action_hooks()
+        self.response_constructor = self.get_response_constructor()
 
-        :param action_name:string
-        :values as defined in CrudActions
-        :return: bool
-        """
+        self.pipelines = {
+            CrudActions.READ_DETAIL: self.get_read_detail_pipeline(),
+            CrudActions.UPDATE_DETAIL: self.get_update_detail_pipeline(),
+            CrudActions.READ_LIST: self.get_read_list_pipeline(),
+            CrudActions.CREATE_DETAIL: self.get_create_detail_pipeline(),
+            CrudActions.CREATE_OR_UPDATE_DETAIL:
+                self.get_create_or_update_detail_pipeline(),
+            CrudActions.GET_AGGREGATES: self.get_aggregates_pipeline(),
+            CrudActions.DELETE_DETAIL: self.get_delete_detail_pipeline()
+        }
+
+    def run_crud_action(self, action_name, request):
         if action_name not in self.allowed_actions:
-            return False
-        return True
+            return Response(
+                is_success=False, reason=error_types.MethodNotAllowed)
+        request.context_params['crud_action'] = action_name
+        crud_pipeline = self.pipelines[action_name]
+        return crud_pipeline(request)
 
-    @validate_action
-    def read_detail(self, request):
-        """
-        Implements the Read Detail (read an object)
+    def get_request_authentication(self):
+        return self.RequestAuthentication(schema_cls=self.schema_cls)
 
-        maps to GET /api/objects/:id/ in rest semantics
-        :param request: rip.Request
-        :return: rip.Response
-        """
-        pipeline = crud_pipeline_factory.read_detail_pipeline(
-            configuration=self.configuration)
-        return pipeline(request=request)
+    def get_request_authorization(self):
+        return self.RequestAuthorization(schema_cls=self.schema_cls)
 
-    @validate_action
-    def update_detail(self, request):
-        """
-        Implements the Update Detail (partially update an object)
+    def get_request_params_validation(self):
+        return self.RequestParamsValidation(
+            schema_cls=self.schema_cls, filter_by_fields=self.filter_by_fields,
+            order_by_fields=self.order_by_fields,
+            aggregate_by_fields=self.aggregate_by_fields)
 
-        maps to PATCH /api/object/:id/ in rest semantics
-        :param request: rip.Request
-        :return: rip.Response
-        """
-        pipeline = crud_pipeline_factory.update_detail_pipeline(
-            configuration=self.configuration)
-        return pipeline(request=request)
+    def get_schema_validation(self):
+        return self.SchemaValidation(
+            schema_cls=self.schema_cls)
 
-    @validate_action
-    def read_list(self, request):
-        """
-        Implements the List read (get a list of objects)
+    def get_request_cleaner(self):
+        return self.RequestCleaner(schema_cls=self.schema_cls)
 
-        maps to GET /api/objects/ in rest semantics
-        :param request: rip.Request
-        :return: rip.Response
-        """
-        pipeline = crud_pipeline_factory.read_list_pipeline(
-            configuration=self.configuration)
-        return pipeline(request=request)
+    def get_entity_actions(self):
+        return self.EntityActions(
+            schema_cls=self.schema_cls, default_offset=self.default_offset,
+            default_limit=self.default_limit)
 
-    @validate_action
-    def create_detail(self, request):
-        """
-        Implements the Create Detail (create an object)
+    def get_entity_serializer(self):
+        return self.EntitySerializer(
+            schema_cls=self.schema_cls,
+            default_limit=self.default_limit,
+            default_offset=self.default_offset)
 
-        maps to POST /api/objects/ in rest semantics
-        :param request: rip.Request
-        :return: rip.Response
-        """
-        pipeline = crud_pipeline_factory.create_detail_pipeline(
-            configuration=self.configuration)
-        return pipeline(request=request)
+    def get_post_action_hooks(self):
+        return self.PostActionHooks(
+            schema_cls=self.schema_cls)
 
-    @validate_action
-    def delete_detail(self, request):
-        """
-        Implements the Delete Detail (delete an object)
+    def get_response_constructor(self):
+        return self.ResponseConstructor(
+            schema_cls=self.schema_cls)
 
-        maps to DELETE /api/object_name/:id/ in rest semantics
-        :param request: rip.Request
-        :return: rip.Response
-        """
-        pipeline = crud_pipeline_factory.delete_detail_pipeline(
-            configuration=self.configuration)
-        return pipeline(request=request)
+    def get_read_detail_pipeline(self):
+        read_detail_pipeline = [
+            self.request_authentication.authenticate,
+            self.request_cleaner.clean_data_for_read_detail,
+            partial(self.entity_actions.read_detail,
+                    get_entity_fn=getattr(self, 'get_entity', None)),
+            self.request_authorization.authorize_read_detail,
+            self.entity_serializer.serialize_detail,
+            self.post_action_hooks.read_detail_hook,
+            self.response_constructor.convert_serialized_data_to_response
+        ]
+        return PipelineComposer(
+            name=CrudActions.READ_DETAIL, pipeline=read_detail_pipeline)
 
-    @validate_action
-    def get_aggregates(self, request):
-        """
-        Implements the Get aggregates (total number of objects filtered)
+    def get_update_detail_pipeline(self):
+        update_pipeline = [
+            self.request_authentication.authenticate,
+            self.request_cleaner.clean_data_for_read_detail,
+            self.request_cleaner.clean_data_for_update_detail,
+            self.schema_validation.validate_request_data,
+            partial(self.entity_actions.read_detail,
+                    get_entity_fn=getattr(self, 'get_entity', None)),
+            self.request_authorization.authorize_update_detail,
+            self.entity_serializer.serialize_detail_pre_update,
+            partial(self.entity_actions.update_detail,
+                    update_entity_fn=getattr(self, 'update_entity', None)),
+            self.entity_serializer.serialize_detail,
+            self.post_action_hooks.update_detail_hook,
+            self.response_constructor.convert_serialized_data_to_response
+        ]
+        return PipelineComposer(
+            name=CrudActions.UPDATE_DETAIL, pipeline=update_pipeline)
 
-        maps to PATCH /api/object_name/get_aggregates/ in rest semantics
-        :param request: rip.Request
-        :return: rip.Response
-        """
-        pipeline = crud_pipeline_factory.get_aggregates_pipeline(
-            configuration=self.configuration)
+    def get_create_or_update_detail_pipeline(self):
+        create_or_update_detail_pipeline = [
+            self.request_authentication.authenticate,
+            self.request_cleaner.clean_data_for_read_detail,
+            self.request_cleaner.clean_data_for_update_detail,
+            self.schema_validation.validate_request_data,
+            partial(self.entity_actions.read_detail,
+                    get_entity_fn=getattr(self, 'get_entity', None)),
+            self.request_authorization.authorize_update_detail,
+            self.entity_serializer.serialize_detail_pre_update,
+            partial(self.entity_actions.update_detail,
+                    update_entity_fn=getattr(self, 'update_entity', None)),
+            self.entity_serializer.serialize_detail,
+            self.post_action_hooks.update_detail_hook,
+            self.response_constructor.convert_serialized_data_to_response
+        ]
+        return PipelineComposer(
+            name=CrudActions.CREATE_OR_UPDATE_DETAIL,
+            pipeline=create_or_update_detail_pipeline
+        )
 
-        return pipeline(request=request)
+    def get_read_list_pipeline(self):
+        read_list_pipeline = [
+            self.request_authentication.authenticate,
+            self.request_params_validation.validate_request_params,
+            self.request_cleaner.clean_data_for_read_list,
+            self.request_authorization.add_read_list_filters,
+            partial(self.entity_actions.read_list,
+                    get_entity_list_fn=getattr(self, 'get_entity_list', None),
+                    get_total_count_fn=getattr(self, 'get_total_count', None)),
+            self.entity_serializer.serialize_list,
+            self.post_action_hooks.read_list_hook,
+            self.response_constructor.convert_serialized_data_to_response
+        ]
+        return PipelineComposer(
+            name=CrudActions.READ_LIST, pipeline=read_list_pipeline)
 
-    @validate_action
-    def create_or_update_detail(self, request):
-        """
-       Implements Create/Update an object completely given an id
+    def get_create_detail_pipeline(self):
+        create_detail_pipeline = [
+            self.request_authentication.authenticate,
+            self.request_cleaner.clean_data_for_create_detail,
+            self.schema_validation.validate_request_data,
+            self.request_authorization.authorize_create_detail,
+            partial(self.entity_actions.create_detail,
+                    create_entity_fn=getattr(self, 'create_entity', None)),
+            self.entity_serializer.serialize_detail,
+            self.post_action_hooks.create_detail_hook,
+            self.response_constructor.convert_serialized_data_to_response
+        ]
 
-       maps to PUT /api/object/:id in rest semantics
-       :param request: rip.Request
-       :return: rip.Response
-       """
+        return PipelineComposer(
+            name=CrudActions.CREATE_DETAIL, pipeline=create_detail_pipeline)
 
-        pipeline = crud_pipeline_factory.create_or_update_detail_pipeline(
-            configuration=self.configuration)
+    def get_delete_detail_pipeline(self):
+        delete_detail_pipeline = [
+            self.request_authentication.authenticate,
+            self.request_cleaner.clean_data_for_delete_detail,
+            partial(self.entity_actions.read_detail,
+                    get_entity_fn=getattr(self, 'get_entity', None)),
+            self.request_authorization.authorize_delete_detail,
+            partial(self.entity_actions.delete_detail,
+                    delete_entity_fn=getattr(self, 'delete_entity', None)),
+            self.post_action_hooks.delete_detail_hook,
+            self.response_constructor.convert_to_simple_response
+        ]
 
-        return pipeline(request=request)
+        return PipelineComposer(
+            name=CrudActions.DELETE_DETAIL, pipeline=delete_detail_pipeline)
+
+    def get_aggregates_pipeline(self):
+        aggregates_pipeline = [
+            self.request_authentication.authenticate,
+            self.request_params_validation.validate_request_params,
+            self.request_cleaner.clean_data_for_get_aggregates,
+            self.request_authorization.add_read_list_filters,
+            partial(self.entity_actions.get_aggregates,
+                    get_aggregates_fn=getattr(self, 'get_aggregates', None)),
+            self.entity_serializer.serialize_entity_aggregates,
+            self.post_action_hooks.get_aggregates_hook,
+            self.response_constructor.convert_serialized_data_to_response
+        ]
+
+        return PipelineComposer(
+            name=CrudActions.GET_AGGREGATES, pipeline=aggregates_pipeline)
+
