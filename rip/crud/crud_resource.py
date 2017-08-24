@@ -1,3 +1,5 @@
+from functools import partial
+
 from rip.crud.crud_actions import CrudActions
 from rip.crud.pipeline_composer import PipelineComposer
 from rip.crud.resource_schema_mixin import ResourceSchemaMixin
@@ -111,7 +113,8 @@ class CrudResource(ResourceSchemaMixin):
         read_detail_pipeline = [
             self.request_authentication.authenticate,
             self.request_cleaner.clean_data_for_read_detail,
-            self.entity_actions.read_detail,
+            partial(self.entity_actions.read_detail,
+                    get_entity_fn=getattr(self, 'get_entity', None)),
             self.request_authorization.authorize_read_detail,
             self.entity_serializer.serialize_detail,
             self.post_action_hooks.read_detail_hook,
@@ -126,10 +129,12 @@ class CrudResource(ResourceSchemaMixin):
             self.request_cleaner.clean_data_for_read_detail,
             self.request_cleaner.clean_data_for_update_detail,
             self.schema_validation.validate_request_data,
-            self.entity_actions.read_detail,
+            partial(self.entity_actions.read_detail,
+                    get_entity_fn=getattr(self, 'get_entity', None)),
             self.request_authorization.authorize_update_detail,
             self.entity_serializer.serialize_detail_pre_update,
-            self.entity_actions.update_detail,
+            partial(self.entity_actions.update_detail,
+                    update_entity_fn=getattr(self, 'update_entity', None)),
             self.entity_serializer.serialize_detail,
             self.post_action_hooks.update_detail_hook,
             self.response_constructor.convert_serialized_data_to_response
@@ -143,10 +148,12 @@ class CrudResource(ResourceSchemaMixin):
             self.request_cleaner.clean_data_for_read_detail,
             self.request_cleaner.clean_data_for_update_detail,
             self.schema_validation.validate_request_data,
-            self.entity_actions.read_detail,
+            partial(self.entity_actions.read_detail,
+                    get_entity_fn=getattr(self, 'get_entity', None)),
             self.request_authorization.authorize_update_detail,
             self.entity_serializer.serialize_detail_pre_update,
-            self.entity_actions.update_detail,
+            partial(self.entity_actions.update_detail,
+                    update_entity_fn=getattr(self, 'update_entity', None)),
             self.entity_serializer.serialize_detail,
             self.post_action_hooks.update_detail_hook,
             self.response_constructor.convert_serialized_data_to_response
@@ -162,7 +169,9 @@ class CrudResource(ResourceSchemaMixin):
             self.request_params_validation.validate_request_params,
             self.request_cleaner.clean_data_for_read_list,
             self.request_authorization.add_read_list_filters,
-            self.entity_actions.read_list,
+            partial(self.entity_actions.read_list,
+                    get_entity_list_fn=getattr(self, 'get_entity_list', None),
+                    get_total_count_fn=getattr(self, 'get_total_count', None)),
             self.entity_serializer.serialize_list,
             self.post_action_hooks.read_list_hook,
             self.response_constructor.convert_serialized_data_to_response
@@ -176,7 +185,8 @@ class CrudResource(ResourceSchemaMixin):
             self.request_cleaner.clean_data_for_create_detail,
             self.schema_validation.validate_request_data,
             self.request_authorization.authorize_create_detail,
-            self.entity_actions.create_detail,
+            partial(self.entity_actions.create_detail,
+                    create_entity_fn=getattr(self, 'create_entity', None)),
             self.entity_serializer.serialize_detail,
             self.post_action_hooks.create_detail_hook,
             self.response_constructor.convert_serialized_data_to_response
@@ -189,9 +199,11 @@ class CrudResource(ResourceSchemaMixin):
         delete_detail_pipeline = [
             self.request_authentication.authenticate,
             self.request_cleaner.clean_data_for_delete_detail,
-            self.entity_actions.read_detail,
+            partial(self.entity_actions.read_detail,
+                    get_entity_fn=getattr(self, 'get_entity', None)),
             self.request_authorization.authorize_delete_detail,
-            self.entity_actions.delete_detail,
+            partial(self.entity_actions.delete_detail,
+                    delete_entity_fn=getattr(self, 'delete_entity', None)),
             self.post_action_hooks.delete_detail_hook,
             self.response_constructor.convert_to_simple_response
         ]
@@ -205,7 +217,8 @@ class CrudResource(ResourceSchemaMixin):
             self.request_params_validation.validate_request_params,
             self.request_cleaner.clean_data_for_get_aggregates,
             self.request_authorization.add_read_list_filters,
-            self.entity_actions.get_aggregates,
+            partial(self.entity_actions.get_aggregates,
+                    get_aggregates_fn=getattr(self, 'get_aggregates', None)),
             self.entity_serializer.serialize_entity_aggregates,
             self.post_action_hooks.get_aggregates_hook,
             self.response_constructor.convert_serialized_data_to_response
