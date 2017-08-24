@@ -6,45 +6,18 @@ from rip.crud.crud_resource import CrudResource
 from rip.generic_steps.default_entity_actions import \
     DefaultEntityActions
 from rip.generic_steps.filter_operators import EQUALS
-from rip.schema.api_schema import ApiSchema
-from rip.schema.base_field import FieldTypes
-from rip.schema.email_field import EmailField
-from rip.schema.integer_field import IntegerField
-from rip.schema.list_field import ListField
-from rip.schema.schema_field import SchemaField
-from rip.schema.string_field import StringField
+from rip.schema_fields.field_types import FieldTypes
+from rip.schema_fields.email_field import EmailField
+from rip.schema_fields.integer_field import IntegerField
+from rip.schema_fields.list_field import ListField
+from rip.schema_fields.schema_field import SchemaField
+from rip.schema_fields.string_field import StringField
 
 
 class PersonEntity(object):
     def __init__(self, **kwargs):
         for key, value in kwargs.items():
             setattr(self, key, value)
-
-
-class AddressSchema(ApiSchema):
-    city = StringField(max_length=20, field_type=FieldTypes.READONLY)
-    country = StringField(max_length=20)
-
-    class Meta:
-        schema_name = 'Person_Address'
-
-
-class CompanySchema(ApiSchema):
-    name = StringField(max_length=100)
-    registration_number = IntegerField()
-    resource_uri = ResourceUriField(entity_attribute='name')
-
-    class Meta:
-        schema_name = 'companies'
-
-
-class FriendSchema(ApiSchema):
-    name = StringField(max_length=100)
-    relationship_type = StringField(max_length=10)
-    resource_uri = ResourceUriField(entity_attribute='name')
-
-    class Meta:
-        schema_name = 'friends'
 
 
 class PersonEntityActions(DefaultEntityActions):
@@ -75,24 +48,37 @@ class FriendEntityActions(DefaultEntityActions):
 
 
 class CompanyResource(CrudResource):
-    filter_by_fields = {'name': (EQUALS,), 'person_name': (EQUALS,)}
-    schema_cls = CompanySchema
-    allowed_actions = [CrudActions.READ_LIST,
-                       CrudActions.READ_DETAIL,
-                       CrudActions.UPDATE_DETAIL]
-    entity_actions_cls = CompanyEntityActions
+    name = StringField(max_length=100)
+    registration_number = IntegerField()
+    resource_uri = ResourceUriField(entity_attribute='name')
+
+    class Meta:
+        filter_by_fields = {'name': (EQUALS,), 'person_name': (EQUALS,)}
+        allowed_actions = [CrudActions.READ_LIST,
+                           CrudActions.READ_DETAIL,
+                           CrudActions.UPDATE_DETAIL]
+        entity_actions_cls = CompanyEntityActions
 
 
 class FriendResource(CrudResource):
-    filter_by_fields = {'friend_name': (EQUALS,)}
-    schema_cls = FriendSchema
-    allowed_actions = [CrudActions.READ_LIST,
-                       CrudActions.READ_DETAIL,
-                       CrudActions.UPDATE_DETAIL]
-    entity_actions_cls = FriendEntityActions
+    name = StringField(max_length=100)
+    relationship_type = StringField(max_length=10)
+    resource_uri = ResourceUriField(entity_attribute='name')
+
+    class Meta:
+        filter_by_fields = {'friend_name': (EQUALS,)}
+        allowed_actions = [CrudActions.READ_LIST,
+                           CrudActions.READ_DETAIL,
+                           CrudActions.UPDATE_DETAIL]
+        entity_actions_cls = FriendEntityActions
 
 
-class PersonSchema(ApiSchema):
+class AddressSchema(CrudResource):
+    city = StringField(max_length=20, field_type=FieldTypes.READONLY)
+    country = StringField(max_length=20)
+
+
+class PersonResource(CrudResource):
     name = StringField(max_length=100, required=True,
                        nullable=False)
     email = EmailField(max_length=100, nullable=True)
@@ -101,17 +87,15 @@ class PersonSchema(ApiSchema):
     company = StringField(show_in_list=False, nullable=True)
     nick_names = ListField(field=StringField())
 
-
-class PersonResource(CrudResource):
-    filter_by_fields = {'name': (EQUALS,), 'nick_names': EQUALS}
-    order_by_fields = ['name']
-    aggregate_by_fields = ['name']
-    schema_cls = PersonSchema
-    allowed_actions = [CrudActions.READ_LIST,
-                       CrudActions.READ_DETAIL,
-                       CrudActions.UPDATE_DETAIL,
-                       CrudActions.CREATE_OR_UPDATE_DETAIL,
-                       CrudActions.CREATE_DETAIL,
-                       CrudActions.DELETE_DETAIL,
-                       CrudActions.GET_AGGREGATES]
-    entity_actions_cls = PersonEntityActions
+    class Meta:
+        filter_by_fields = {'name': (EQUALS,), 'nick_names': EQUALS}
+        order_by_fields = ['name']
+        aggregate_by_fields = ['name']
+        allowed_actions = [CrudActions.READ_LIST,
+                           CrudActions.READ_DETAIL,
+                           CrudActions.UPDATE_DETAIL,
+                           CrudActions.CREATE_OR_UPDATE_DETAIL,
+                           CrudActions.CREATE_DETAIL,
+                           CrudActions.DELETE_DETAIL,
+                           CrudActions.GET_AGGREGATES]
+        entity_actions_cls = PersonEntityActions

@@ -1,12 +1,12 @@
 import unittest
 
+from rip.crud.crud_resource import CrudResource
 from rip.generic_steps.default_schema_serializer import \
     DefaultEntitySerializer
 from rip.request import Request
-from rip.schema.api_schema import ApiSchema
-from rip.schema.boolean_field import \
+from rip.schema_fields.boolean_field import \
     BooleanField
-from rip.schema.string_field import StringField
+from rip.schema_fields.string_field import StringField
 
 
 __all__ = ["TestSerializeSchemaToResponse"]
@@ -14,16 +14,13 @@ __all__ = ["TestSerializeSchemaToResponse"]
 
 class TestSerializeSchemaToResponse(unittest.TestCase):
     def setUp(self):
-        class TestSchema(ApiSchema):
+        class TestResource(CrudResource):
             id = StringField(required=True)
             name = StringField(max_length=32)
             is_active = BooleanField()
 
-            class Meta:
-                schema_name = 'asdf'
-
-        self.TestSchema = TestSchema
-        self.serializer = DefaultEntitySerializer(schema_cls=TestSchema)
+        self.TestResource = TestResource
+        self.serializer = DefaultEntitySerializer(resource=TestResource())
 
     def test_should_serialize_to_response(self):
         request = Request(user=None, request_params=None)

@@ -10,8 +10,8 @@ from tests.integration_tests.person_resource import PersonResource, PersonEntity
 
 
 class DeleteCrudResourceIntegrationTest(PersonResourceBaseTestCase):
-    @patch.object(PersonResource.entity_actions_cls, 'delete_entity')
-    @patch.object(PersonResource.entity_actions_cls, 'get_entity_list')
+    @patch.object(PersonResource._meta.entity_actions_cls, 'delete_entity')
+    @patch.object(PersonResource._meta.entity_actions_cls, 'get_entity_list')
     def test_should_delete(self, get_person_entity_list, delete_person_entity):
         resource = PersonResource()
         expected_entity = PersonEntity(
@@ -28,8 +28,8 @@ class DeleteCrudResourceIntegrationTest(PersonResourceBaseTestCase):
         delete_person_entity.assert_called_once_with(
             request, expected_entity)
 
-    @patch.object(PersonResource.entity_actions_cls, 'delete_entity')
-    @patch.object(PersonResource.entity_actions_cls, 'get_entity_list')
+    @patch.object(PersonResource._meta.entity_actions_cls, 'delete_entity')
+    @patch.object(PersonResource._meta.entity_actions_cls, 'get_entity_list')
     def test_should_return_NotFound_for_non_existing_object(
             self, get_person_entity_list, delete_person_entity):
 

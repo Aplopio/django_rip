@@ -1,7 +1,7 @@
 import datetime
 
 from rip import datetime_converter
-from rip.schema.base_field import \
+from rip.schema_fields.base_field import \
     BaseField
 
 

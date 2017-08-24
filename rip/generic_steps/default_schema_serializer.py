@@ -14,17 +14,17 @@ class DefaultEntitySerializer(object):
     serialized_data_var = 'serialized_data'
     serialized_data_var_pre_update = 'serialized_data_pre_update'
 
-    def __init__(self, schema_cls, default_limit=None, default_offset=None,
+    def __init__(self, resource,
                  attribute_getter_cls=DefaultEntityAttributeManager):
-        self.default_offset = default_offset
-        self.default_limit = default_limit
-        self.AttributeGetter = attribute_getter_cls
-        self.schema_cls = schema_cls
+        self.resource = resource
+        self.default_offset = resource.get_meta().default_offset
+        self.default_limit = resource.get_meta().default_limit
+        self.attribute_getter_cls = attribute_getter_cls
 
     def get_fields_to_serialize(self, request):
-        schema_fields = self.schema_cls._meta.fields
+        schema_fields = self.resource.all_fields()
         if request.context_params.get('crud_action') == CrudActions.READ_LIST:
-            return self.schema_cls.list_fields()
+            return self.resource.list_fields()
 
         elif request.context_params.get('crud_action') == \
                 CrudActions.GET_AGGREGATES:
@@ -35,7 +35,7 @@ class DefaultEntitySerializer(object):
 
     def serialize_aggregated_entity(self, request, aggregate_entity):
         aggregate_by_fields = self.get_fields_to_serialize(request)
-        attribute_getter = self.AttributeGetter(entity=aggregate_entity)
+        attribute_getter = self.attribute_getter_cls(entity=aggregate_entity)
         serialized = {}
         for field_name, field in aggregate_by_fields.items():
             field_attribute = field.entity_attribute or field_name
@@ -48,7 +48,7 @@ class DefaultEntitySerializer(object):
         """
         @param: entity -> entity object returned by the entity_actions step
         """
-        attribute_getter = self.AttributeGetter(entity=entity)
+        attribute_getter = self.attribute_getter_cls(entity=entity)
         serialized = {}
         fields_to_serialize = self.get_fields_to_serialize(request)
         for field_name, field in fields_to_serialize.items():
@@ -72,7 +72,7 @@ class DefaultEntitySerializer(object):
     def serialize_detail(self, request):
         """
         @param: request -> request object that will be converted into a response
-        @param: schema_obj_variable -> property name of the schema object on
+        @param: schema_obj_variable -> property name of the schema_fields object on
         request obj that needs to be serialized
         """
         schema_obj = request.context_params[self.entity_var]

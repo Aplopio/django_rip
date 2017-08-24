@@ -1,5 +1,5 @@
-from rip.schema.base_field import FieldTypes
-from rip.schema.integer_field import IntegerField
+from rip.schema_fields.field_types import FieldTypes
+from rip.schema_fields.integer_field import IntegerField
 
 
 class IdField(IntegerField):

@@ -9,8 +9,8 @@ class DefaultAuthorization(object):
     for all users
     """
 
-    def __init__(self, schema_cls):
-        self.schema_cls = schema_cls
+    def __init__(self, resource):
+        self.resource = resource
 
     def add_read_list_filters(self, request):
         """

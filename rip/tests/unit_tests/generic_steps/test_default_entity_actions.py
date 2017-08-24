@@ -17,8 +17,7 @@ class TestEntityActionsReadDetail(unittest.TestCase):
     def test_should_call_entity_getter(self):
         request = MagicMock()
         request.context_params = dict(request_filters={'id': 1})
-        entity_actions = DummyEntityActions(schema_cls=None, default_offset=0,
-                                            default_limit=20)
+        entity_actions = DummyEntityActions(resource=MagicMock())
         entity_actions.get_entity = MagicMock()
         entity_actions.get_entity.return_value = expected_obj = object()
 
@@ -31,9 +30,7 @@ class TestEntityActionsReadDetail(unittest.TestCase):
         request = MagicMock()
         request.context_params = dict(request_filters={'id': 1})
 
-        entity_actions = DefaultEntityActions(schema_cls=None,
-                                              default_offset=0,
-                                              default_limit=20)
+        entity_actions = DefaultEntityActions(MagicMock())
         entity_actions.get_entity = MagicMock()
         entity_actions.get_entity.return_value = expected_obj = object()
 
@@ -48,9 +45,7 @@ class TestEntityActionsReadDetail(unittest.TestCase):
         request = MagicMock()
         request.request_params = {'id': 1}
 
-        entity_actions = DefaultEntityActions(schema_cls=None,
-                                              default_offset=0,
-                                              default_limit=20)
+        entity_actions = DefaultEntityActions(MagicMock())
         entity_actions.get_entity = MagicMock()
         entity_actions.get_entity.return_value = expected_obj = None
 
@@ -63,9 +58,7 @@ class TestEntityActionsReadDetail(unittest.TestCase):
 
 class TestEntityActionsGetEntity(unittest.TestCase):
     def test_should_raise_for_multiple_objects_found(self):
-        entity_actions = DefaultEntityActions(schema_cls=None,
-                                              default_offset=0,
-                                              default_limit=20)
+        entity_actions = DefaultEntityActions(MagicMock())
         entity_actions.get_entity_list = MagicMock()
         entity_actions.get_entity_list.return_value = [object(), object()]
 
@@ -74,9 +67,7 @@ class TestEntityActionsGetEntity(unittest.TestCase):
 
 
     def test_should_return_entity(self):
-        entity_actions = DefaultEntityActions(schema_cls=None,
-                                              default_offset=0,
-                                              default_limit=20)
+        entity_actions = DefaultEntityActions(MagicMock())
         entity_actions.get_entity_list = MagicMock()
         entity_actions.get_entity_list.return_value = expected_objs = [object()]
 
@@ -86,9 +77,7 @@ class TestEntityActionsGetEntity(unittest.TestCase):
 
 
     def test_should_return_none(self):
-        entity_actions = DefaultEntityActions(schema_cls=None,
-                                              default_offset=0,
-                                              default_limit=20)
+        entity_actions = DefaultEntityActions(MagicMock())
         entity_actions.get_entity_list = MagicMock()
         entity_actions.get_entity_list.return_value = []
 
@@ -102,9 +91,7 @@ class TestEntityActionsReadList(unittest.TestCase):
         request = MagicMock()
         request.request_params = {'id': 1}
         request.context_params = {}
-        entity_actions = DefaultEntityActions(schema_cls=MagicMock(),
-                                              default_offset=0,
-                                              default_limit=20)
+        entity_actions = DefaultEntityActions(MagicMock())
         entity_actions.get_entity_list = MagicMock()
         entity_actions.get_entity_list_total_count = MagicMock()
         entity_actions.get_entity_list_total_count.return_value = 1
@@ -122,9 +109,7 @@ class TestEntityActionsUpdateDetail(unittest.TestCase):
         request = MagicMock()
         request.request_params = {'id': 1}
         request.context_params = {'entity': MagicMock(), 'data':{}}
-        entity_actions = DefaultEntityActions(schema_cls=MagicMock(),
-                                              default_offset=0,
-                                              default_limit=20)
+        entity_actions = DefaultEntityActions(MagicMock())
         update_entity = MagicMock()
         entity_actions.update_entity = update_entity
         update_entity.return_value = expected_entity = MagicMock()
@@ -132,6 +117,4 @@ class TestEntityActionsUpdateDetail(unittest.TestCase):
         entity_actions.update_detail(request)
 
         self.assertEqual(request.context_params['entity'], expected_entity)
-
-
 

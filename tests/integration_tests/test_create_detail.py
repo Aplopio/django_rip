@@ -10,7 +10,7 @@ from tests.integration_tests.person_resource import (
 
 
 class CrudResourceCreateActionIntegrationTest(PersonResourceBaseTestCase):
-    @patch.object(PersonResource.entity_actions_cls, 'create_entity')
+    @patch.object(PersonResource._meta.entity_actions_cls, 'create_entity')
     def test_should_create(self, create_person_entity):
         resource = PersonResource()
         expected_entity = PersonEntity(name='John', email="foo@bar.com",
@@ -65,7 +65,7 @@ class CrudResourceCreateActionIntegrationTest(PersonResourceBaseTestCase):
         assert not response.is_success
         assert response.data.get('name') == 'null is not a valid value'
 
-    @patch.object(PersonResource.entity_actions_cls, 'create_entity')
+    @patch.object(PersonResource._meta.entity_actions_cls, 'create_entity')
     def test_readonly_fields_are_skipped_when_calling_create_entity(
             self, create_person_entity):
         resource = PersonResource()

@@ -2,14 +2,9 @@ from abc import ABCMeta
 
 import six
 
-from rip.schema.default_field_value import DEFAULT_FIELD_VALUE
-from rip.schema.validation_result import ValidationResult
-
-
-class FieldTypes(object):
-    READONLY = 'readonly'
-    DEFAULT = 'default'
-    IMMUTABLE = 'immutable'
+from rip.schema_fields.default_field_value import DEFAULT_FIELD_VALUE
+from rip.schema_fields.field_types import FieldTypes
+from rip.schema_fields.validation_result import ValidationResult
 
 
 class BaseField(six.with_metaclass(ABCMeta)):

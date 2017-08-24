@@ -2,8 +2,8 @@
 
 from unittest.case import TestCase
 
-from rip.schema.fields import ChoiceField
-from rip.schema.default_field_value import DEFAULT_FIELD_VALUE
+from rip.schema_fields.fields import ChoiceField
+from rip.schema_fields.default_field_value import DEFAULT_FIELD_VALUE
 
 
 class Foo:

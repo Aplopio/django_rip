@@ -2,8 +2,8 @@ from rip.response import Response
 
 
 class DefaultResponseConstructor(object):
-    def __init__(self, schema_cls):
-        self.schema_cls = schema_cls
+    def __init__(self, resource):
+        self.resource = resource
 
     def convert_serialized_data_to_response(self, request):
         return Response(is_success=True,

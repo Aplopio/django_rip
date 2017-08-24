@@ -1,6 +1,6 @@
 import unittest
-from rip.schema.email_field import EmailField
-from rip.schema.default_field_value import \
+from rip.schema_fields.email_field import EmailField
+from rip.schema_fields.default_field_value import \
     DEFAULT_FIELD_VALUE
 
 

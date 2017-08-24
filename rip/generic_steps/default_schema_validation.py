@@ -1,22 +1,22 @@
 from rip.crud.crud_actions import CrudActions
 from rip.generic_steps import error_types
 from rip.response import Response
-from rip.schema.default_field_value import \
+from rip.schema_fields.default_field_value import \
     DEFAULT_FIELD_VALUE
 
 
 class DefaultSchemaValidation(object):
-    def __init__(self, schema_cls):
-        self.schema_cls = schema_cls
+    def __init__(self, resource):
+        self.resource = resource
 
     def _get_fields_to_validate_data(self, request, data):
         action = request.context_params['crud_action']
-        non_read_only_fields = self.schema_cls.non_readonly_fields()
+        non_read_only_fields = self.resource.non_readonly_fields()
         if action == CrudActions.UPDATE_DETAIL:
-            updatable_fields = self.schema_cls.updatable_fields()
+            updatable_fields = self.resource.updatable_fields()
             field_names = set(data).intersection(set(updatable_fields))
         elif action == CrudActions.CREATE_OR_UPDATE_DETAIL:
-            field_names = self.schema_cls.updatable_fields()
+            field_names = self.resource.updatable_fields()
         elif action == CrudActions.CREATE_DETAIL:
             field_names = non_read_only_fields.keys()
         else:

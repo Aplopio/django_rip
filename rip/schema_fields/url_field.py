@@ -1,9 +1,9 @@
 import re
 import urlparse
 
-from rip.schema.string_field import StringField
-from rip.schema.default_field_value import DEFAULT_FIELD_VALUE
-from rip.schema.validation_result import ValidationResult
+from rip.schema_fields.string_field import StringField
+from rip.schema_fields.default_field_value import DEFAULT_FIELD_VALUE
+from rip.schema_fields.validation_result import ValidationResult
 
 
 class UrlValidator(object):

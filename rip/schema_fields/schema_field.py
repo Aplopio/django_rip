@@ -1,17 +1,22 @@
+from rip.crud.resource_schema_mixin import ResourceSchemaMixin
 from rip.generic_steps.default_data_cleaner import \
     DefaultRequestCleaner
 from rip.generic_steps.default_schema_serializer import \
     DefaultEntitySerializer
 from rip.generic_steps.default_schema_validation import \
     DefaultSchemaValidation
-from rip.schema.base_field import BaseField, FieldTypes
-from rip.schema.default_field_value import \
+from rip.schema_fields.base_field import BaseField
+from rip.schema_fields.field_types import FieldTypes
+from rip.schema_fields.default_field_value import \
     DEFAULT_FIELD_VALUE
-from rip.schema.validation_result import \
+from rip.schema_fields.validation_result import \
     ValidationResult
 
 
 class SchemaField(BaseField):
+    """
+    Use the schema of a Resource to represent (serialize / clean / validated)
+    """
     def __init__(self, of_type,
                  required=False,
                  field_type=FieldTypes.DEFAULT,
@@ -27,9 +32,10 @@ class SchemaField(BaseField):
                                           entity_attribute=entity_attribute,
                                           show_in_list=show_in_list)
         self.of_type = of_type
-        self.validator = validator_cls(schema_cls=self.of_type)
-        self.serializer = serializer_cls(schema_cls=self.of_type)
-        self.cleaner = cleaner_cls(schema_cls=self.of_type)
+        resource = self.of_type()
+        self.validator = validator_cls(resource=resource)
+        self.serializer = serializer_cls(resource=resource)
+        self.cleaner = cleaner_cls(resource=resource)
 
     def validate(self, request, value):
         validation_result = super(SchemaField, self).validate(request, value)

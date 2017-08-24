@@ -31,12 +31,12 @@ Above, we defined a CRUD type resource called 'Tweet'. By defining it as a CRUD 
 Lets see how the schema itself is defined.
 
 ```python
-from rip.api_schema import ApiSchema
+from rip.api_schema import ResourceSchemaMixin
 from rip.filter_types import EQUALS
 from rip.schema.base_field import FieldTypes
 from rip.schema import fields
 
-class TweetSchema(ApiSchema):
+class TweetSchema(ResourceSchemaMixin):
     id = fields.StringField(max_length=10, required=True,
                      field_type=FieldTypes.READONLY)
     author = fields.StringField(max_length=100, required=True,
