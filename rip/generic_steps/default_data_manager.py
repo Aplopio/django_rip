@@ -2,7 +2,7 @@ from rip.generic_steps import error_types
 from rip.response import Response
 
 
-class DefaultEntityActions(object):
+class DefaultDataManager(object):
     """
     Defines the default steps needed for actions  on a CRUD entity
     """

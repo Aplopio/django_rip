@@ -3,7 +3,7 @@ import unittest
 from mock import MagicMock
 
 from rip.crud.crud_resource import CrudResource
-from rip.generic_steps.default_entity_actions import DefaultEntityActions
+from rip.generic_steps.default_data_manager import DefaultDataManager
 from rip.schema_fields.boolean_field import \
     BooleanField
 from rip.schema_fields.email_field import EmailField
@@ -33,40 +33,40 @@ class TestApiSchemaConstruction(unittest.TestCase):
 
     def test_should_inherit_meta_attrs(self):
         new_resource_name = 'something'
-        expected_entity_actions = MagicMock()
+        expected_data_manager = MagicMock()
 
         class NewSchema(self.TestSchema):
             class Meta:
                 resource_name = new_resource_name
-                entity_actions_cls = expected_entity_actions
+                data_manager_cls = expected_data_manager
 
         assert self.TestSchema.get_meta().resource_name == 'asdf'
         assert NewSchema.get_meta().resource_name == new_resource_name
 
-        assert self.TestSchema.get_meta().entity_actions_cls == \
-            DefaultEntityActions
-        assert NewSchema.get_meta().entity_actions_cls == \
-               expected_entity_actions
+        assert self.TestSchema.get_meta().data_manager_cls == \
+               DefaultDataManager
+        assert NewSchema.get_meta().data_manager_cls == \
+               expected_data_manager
 
     def test_should_override_meta_attrs(self):
         new_resource_name1 = 'something'
         new_resource_name2 = 'something new'
-        expected_entity_actions1 = MagicMock()
-        expected_entity_actions2 = MagicMock()
+        expected_data_manager1 = MagicMock()
+        expected_data_manager2 = MagicMock()
 
         class NewSchema(self.TestSchema):
             class Meta:
                 resource_name = new_resource_name1
-                entity_actions_cls = expected_entity_actions1
+                data_manager_cls = expected_data_manager1
 
         class NewSchema2(NewSchema):
             class Meta:
                 resource_name = new_resource_name2
-                entity_actions_cls = expected_entity_actions2
+                data_manager_cls = expected_data_manager2
 
         assert NewSchema2.get_meta().resource_name == new_resource_name2
-        assert NewSchema2.get_meta().entity_actions_cls == \
-            expected_entity_actions2
+        assert NewSchema2.get_meta().data_manager_cls == \
+            expected_data_manager2
 
     def test_should_inherit_fields(self):
         class NewSchema(self.TestSchema):

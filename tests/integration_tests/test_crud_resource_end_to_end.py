@@ -4,13 +4,13 @@ from mock import MagicMock
 
 from http_adapter.django_crud_resource import DjangoResource
 from http_adapter.url_types import UrlTypes
-from rip.generic_steps.default_entity_actions import DefaultEntityActions
+from rip.generic_steps.default_data_manager import DefaultDataManager
 from rip.schema_fields.string_field import StringField
 import os
 os.environ['DJANGO_SETTINGS_MODULE'] = 'tests.test_settings'
 
 
-class DummyEntityActions(DefaultEntityActions):
+class DummyDataManager(DefaultDataManager):
     def get_entity_list(self, request, **kwargs):
         return [{
             'name': 'dummy'
@@ -24,7 +24,7 @@ class DummyViewResource(DjangoResource):
     name = StringField(required=True)
 
     class Meta:
-        entity_actions_cls = DummyEntityActions
+        data_manager_cls = DummyDataManager
 
 
 class DummyUser(object):

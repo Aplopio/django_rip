@@ -3,8 +3,8 @@ import mock
 from http_adapter.resource_uri_field import ResourceUriField
 from rip.crud.crud_actions import CrudActions
 from rip.crud.crud_resource import CrudResource
-from rip.generic_steps.default_entity_actions import \
-    DefaultEntityActions
+from rip.generic_steps.default_data_manager import \
+    DefaultDataManager
 from rip.generic_steps.filter_operators import EQUALS
 from rip.schema_fields.field_types import FieldTypes
 from rip.schema_fields.email_field import EmailField
@@ -20,7 +20,7 @@ class PersonEntity(object):
             setattr(self, key, value)
 
 
-class PersonEntityActions(DefaultEntityActions):
+class PersonDataManager(DefaultDataManager):
     @classmethod
     def set_mocks(cls):
         cls.get_entity_list = mock.MagicMock()
@@ -31,7 +31,7 @@ class PersonEntityActions(DefaultEntityActions):
         cls.delete_entity = mock.MagicMock()
 
 
-class CompanyEntityActions(DefaultEntityActions):
+class CompanyDataManager(DefaultDataManager):
     @classmethod
     def set_mocks(cls):
         cls.get_entity_list = mock.MagicMock()
@@ -39,7 +39,7 @@ class CompanyEntityActions(DefaultEntityActions):
         cls.update_entity = mock.MagicMock()
 
 
-class FriendEntityActions(DefaultEntityActions):
+class FriendDataManager(DefaultDataManager):
     @classmethod
     def set_mocks(cls):
         cls.get_entity_list = mock.MagicMock()
@@ -57,7 +57,7 @@ class CompanyResource(CrudResource):
         allowed_actions = [CrudActions.READ_LIST,
                            CrudActions.READ_DETAIL,
                            CrudActions.UPDATE_DETAIL]
-        entity_actions_cls = CompanyEntityActions
+        data_manager_cls = CompanyDataManager
 
 
 class FriendResource(CrudResource):
@@ -70,7 +70,7 @@ class FriendResource(CrudResource):
         allowed_actions = [CrudActions.READ_LIST,
                            CrudActions.READ_DETAIL,
                            CrudActions.UPDATE_DETAIL]
-        entity_actions_cls = FriendEntityActions
+        data_manager_cls = FriendDataManager
 
 
 class AddressSchema(CrudResource):
@@ -98,4 +98,4 @@ class PersonResource(CrudResource):
                            CrudActions.CREATE_DETAIL,
                            CrudActions.DELETE_DETAIL,
                            CrudActions.GET_AGGREGATES]
-        entity_actions_cls = PersonEntityActions
+        data_manager_cls = PersonDataManager

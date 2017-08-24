@@ -1,6 +1,6 @@
 import unittest
-from tests.integration_tests.person_resource import PersonEntityActions, \
-    FriendEntityActions, CompanyEntityActions
+from tests.integration_tests.person_resource import PersonDataManager, \
+    FriendDataManager, CompanyDataManager
 
 
 class PersonResourceBaseTestCase(unittest.TestCase):
@@ -9,6 +9,6 @@ class PersonResourceBaseTestCase(unittest.TestCase):
         Sets the methods of of all entity actions to MagicMocks
         :return:
         """
-        PersonEntityActions.set_mocks()
-        FriendEntityActions.set_mocks()
-        CompanyEntityActions.set_mocks()
+        PersonDataManager.set_mocks()
+        FriendDataManager.set_mocks()
+        CompanyDataManager.set_mocks()
