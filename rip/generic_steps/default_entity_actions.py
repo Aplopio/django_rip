@@ -13,10 +13,10 @@ class DefaultEntityActions(object):
     detail_property_name = 'entity'
     updated_property_name = 'entity'
 
-    def __init__(self, schema_cls, default_offset=0, default_limit=20):
-        self.schema_cls = schema_cls
-        self.default_limit = default_limit
-        self.default_offset = default_offset
+    def __init__(self, resource):
+        self.resource = resource
+        self.default_limit = resource.get_meta().default_limit
+        self.default_offset = resource.get_meta().default_offset
 
     def get_limit_and_offset(self, request_filters):
         default_limit = self.default_limit

@@ -7,6 +7,8 @@ from model_adapter.model_entity_actions import ModelEntityActions
 from rip.crud.crud_resource import CrudResource
 from rip.generic_steps import error_types
 from rip.response import Response
+from rip.schema_fields.field_types import FieldTypes
+from rip.schema_fields.integer_field import IntegerField
 
 
 class DjangoResource(View, CrudResource):
@@ -17,10 +19,10 @@ class DjangoResource(View, CrudResource):
     # `{resource_name}-aggregates` will be the url names.
     # If not set, it will default to the name of the resource pluralized
 
-    resource_name = None
-    http_response_builder_cls = DefaultHttpResponseBuilder
-    rip_request_builder_cls = DefaultRipRequestBuilder
-    rip_action_resolver_cls = DefaultRipActionResolver
+    class Meta:
+        http_response_builder_cls = DefaultHttpResponseBuilder
+        rip_request_builder_cls = DefaultRipRequestBuilder
+        rip_action_resolver_cls = DefaultRipActionResolver
 
     def __init__(self, **kwargs):
         View.__init__(self, **kwargs)
@@ -37,11 +39,12 @@ class DjangoResource(View, CrudResource):
         :return: http_response
         """
         url_type = url_kwargs.pop('url_type', None)
-        action_resolver = self.rip_action_resolver_cls(
+        action_resolver = self.get_meta().rip_action_resolver_cls(
             http_request, url_type, url_kwargs)
         action_name = action_resolver.get_action_name()
 
-        rip_request_builder = self.rip_request_builder_cls(http_request, url_kwargs)
+        rip_request_builder = self.get_meta().rip_request_builder_cls(
+            http_request, url_kwargs)
         rip_request = rip_request_builder.build_rip_request_or_response()
 
         if action_name is None:
@@ -52,17 +55,18 @@ class DjangoResource(View, CrudResource):
         else:
             rip_response = self.run_crud_action(action_name, rip_request)
 
-        http_response_builder = self.http_response_builder_cls(
+        http_response_builder = self.get_meta().http_response_builder_cls(
             http_request, rip_response)
         return http_response_builder.build_http_response()
 
 
 class DjangoModelResource(DjangoResource):
-    entity_actions_cls = ModelEntityActions
-    model_cls = None
+    id = IntegerField(field_type=FieldTypes.IMMUTABLE, nullable=False)
+
+    class Meta:
+        entity_actions_cls = ModelEntityActions
+        model_cls = None
 
     def get_entity_actions(self):
-        return self.entity_actions_cls(
-            model_cls=self.model_cls,
-            schema_cls=self.schema_cls, default_limit=self.default_limit,
-            default_offset=self.default_offset)
+        return self._meta.entity_actions_cls(
+            resource=self)

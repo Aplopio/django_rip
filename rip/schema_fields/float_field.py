@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from decimal import Decimal
-from rip.schema.base_field import BaseField, FieldTypes
+from rip.schema_fields.base_field import BaseField
+from rip.schema_fields.field_types import FieldTypes
 
 
 class FloatField(BaseField):

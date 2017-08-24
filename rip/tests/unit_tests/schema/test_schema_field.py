@@ -1,24 +1,24 @@
 import unittest
 
 from rip.crud.crud_actions import CrudActions
+from rip.crud.crud_resource import CrudResource
 from rip.generic_steps.default_schema_serializer import DefaultEntitySerializer
 from rip.generic_steps.default_schema_validation import \
     DefaultSchemaValidation
-from rip.schema.api_schema import ApiSchema
-from rip.schema.schema_field import SchemaField
-from rip.schema.string_field import StringField
-from rip.schema.validation_result import \
+from rip.schema_fields.schema_field import SchemaField
+from rip.schema_fields.string_field import StringField
+from rip.schema_fields.validation_result import \
     ValidationResult
 from tests import request_factory
 
 
 class TestSchemaField(unittest.TestCase):
     def setUp(self):
-        class TestSchema(ApiSchema):
-            class Meta:
-                schema_name = 'test_schema'
-
+        class TestSchema(CrudResource):
             name = StringField(max_length=10)
+
+            class Meta:
+                resource_name = 'test_schema'
 
         self.test_schema_cls = TestSchema
 
@@ -67,9 +67,6 @@ class TestSchemaField(unittest.TestCase):
 
     def test_should_validate_with_overridden_validator(self):
         class TestValidator(DefaultSchemaValidation):
-            def __init__(self, schema_cls):
-                super(TestValidator, self).__init__(schema_cls)
-
             def validate_data(self, data, fields_to_validate=None):
                 return {'name': 'Custom Validation Failed'}
 

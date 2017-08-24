@@ -6,12 +6,11 @@ SPECIAL_FILTERS = ['offset', 'limit', 'aggregate_by', 'order_by']
 
 
 class DefaultRequestParamsValidation(object):
-    def __init__(self, schema_cls, filter_by_fields, order_by_fields,
-                 aggregate_by_fields):
-        self.aggregate_by_fields = aggregate_by_fields
-        self.order_by_fields = order_by_fields
-        self.filter_by_fields = filter_by_fields
-        self.schema_cls = schema_cls
+    def __init__(self, resource):
+        self.resource = resource
+        self.aggregate_by_fields = resource.get_meta().aggregate_by_fields
+        self.order_by_fields = resource.get_meta().order_by_fields
+        self.filter_by_fields = resource.get_meta().filter_by_fields
 
     def validate_order_by(self, request_params):
         order_by_params = request_params.get('order_by', [])

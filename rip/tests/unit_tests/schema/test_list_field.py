@@ -1,6 +1,6 @@
 import unittest
-from rip.schema.list_field import ListField
-from rip.schema.string_field import StringField
+from rip.schema_fields.list_field import ListField
+from rip.schema_fields.string_field import StringField
 
 
 class TestValidateListField(unittest.TestCase):

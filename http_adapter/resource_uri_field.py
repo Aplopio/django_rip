@@ -1,7 +1,7 @@
 from http_adapter.default_url_generator import DefaultUrlReverser
 from http_adapter.url_types import UrlTypes
-from rip.schema.base_field import FieldTypes
-from rip.schema.string_field import StringField
+from rip.schema_fields.field_types import FieldTypes
+from rip.schema_fields.string_field import StringField
 
 
 class ResourceUriField(StringField):

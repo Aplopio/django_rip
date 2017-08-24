@@ -1,21 +1,25 @@
 import unittest
 
-from rip.schema.api_schema import ApiSchema
-from rip.schema.boolean_field import \
+from mock import MagicMock
+
+from rip.crud.crud_resource import CrudResource
+from rip.generic_steps.default_entity_actions import DefaultEntityActions
+from rip.schema_fields.boolean_field import \
     BooleanField
-from rip.schema.email_field import EmailField
-from rip.schema.string_field import StringField
+from rip.schema_fields.email_field import EmailField
+from rip.schema_fields.integer_field import IntegerField
+from rip.schema_fields.string_field import StringField
 
 
 class TestApiSchemaConstruction(unittest.TestCase):
     def setUp(self):
-        class TestSchema(ApiSchema):
+        class TestSchema(CrudResource):
             email = EmailField(max_length=50)
             char = StringField(required=True, max_length=100)
             boolean = BooleanField()
 
             class Meta:
-                schema_name = 'asdf'
+                resource_name = 'asdf'
 
         self.TestSchema = TestSchema
 
@@ -27,14 +31,42 @@ class TestApiSchemaConstruction(unittest.TestCase):
         self.assertIn('char', TestSchema._meta.fields)
         self.assertIn('boolean', TestSchema._meta.fields)
 
-    def test_attributes_should_be_set_on_instance(self):
-        test_schema_obj = self.TestSchema(email='a@b.com',
-                                          char='asdf',
-                                          boolean=True)
+    def test_should_inherit_meta_attrs(self):
+        new_resource_name = 'something'
+        expected_entity_actions = MagicMock()
 
-        self.assertEqual(test_schema_obj.email, 'a@b.com')
-        self.assertEqual(test_schema_obj.char, 'asdf')
-        self.assertTrue(test_schema_obj.boolean)
+        class NewSchema(self.TestSchema):
+            class Meta:
+                resource_name = new_resource_name
+                entity_actions_cls = expected_entity_actions
+
+        assert self.TestSchema.get_meta().resource_name == 'asdf'
+        assert NewSchema.get_meta().resource_name == new_resource_name
+
+        assert self.TestSchema.get_meta().entity_actions_cls == \
+            DefaultEntityActions
+        assert NewSchema.get_meta().entity_actions_cls == \
+               expected_entity_actions
+
+    def test_should_override_meta_attrs(self):
+        new_resource_name1 = 'something'
+        new_resource_name2 = 'something new'
+        expected_entity_actions1 = MagicMock()
+        expected_entity_actions2 = MagicMock()
+
+        class NewSchema(self.TestSchema):
+            class Meta:
+                resource_name = new_resource_name1
+                entity_actions_cls = expected_entity_actions1
+
+        class NewSchema2(NewSchema):
+            class Meta:
+                resource_name = new_resource_name2
+                entity_actions_cls = expected_entity_actions2
+
+        assert NewSchema2.get_meta().resource_name == new_resource_name2
+        assert NewSchema2.get_meta().entity_actions_cls == \
+            expected_entity_actions2
 
     def test_should_inherit_fields(self):
         class NewSchema(self.TestSchema):
@@ -42,3 +74,16 @@ class TestApiSchemaConstruction(unittest.TestCase):
 
         self.assertTrue('new_field' in NewSchema._meta.fields)
         self.assertTrue('new_field' in NewSchema._meta.declared_fields)
+
+    def test_should_override_inherited_fields(self):
+        expected_field = StringField(required=True, max_length=100)
+        expected_field1 = IntegerField(required=True)
+
+        class NewSchema(self.TestSchema):
+            email = expected_field
+
+        class NewSchema2(NewSchema):
+            email = expected_field1
+
+        assert NewSchema.get_meta().fields['email'] == expected_field
+        assert NewSchema2.get_meta().fields['email'] == expected_field1

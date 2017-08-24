@@ -2,6 +2,7 @@ from functools import partial
 
 from rip.crud.crud_actions import CrudActions
 from rip.crud.pipeline_composer import PipelineComposer
+from rip.crud.resource_schema_mixin import ResourceSchemaMixin
 from rip.generic_steps import error_types
 from rip.generic_steps.default_authentication import DefaultAuthentication
 from rip.generic_steps.default_authorization import DefaultAuthorization
@@ -17,41 +18,37 @@ from rip.generic_steps.default_schema_validation import DefaultSchemaValidation
 from rip.response import Response
 
 
-class CrudResource(object):
+class CrudResource(ResourceSchemaMixin):
     """
     Defines a Resource with CRUD actions implemented in as as series of steps
     in a pipeline
-    If your resource confirms to the basic CRUD actions in Rest,
-    then inherit from this class
+    If you want basic CRUD actions in Rest then inherit from this class
     """
 
-    schema_cls = None
-    # By default only allow Read actions. Subclasses are expected
-    # to override this to allow update/delete etc.
-    allowed_actions = [CrudActions.READ_DETAIL, CrudActions.READ_LIST]
-    filter_by_fields = {}
-    order_by_fields = []
-    aggregate_by_fields = []
-    default_offset = 0
-    default_limit = 20
+    # Field definitions go here.
+    # field1 = IntegerField()
+    # field2 = CharField()
+    # ...
 
-    request_authentication_cls = DefaultAuthentication
-    request_authorization_cls = DefaultAuthorization
-    request_params_validation_cls = DefaultRequestParamsValidation
-    schema_validation_cls = DefaultSchemaValidation
-    request_cleaner_cls = DefaultRequestCleaner
-    entity_actions_cls = DefaultEntityActions
-    entity_serializer_cls = DefaultEntitySerializer
-    post_action_hooks_cls = DefaultPostActionHooks
-    response_constructor_cls = DefaultResponseConstructor
+    class Meta:  # configuration of params for the resource
+        resource_name = None
+        # allow only read actions by default to avoid unintended errors
+        allowed_actions = [CrudActions.READ_DETAIL, CrudActions.READ_LIST]
+        filter_by_fields = {}
+        order_by_fields = []
+        aggregate_by_fields = []
+        default_offset = 0
+        default_limit = 20
 
-    def __new__(cls, *args, **kwargs):
-        if cls.schema_cls is None:
-            raise TypeError('Missing configuration property `schema_cls` \
-                             on Resource `{resource_name}`'
-                            .format(resource_name=cls.__name__))
-        obj = super(CrudResource, cls).__new__(cls, *args, **kwargs)
-        return obj
+        request_authentication_cls = DefaultAuthentication
+        request_authorization_cls = DefaultAuthorization
+        request_params_validation_cls = DefaultRequestParamsValidation
+        schema_validation_cls = DefaultSchemaValidation
+        request_cleaner_cls = DefaultRequestCleaner
+        entity_actions_cls = DefaultEntityActions
+        entity_serializer_cls = DefaultEntitySerializer
+        post_action_hooks_cls = DefaultPostActionHooks
+        response_constructor_cls = DefaultResponseConstructor
 
     def __init__(self):
         super(CrudResource, self).__init__()
@@ -78,7 +75,7 @@ class CrudResource(object):
         }
 
     def run_crud_action(self, action_name, request):
-        if action_name not in self.allowed_actions:
+        if action_name not in self.get_meta().allowed_actions:
             return Response(
                 is_success=False, reason=error_types.MethodNotAllowed)
         request.context_params['crud_action'] = action_name
@@ -86,42 +83,31 @@ class CrudResource(object):
         return crud_pipeline(request)
 
     def get_request_authentication(self):
-        return self.request_authentication_cls(schema_cls=self.schema_cls)
+        return self.get_meta().request_authentication_cls(resource=self)
 
     def get_request_authorization(self):
-        return self.request_authorization_cls(schema_cls=self.schema_cls)
+        return self.get_meta().request_authorization_cls(resource=self)
 
     def get_request_params_validation(self):
-        return self.request_params_validation_cls(
-            schema_cls=self.schema_cls, filter_by_fields=self.filter_by_fields,
-            order_by_fields=self.order_by_fields,
-            aggregate_by_fields=self.aggregate_by_fields)
+        return self.get_meta().request_params_validation_cls(resource=self)
 
     def get_schema_validation(self):
-        return self.schema_validation_cls(
-            schema_cls=self.schema_cls)
+        return self.get_meta().schema_validation_cls(resource=self)
 
     def get_request_cleaner(self):
-        return self.request_cleaner_cls(schema_cls=self.schema_cls)
+        return self.get_meta().request_cleaner_cls(resource=self)
 
     def get_entity_actions(self):
-        return self.entity_actions_cls(
-            schema_cls=self.schema_cls, default_offset=self.default_offset,
-            default_limit=self.default_limit)
+        return self.get_meta().entity_actions_cls(resource=self)
 
     def get_entity_serializer(self):
-        return self.entity_serializer_cls(
-            schema_cls=self.schema_cls,
-            default_limit=self.default_limit,
-            default_offset=self.default_offset)
+        return self.get_meta().entity_serializer_cls(resource=self)
 
     def get_post_action_hooks(self):
-        return self.post_action_hooks_cls(
-            schema_cls=self.schema_cls)
+        return self.get_meta().post_action_hooks_cls(resource=self)
 
     def get_response_constructor(self):
-        return self.response_constructor_cls(
-            schema_cls=self.schema_cls)
+        return self.get_meta().response_constructor_cls(resource=self)
 
     def get_read_detail_pipeline(self):
         read_detail_pipeline = [
@@ -240,4 +226,3 @@ class CrudResource(object):
 
         return PipelineComposer(
             name=CrudActions.GET_AGGREGATES, pipeline=aggregates_pipeline)
-

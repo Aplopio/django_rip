@@ -1,8 +1,8 @@
-from rip.schema.base_field import \
+from rip.schema_fields.base_field import \
     BaseField
-from rip.schema.default_field_value import \
+from rip.schema_fields.default_field_value import \
     DEFAULT_FIELD_VALUE
-from rip.schema.validation_result import \
+from rip.schema_fields.validation_result import \
     ValidationResult
 
 

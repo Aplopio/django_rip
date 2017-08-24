@@ -1,25 +1,27 @@
 import unittest
+
 from mock import MagicMock
+
+from rip.crud.crud_resource import CrudResource
 from rip.generic_steps import filter_operators
 from rip.generic_steps.default_request_params_validation import \
     DefaultRequestParamsValidation
-from rip.schema.api_schema import ApiSchema
-from rip.schema.string_field import StringField
+from rip.schema_fields.string_field import StringField
 
 
 class TestEntityActionsReadDetail(unittest.TestCase):
 
     def setUp(self):
 
-        class TestSchema(ApiSchema):
+        class TestResource(CrudResource):
             f1 = StringField()
-        
-        self.filter_by_fields = {
-            'f1': (filter_operators.EQUALS, filter_operators.GT)}
+
+            class Meta:
+                filter_by_fields = {'f1': (filter_operators.EQUALS,
+                                           filter_operators.GT)}
+
         self.request_params_validator = DefaultRequestParamsValidation(
-            schema_cls=TestSchema, filter_by_fields=self.filter_by_fields,
-            order_by_fields=[], aggregate_by_fields=[]
-        )
+            resource=TestResource())
 
     def test_should_fail_for_unallowed_filter_type(self):
         request = MagicMock()

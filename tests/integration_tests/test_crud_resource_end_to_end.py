@@ -5,13 +5,9 @@ from mock import MagicMock
 from http_adapter.django_crud_resource import DjangoResource
 from http_adapter.url_types import UrlTypes
 from rip.generic_steps.default_entity_actions import DefaultEntityActions
-from rip.schema.api_schema import ApiSchema
-from rip.schema.string_field import StringField
+from rip.schema_fields.string_field import StringField
 import os
 os.environ['DJANGO_SETTINGS_MODULE'] = 'tests.test_settings'
-
-class DummySchema(ApiSchema):
-    name = StringField(required=True)
 
 
 class DummyEntityActions(DefaultEntityActions):
@@ -25,8 +21,10 @@ class DummyEntityActions(DefaultEntityActions):
 
 
 class DummyViewResource(DjangoResource):
-    schema_cls = DummySchema
-    entity_actions_cls = DummyEntityActions
+    name = StringField(required=True)
+
+    class Meta:
+        entity_actions_cls = DummyEntityActions
 
 
 class DummyUser(object):

@@ -1,6 +1,6 @@
 import unittest
-from rip.schema.url_field import UrlField
-from rip.schema.default_field_value import \
+from rip.schema_fields.url_field import UrlField
+from rip.schema_fields.default_field_value import \
     DEFAULT_FIELD_VALUE
 
 

@@ -1,6 +1,6 @@
 import unittest
-from rip.schema.boolean_field import BooleanField
-from rip.schema.default_field_value import DEFAULT_FIELD_VALUE
+from rip.schema_fields.boolean_field import BooleanField
+from rip.schema_fields.default_field_value import DEFAULT_FIELD_VALUE
 
 
 class TestValidateBooleanField(unittest.TestCase):

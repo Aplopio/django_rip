@@ -1,4 +1,4 @@
-from rip.schema.base_field import \
+from rip.schema_fields.base_field import \
     BaseField
 
 

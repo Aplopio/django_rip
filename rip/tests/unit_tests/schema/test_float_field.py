@@ -3,7 +3,7 @@
 import unittest
 from decimal import Decimal
 
-from rip.schema.float_field import FloatField
+from rip.schema_fields.float_field import FloatField
 
 
 class TestFloatField(unittest.TestCase):

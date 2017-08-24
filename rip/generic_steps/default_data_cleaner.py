@@ -4,11 +4,11 @@ from rip.generic_steps import filter_operators
 
 class DefaultRequestCleaner(object):
 
-    def __init__(self, schema_cls):
-        self.schema_cls = schema_cls
+    def __init__(self, resource):
+        self.resource = resource
 
     def _get_attribute_name(self, field_name):
-        fields = self.schema_cls._meta.fields
+        fields = self.resource.all_fields()
         if field_name not in fields:
             cleaned_field_name = field_name
         else:
@@ -17,17 +17,17 @@ class DefaultRequestCleaner(object):
         return cleaned_field_name
 
     def _get_filter_value(self, request, field_name, value, filter_type):
-        from rip.schema.schema_field import SchemaField
-        from rip.schema.list_field import ListField
+        from rip.schema_fields.schema_field import SchemaField
+        from rip.schema_fields.list_field import ListField
 
-        schema_cls = self.schema_cls
+        resource_cls = self.resource.__class__
         field_name_split = field_name.split(filter_operators.OPERATOR_SEPARATOR)
         cleaned_field_value = value
         for part in field_name_split:
-            fields = schema_cls._meta.fields
+            fields = resource_cls.all_fields()
             field_obj = fields.get(part)
             if isinstance(field_obj, SchemaField):
-                schema_cls = field_obj.of_type
+                resource_cls = field_obj.of_type
                 continue
 
             if field_obj is not None:
@@ -91,11 +91,11 @@ class DefaultRequestCleaner(object):
 
     def _get_fields_to_clean(self, request, data):
         action = request.context_params['crud_action']
-        non_read_only_fields = self.schema_cls.non_readonly_fields()
+        non_read_only_fields = self.resource.non_readonly_fields()
 
         if action in (CrudActions.UPDATE_DETAIL,
                       CrudActions.CREATE_OR_UPDATE_DETAIL):
-            updatable_fields = self.schema_cls.updatable_fields()
+            updatable_fields = self.resource.updatable_fields()
             field_names = set(data).intersection(set(updatable_fields))
         elif action == CrudActions.CREATE_DETAIL:
             field_names = set(data).intersection(set(non_read_only_fields))

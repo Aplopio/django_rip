@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
-from rip.schema.default_field_value import DEFAULT_FIELD_VALUE
+from rip.schema_fields.default_field_value import DEFAULT_FIELD_VALUE
 
-from rip.schema.base_field import BaseField, FieldTypes
-from rip.schema.validation_result import ValidationResult
+from rip.schema_fields.base_field import BaseField
+from rip.schema_fields.field_types import FieldTypes
+from rip.schema_fields.validation_result import ValidationResult
 
 
 class ChoiceField(BaseField):
@@ -26,7 +27,7 @@ class ChoiceField(BaseField):
         True
 
         >>>choice_field = ChoiceField(choices=[1, 2], required=True)
-        >>>from rip.schema.default_field_value import DEFAULT_FIELD_VALUE
+        >>>from rip.schema_fields.default_field_value import DEFAULT_FIELD_VALUE
         >>>result = choice_field.validate(request=None, value=DEFAULT_FIELD_VALUE)
         >>>assert result.is_success
         False
