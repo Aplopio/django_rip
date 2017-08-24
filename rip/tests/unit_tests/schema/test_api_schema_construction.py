@@ -26,10 +26,10 @@ class TestApiSchemaConstruction(unittest.TestCase):
     def test_should_generate_fields_attribute(self):
         TestSchema = self.TestSchema
 
-        self.assertTrue(hasattr(TestSchema._meta, 'fields'))
-        self.assertIn('email', TestSchema._meta.fields)
-        self.assertIn('char', TestSchema._meta.fields)
-        self.assertIn('boolean', TestSchema._meta.fields)
+        self.assertTrue(hasattr(TestSchema._meta, '_all_fields'))
+        self.assertIn('email', TestSchema.all_fields())
+        self.assertIn('char', TestSchema.all_fields())
+        self.assertIn('boolean', TestSchema.all_fields())
 
     def test_should_inherit_meta_attrs(self):
         new_resource_name = 'something'
@@ -72,8 +72,8 @@ class TestApiSchemaConstruction(unittest.TestCase):
         class NewSchema(self.TestSchema):
             new_field = EmailField(max_length=20)
 
-        self.assertTrue('new_field' in NewSchema._meta.fields)
-        self.assertTrue('new_field' in NewSchema._meta.declared_fields)
+        self.assertTrue('new_field' in NewSchema.all_fields())
+        self.assertTrue('new_field' in NewSchema._meta._declared_fields)
 
     def test_should_override_inherited_fields(self):
         expected_field = StringField(required=True, max_length=100)
@@ -85,5 +85,5 @@ class TestApiSchemaConstruction(unittest.TestCase):
         class NewSchema2(NewSchema):
             email = expected_field1
 
-        assert NewSchema.get_meta().fields['email'] == expected_field
-        assert NewSchema2.get_meta().fields['email'] == expected_field1
+        assert NewSchema.all_fields()['email'] == expected_field
+        assert NewSchema2.all_fields()['email'] == expected_field1
