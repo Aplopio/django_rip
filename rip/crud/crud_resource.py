@@ -248,7 +248,7 @@ class CustomDataMixin(object):
     def update_entity(self, request, entity, **update_params):
         raise NotImplementedError
 
-    def create_entity(self, request, entity, **data):
+    def create_entity(self, request, **data):
         raise NotImplementedError
 
     def get_entity_list(self, request, limit, offset, **kwargs):
