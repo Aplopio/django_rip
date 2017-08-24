@@ -226,3 +226,36 @@ class CrudResource(ResourceSchemaMixin):
 
         return PipelineComposer(
             name=CrudActions.GET_AGGREGATES, pipeline=aggregates_pipeline)
+
+
+class CustomDataMixin(object):
+    """
+    Provides hooks to manage CRUD operations for Custom data.
+
+    If a user does not have access to the data they requested for,
+    you can return error_types.ActionForbidden from these data hooks.
+
+    Similarly if the object the user has requested for is not found,
+    you can return error_types.ObjectNotFound
+    """
+
+    def get_aggregates(self, request, **request_filters):
+        raise NotImplementedError
+
+    def get_entity(self, request, **request_filters):
+        raise NotImplementedError
+
+    def update_entity(self, request, entity, **update_params):
+        raise NotImplementedError
+
+    def create_entity(self, request, entity, **data):
+        raise NotImplementedError
+
+    def get_entity_list(self, request, limit, offset, **kwargs):
+        raise NotImplementedError
+
+    def get_total_count(self, request, **kwargs):
+        raise NotImplementedError
+
+    def delete_entity(self, entity):
+        raise NotImplementedError

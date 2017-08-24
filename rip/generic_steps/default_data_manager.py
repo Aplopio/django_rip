@@ -1,5 +1,5 @@
 from rip.generic_steps import error_types
-from rip.response import Response
+from rip.response import Response, NotFoundResponse, ActionForbiddenResponse
 
 
 class DefaultDataManager(object):
@@ -40,8 +40,12 @@ class DefaultDataManager(object):
         list_filters.pop('order_by', None)
         list_filters.update(**self.get_limit_and_offset(request_filters))
         entity_list_getter = get_entity_list_fn or self.get_entity_list
-        entities = entity_list_getter(request, **list_filters)
-        request.context_params[self.list_property_name] = entities
+        entities_response = entity_list_getter(request, **list_filters)
+
+        if entities_response is error_types.ActionForbidden:
+            return ActionForbiddenResponse()
+
+        request.context_params[self.list_property_name] = entities_response
 
         # offset and limit don't make sense to get aggregates
         count_filters = request_filters.copy()
@@ -50,10 +54,13 @@ class DefaultDataManager(object):
         count_filters.pop('order_by', None)
         total_count_getter = get_total_count_fn or \
                              self.get_entity_list_total_count
-        total_count = total_count_getter(request, **count_filters)
+        total_count_response = total_count_getter(request, **count_filters)
+
+        if total_count_response is error_types.ActionForbidden:
+            return ActionForbiddenResponse()
 
         request.context_params[self.entity_list_total_count_property_name] = \
-            total_count
+            total_count_response
         return request
 
     def read_detail(self, request, get_entity_fn=None):
@@ -67,12 +74,14 @@ class DefaultDataManager(object):
             self.request_filters_property, {})
 
         entity_getter = get_entity_fn or self.get_entity
-        entity = entity_getter(request, **request_filters)
-        if entity is None:
-            return Response(is_success=False, reason=error_types.ObjectNotFound)
+        entity_response = entity_getter(request, **request_filters)
 
-        request.context_params[self.detail_property_name] = entity
+        if entity_response in (error_types.ObjectNotFound, None):
+            return NotFoundResponse()
+        elif entity_response is error_types.ActionForbidden:
+            return ActionForbiddenResponse()
 
+        request.context_params[self.detail_property_name] = entity_response
         return request
 
     def update_detail(self, request, update_entity_fn=None):
@@ -85,9 +94,13 @@ class DefaultDataManager(object):
         entity = request.context_params[self.detail_property_name]
 
         entity_updater = update_entity_fn or self.update_entity
-        updated_entity = entity_updater(
+        entity_response = entity_updater(
                 request, entity, **request.context_params['data'])
-        request.context_params[self.updated_property_name] = updated_entity
+
+        if entity_response is error_types.ActionForbidden:
+            return ActionForbiddenResponse()
+
+        request.context_params[self.updated_property_name] = entity_response
         return request
 
     def delete_detail(self, request, delete_entity_fn=None):
@@ -99,7 +112,10 @@ class DefaultDataManager(object):
         """
         entity = request.context_params[self.detail_property_name]
         entity_deleter = delete_entity_fn or self.delete_entity
-        entity_deleter(request, entity)
+        entity_response = entity_deleter(request, entity)
+        if entity_response is error_types.ActionForbidden:
+            return ActionForbiddenResponse()
+
         return request
 
     def create_detail(self, request, create_entity_fn=None):
@@ -110,16 +126,26 @@ class DefaultDataManager(object):
         :return: request if successful with entities set on request
         """
         entity_creator = create_entity_fn or self.create_entity
-        entity = entity_creator(request, **request.context_params['data'])
-        request.context_params[self.detail_property_name] = entity
+        entity_response = entity_creator(
+            request, **request.context_params['data'])
+
+        if entity_response is error_types.ActionForbidden:
+            return ActionForbiddenResponse()
+
+        request.context_params[self.detail_property_name] = entity_response
         return request
 
     def get_aggregates(self, request, get_aggregates_fn=None):
         request_filters = request.context_params[self.request_filters_property]
         request_filters['aggregate_by'] = request_filters.get('aggregate_by', [])
         aggregates_getter = get_aggregates_fn or self.get_entity_aggregates
-        aggregates = aggregates_getter(request, **request_filters)
-        request.context_params[self.get_aggregates_property_name] = aggregates
+        aggregates_response = aggregates_getter(request, **request_filters)
+
+        if aggregates_response is error_types.ActionForbidden:
+            return ActionForbiddenResponse()
+
+        request.context_params[self.get_aggregates_property_name] = \
+            aggregates_response
         return request
 
     def update_entity(self, request, entity, **update_params):
@@ -132,11 +158,11 @@ class DefaultDataManager(object):
         raise NotImplementedError
 
     def get_entity(self, request, **kwargs):
-        kwargs['limit'] = 1
+        kwargs['limit'] = 2
         kwargs['offset'] = 0
         entities = self.get_entity_list(request, **kwargs)
         if len(entities) == 0:
-            return None
+            return error_types.ObjectNotFound
         elif len(entities) > 1:
             raise error_types.MultipleObjectsFound()
         else:

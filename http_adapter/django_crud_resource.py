@@ -4,7 +4,7 @@ from http_adapter.default_http_response_builder import \
 from http_adapter.default_rip_action_resolver import DefaultRipActionResolver
 from http_adapter.default_rip_request_builder import DefaultRipRequestBuilder
 from model_adapter.model_data_manager import ModelDataManager
-from rip.crud.crud_resource import CrudResource
+from rip.crud.crud_resource import CrudResource, CustomDataMixin
 from rip.generic_steps import error_types
 from rip.response import Response
 from rip.schema_fields.field_types import FieldTypes
@@ -70,3 +70,7 @@ class DjangoModelResource(DjangoResource):
     def get_data_manager(self):
         return self._meta.data_manager_cls(
             resource=self)
+
+
+class CustomDataResource(DjangoResource, CustomDataMixin):
+    pass
