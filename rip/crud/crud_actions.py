@@ -1,3 +1,5 @@
+
+
 class CrudActions(object):
     GET_AGGREGATES = 'get_aggregates'
     READ_LIST = 'read_list'
@@ -23,3 +25,8 @@ class CrudActions(object):
 def _build_reverse_dictionary(cls):
     return {v: k for k, v in cls.__dict__.items() if
             k != '_reverse_dictionary'}
+
+READ_ACTIONS = [CrudActions.READ_DETAIL, CrudActions.READ_LIST]
+READ_WRITE_ACTIONS = [CrudActions.READ_DETAIL, CrudActions.READ_LIST,
+                      CrudActions.DELETE_DETAIL, CrudActions.CREATE_DETAIL,
+                      CrudActions.UPDATE_DETAIL]

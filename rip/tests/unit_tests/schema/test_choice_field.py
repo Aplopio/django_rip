@@ -2,7 +2,7 @@
 
 from unittest.case import TestCase
 
-from rip.schema_fields.fields import ChoiceField
+from rip.schema_fields.choice_field import ChoiceField
 from rip.schema_fields.default_field_value import DEFAULT_FIELD_VALUE
 
 

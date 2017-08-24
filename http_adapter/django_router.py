@@ -1,5 +1,4 @@
 from http_adapter.default_url_generator import DefaultUrlGenerator
-from django.template.defaultfilters import pluralize
 
 
 class DefaultRouter(object):
@@ -25,11 +24,6 @@ class DefaultRouter(object):
             registered at the url_pattern
         :return: None
         """
-        if resource_cls.resource_name is None:
-            resource_name = resource_cls.__name__.lower().replace(
-                'resource', '')
-            plural_resource_name = '{}{}'.format(resource_name, pluralize(2))
-            resource_cls.resource_name = plural_resource_name
 
         url_pattern = url_pattern or resource_cls.resource_name
 

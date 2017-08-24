@@ -1,6 +1,6 @@
 from functools import partial
 
-from rip.crud.crud_actions import CrudActions
+from rip.crud.crud_actions import CrudActions, READ_ACTIONS
 from rip.crud.pipeline_composer import PipelineComposer
 from rip.crud.resource_schema_mixin import ResourceSchemaMixin
 from rip.generic_steps import error_types
@@ -33,7 +33,7 @@ class CrudResource(ResourceSchemaMixin):
     class Meta:  # configuration of params for the resource
         resource_name = None
         # allow only read actions by default to avoid unintended errors
-        allowed_actions = [CrudActions.READ_DETAIL, CrudActions.READ_LIST]
+        allowed_actions = READ_ACTIONS
         filter_by_fields = {}
         order_by_fields = []
         aggregate_by_fields = []
