@@ -1,7 +1,7 @@
 from django.db.models import Count
 
 
-class CrudRepo(object):
+class ModelRepo(object):
     def __init__(self, model_cls):
         self.model_cls = model_cls
 

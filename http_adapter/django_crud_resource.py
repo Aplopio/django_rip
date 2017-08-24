@@ -3,7 +3,7 @@ from http_adapter.default_http_response_builder import \
     DefaultHttpResponseBuilder
 from http_adapter.default_rip_action_resolver import DefaultRipActionResolver
 from http_adapter.default_rip_request_builder import DefaultRipRequestBuilder
-from model_adapter.model_entity_actions import ModelEntityActions
+from model_adapter.model_data_manager import ModelDataManager
 from rip.crud.crud_resource import CrudResource
 from rip.generic_steps import error_types
 from rip.response import Response
@@ -64,9 +64,9 @@ class DjangoModelResource(DjangoResource):
     id = IntegerField(field_type=FieldTypes.IMMUTABLE, nullable=False)
 
     class Meta:
-        entity_actions_cls = ModelEntityActions
+        data_manager_cls = ModelDataManager
         model_cls = None
 
-    def get_entity_actions(self):
-        return self._meta.entity_actions_cls(
+    def get_data_manager(self):
+        return self._meta.data_manager_cls(
             resource=self)

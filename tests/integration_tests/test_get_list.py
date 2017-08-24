@@ -10,13 +10,13 @@ class ListCrudResourceIntegrationTest(PersonResourceBaseTestCase):
 
     def test_should_get_list(self):
         resource = PersonResource()
-        entity_actions = resource.entity_actions
+        data_manager = resource.data_manager
         expected_entities = [
             PersonEntity(name='John', email=None, phone='1234',
                          address={'city': 'bangalore', 'country': 'India'},
                          nick_names=['Johnny', 'Papa'])]
-        entity_actions.get_entity_list.return_value = expected_entities
-        entity_actions.get_entity_list_total_count.return_value = 1
+        data_manager.get_entity_list.return_value = expected_entities
+        data_manager.get_entity_list_total_count.return_value = 1
         request = request_factory.get_request(user=object())
 
         response = resource.run_crud_action(CrudActions.READ_LIST, request)
@@ -29,13 +29,13 @@ class ListCrudResourceIntegrationTest(PersonResourceBaseTestCase):
 
     def test_should_get_list_fields_only(self):
         resource = PersonResource()
-        entity_actions = resource.entity_actions
+        data_manager = resource.data_manager
         expected_entities = [
             PersonEntity(name='John', email=None, phone='1234',
                          address={'city': 'bangalore', 'country': 'India'},
                          nick_names=['Johnny', 'Papa'], company=None)]
-        entity_actions.get_entity_list.return_value = expected_entities
-        entity_actions.get_entity_list_total_count.return_value = 1
+        data_manager.get_entity_list.return_value = expected_entities
+        data_manager.get_entity_list_total_count.return_value = 1
         request = request_factory.get_request(user=object())
 
         response = resource.run_crud_action(CrudActions.READ_LIST, request)
@@ -46,13 +46,13 @@ class ListCrudResourceIntegrationTest(PersonResourceBaseTestCase):
 
     def test_should_fail_ordering_for_unallowed_field_ordering(self):
         resource = PersonResource()
-        entity_actions = resource.entity_actions
+        data_manager = resource.data_manager
         expected_entities = [PersonEntity(
             name='John', email=None, phone='1234',
             address={'city': 'bangalore', 'country': 'India'}, company=None)]
 
-        entity_actions.get_entity_list.return_value = expected_entities
-        entity_actions.get_entity_list_total_count.return_value = 1
+        data_manager.get_entity_list.return_value = expected_entities
+        data_manager.get_entity_list_total_count.return_value = 1
         user = object()
         request = request_factory.get_request(user=user, request_params={
             'order_by': 'email'})
@@ -65,14 +65,14 @@ class ListCrudResourceIntegrationTest(PersonResourceBaseTestCase):
 
     def test_should_order_by_allowed_field(self):
         resource = PersonResource()
-        entity_actions = resource.entity_actions
+        data_manager = resource.data_manager
         expected_entities = [PersonEntity(
             name='John', email=None, phone='1234',
             address={'city': 'bangalore', 'country': 'India'},
             company=None, nick_names=['Johnny', 'Papa'])]
 
-        entity_actions.get_entity_list.return_value = expected_entities
-        entity_actions.get_entity_list_total_count.return_value = 1
+        data_manager.get_entity_list.return_value = expected_entities
+        data_manager.get_entity_list_total_count.return_value = 1
         user = object()
         request = request_factory.get_request(user=user, request_params={
             'order_by': 'name'})
@@ -82,15 +82,15 @@ class ListCrudResourceIntegrationTest(PersonResourceBaseTestCase):
 
     def test_should_filter_by_list_field(self):
         resource = PersonResource()
-        entity_actions = resource.entity_actions
+        data_manager = resource.data_manager
         expected_entities = [PersonEntity(name='John', email=None, phone='1234',
                                           address={'city': 'bangalore',
                                                    'country': 'India'},
                                           company=None,
                                           nick_names=['Johnny', 'Papa'])]
 
-        entity_actions.get_entity_list.return_value = expected_entities
-        entity_actions.get_entity_list_total_count.return_value = 1
+        data_manager.get_entity_list.return_value = expected_entities
+        data_manager.get_entity_list_total_count.return_value = 1
         user = object()
         request = request_factory.get_request(user=user, request_params={
             'nick_names': 'Johnny'})

@@ -46,7 +46,7 @@ class DefaultEntitySerializer(object):
 
     def serialize_entity(self, request, entity):
         """
-        @param: entity -> entity object returned by the entity_actions step
+        @param: entity -> entity object returned by the data_manager step
         """
         attribute_getter = self.attribute_getter_cls(entity=entity)
         serialized = {}
