@@ -45,10 +45,11 @@ urlpatterns = [
 ]
 ```
 This makes TweetResource available at /api/v1/tweets/{id}
+
 ---
 
 ## Custom data / Custom authorization
-It is easy to get custom data or add custom permission checks to see if the user has access the the data they are requesting.
+It is easy to get custom data or add custom permission checks to a resource. Lets see an example below.
 
 ```python
 from django_rip import fields
