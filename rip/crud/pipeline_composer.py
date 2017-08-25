@@ -20,7 +20,7 @@ class PipelineComposer(object):
 
         for counter, handler in enumerate(pipeline):
             response = handler(request=request)
-            assert type(response) in [Request, Response], \
+            assert isinstance(response, (Request, Response)), \
                 "handle_request of {handler_name} handler did not return a request or a response object".format(
                     handler_name=str(handler))
             if isinstance(response, Response):

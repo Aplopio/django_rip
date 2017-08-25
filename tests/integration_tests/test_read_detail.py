@@ -43,7 +43,7 @@ class GetCrudResourceIntegrationTest(PersonResourceBaseTestCase):
 
         assert response.is_success
         data_manager.get_entity_list.assert_called_once_with(
-            request, name='bar', limit=1, offset=0)
+            request, name='bar', limit=2, offset=0)
 
     def test_should_get_none_for_nullable_schema_field(self):
         resource = PersonResource()
