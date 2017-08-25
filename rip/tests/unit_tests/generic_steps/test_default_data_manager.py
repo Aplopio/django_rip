@@ -83,7 +83,7 @@ class TestEntityActionsGetEntity(unittest.TestCase):
 
         entity = data_manager.get_entity(request=None)
 
-        self.assertEqual(entity, error_types.ObjectNotFound)
+        self.assertEqual(entity, None)
 
 
 class TestEntityActionsReadList(unittest.TestCase):
