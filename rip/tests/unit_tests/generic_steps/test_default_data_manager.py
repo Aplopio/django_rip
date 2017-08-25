@@ -2,6 +2,7 @@ import unittest
 
 from mock import MagicMock
 
+from rip.generic_steps import error_types
 from rip.generic_steps.default_data_manager import \
     DefaultDataManager
 from rip.generic_steps.error_types import ObjectNotFound, \
@@ -75,7 +76,6 @@ class TestEntityActionsGetEntity(unittest.TestCase):
 
         self.assertEqual(entity, expected_objs[0])
 
-
     def test_should_return_none(self):
         data_manager = DefaultDataManager(MagicMock())
         data_manager.get_entity_list = MagicMock()
@@ -83,7 +83,7 @@ class TestEntityActionsGetEntity(unittest.TestCase):
 
         entity = data_manager.get_entity(request=None)
 
-        self.assertEqual(entity, None)
+        self.assertEqual(entity, error_types.ObjectNotFound)
 
 
 class TestEntityActionsReadList(unittest.TestCase):
