@@ -37,7 +37,7 @@ from django_rip.http_adapter.django_router import DefaultRouter
 router = DefaultRouter(url_prefix='api/v1')
 router.register(TweetResource)
 
---- urls.py
+- urls.py
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
