@@ -162,7 +162,7 @@ class DefaultDataManager(object):
         kwargs['offset'] = 0
         entities = self.get_entity_list(request, **kwargs)
         if len(entities) == 0:
-            return error_types.ObjectNotFound
+            return None
         elif len(entities) > 1:
             raise error_types.MultipleObjectsFound()
         else:
