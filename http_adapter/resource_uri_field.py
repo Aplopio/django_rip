@@ -1,4 +1,4 @@
-from http_adapter.default_url_generator import DefaultUrlReverser
+from http_adapter.default_url_generator import CachedUrlReverser
 from http_adapter.url_types import UrlTypes
 from rip.schema_fields.field_types import FieldTypes
 from rip.schema_fields.string_field import StringField
@@ -12,7 +12,7 @@ class ResourceUriField(StringField):
                  url_type=UrlTypes.detail_url,
                  field_type=FieldTypes.READONLY,
                  required=False, nullable=False,
-                 url_reverser_cls=DefaultUrlReverser):
+                 url_reverser_cls=CachedUrlReverser):
         """
         :param resource_name: Name of a Resource Class that has been
         registered with a router

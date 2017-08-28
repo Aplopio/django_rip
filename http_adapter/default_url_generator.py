@@ -32,11 +32,11 @@ class DefaultUrlReverser(object):
 class CachedUrlReverser(DefaultUrlReverser):
     def __init__(self, resource_name, url_type):
         super(CachedUrlReverser, self).__init__(resource_name, url_type)
+        self.url_pattern = None
         """
         ex url_pattern for detail = '/api/v1/jobs/{job_id}/resource_name/{id}'
         ex url_pattern for list = 'api/v1/jobs/{job_id}/resource_name'
         """
-        self.url_pattern = None
 
     def _get_url_pattern(self, list_of_value):
         """
