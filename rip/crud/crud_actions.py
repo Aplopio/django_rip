@@ -30,3 +30,4 @@ READ_ACTIONS = [CrudActions.READ_DETAIL, CrudActions.READ_LIST]
 READ_WRITE_ACTIONS = [CrudActions.READ_DETAIL, CrudActions.READ_LIST,
                       CrudActions.DELETE_DETAIL, CrudActions.CREATE_DETAIL,
                       CrudActions.UPDATE_DETAIL]
+ALL_ACTIONS = READ_WRITE_ACTIONS + [CrudActions.GET_AGGREGATES]
