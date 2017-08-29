@@ -1,4 +1,4 @@
-from model_adapter.crud_repo import ModelRepo
+from model_adapter.model_repo import ModelRepo
 from rip.generic_steps.default_data_manager import DefaultDataManager
 
 

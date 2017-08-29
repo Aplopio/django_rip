@@ -3,7 +3,7 @@ from http_adapter.default_http_response_builder import \
     DefaultHttpResponseBuilder
 from http_adapter.default_rip_action_resolver import DefaultRipActionResolver
 from http_adapter.default_rip_request_builder import DefaultRipRequestBuilder
-from model_adapter.crud_repo import ModelRepo
+from model_adapter.model_repo import ModelRepo
 from model_adapter.model_data_manager import ModelDataManager
 from rip.crud.crud_resource import CrudResource, CustomDataMixin
 from rip.generic_steps import error_types

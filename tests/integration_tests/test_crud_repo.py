@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
-from model_adapter.crud_repo import ModelRepo
+from model_adapter.model_repo import ModelRepo
 
 """
 class TestModelEntityActions(TestCase):
