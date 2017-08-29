@@ -27,10 +27,6 @@ class DefaultEntityAttributeManager(object):
         return val
 
     def get_attribute(self, field_name):
-        """
-        todo: Add support for a.b kind of access for nested access to
-        fields in an entity
-        """
         if isinstance(field_name, list):
             return [self._get_from_dict_or_object(f)
                     for f in field_name]

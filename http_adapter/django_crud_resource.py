@@ -13,8 +13,6 @@ from rip.schema_fields.integer_field import IntegerField
 
 
 class DjangoResource(View, CrudResource):
-    # todo: override the EntityActions to allow fetching Data from Models
-
     # resource_name is used by the router to construct the url name when
     # adding to urls `{resource_name}-detail`, `{resource_name}-list` and
     # `{resource_name}-aggregates` will be the url names.

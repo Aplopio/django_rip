@@ -28,6 +28,10 @@ class DefaultRouter(object):
         url_pattern = url_pattern or resource_name
 
         full_url_pattern = self._get_full_url_pattern(url_pattern)
+        if '{id}' in full_url_pattern:
+            raise ValueError('{id} will be added to the url pattern '
+                             'automatically. Please provide a pattern without '
+                             'an {id} parameter')
         if full_url_pattern in self.registry:
             raise ValueError(
                 "`url_pattern` {url_pattern} already registered for "

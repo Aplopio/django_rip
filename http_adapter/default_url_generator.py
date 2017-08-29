@@ -75,6 +75,10 @@ class DefaultUrlGenerator(object):
         self.url_construction_snippet = r'(?P<{url_kwarg}>[0-9a-zA-Z_-]+)'
 
     def _generate_url_name(self, url_type):
+        """
+        If you decide to override this function, make appropriate
+        changes in UrlReverser as well
+        """
         return '{}-{}'.format(
             self.resource_cls.get_meta().resource_name, url_type)
 
