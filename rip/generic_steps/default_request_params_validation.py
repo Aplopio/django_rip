@@ -1,4 +1,6 @@
 import collections
+
+from rip.crud.crud_actions import CrudActions
 from rip.generic_steps import error_types, filter_operators
 from rip.response import Response
 
@@ -32,8 +34,12 @@ class DefaultRequestParamsValidation(object):
         aggregate_by_params = request_params.get('aggregate_by', [])
         aggregate_by_params = filter_operators.transform_to_list(
             aggregate_by_params)
-
         validation_errors = {}
+
+        if len(aggregate_by_params) == 0:
+            validation_errors.update(
+                    {'__all__': "Aggregating requires a field"})
+
         for field_name in aggregate_by_params:
             if field_name not in self.aggregate_by_fields:
                 validation_errors.update(
@@ -65,12 +71,14 @@ class DefaultRequestParamsValidation(object):
 
     def validate_request_params(self, request):
         request_params = request.request_params
+        crud_action = request.context_params['crud_action']
         validation_errors = self._validate_fields(request_params)
-        if validation_errors is None:
+        if validation_errors is None and crud_action == CrudActions.READ_LIST:
             validation_errors = self.validate_order_by(request_params)
-        if validation_errors is None:
+        if validation_errors is None and \
+                crud_action == CrudActions.GET_AGGREGATES:
             validation_errors = self.validate_aggregate_by(request_params)
-        if validation_errors is None:
+        if validation_errors is None and crud_action == CrudActions.READ_LIST:
             validation_errors = self.validate_limit(request_params) or \
                                 self.validate_offset(request_params)
 

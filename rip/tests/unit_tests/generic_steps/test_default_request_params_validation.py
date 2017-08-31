@@ -2,6 +2,7 @@ import unittest
 
 from mock import MagicMock
 
+from rip.crud.crud_actions import CrudActions
 from rip.crud.crud_resource import CrudResource
 from rip.generic_steps import filter_operators
 from rip.generic_steps.default_request_params_validation import \
@@ -25,7 +26,8 @@ class TestEntityActionsReadDetail(unittest.TestCase):
 
     def test_should_fail_for_unallowed_filter_type(self):
         request = MagicMock()
-        request.context_params = dict(request_filters={'f1__in': 1})
+        request.context_params = dict(request_filters={'f1__in': 1},
+                                      crud_action=CrudActions.READ_LIST)
 
         response = self.request_params_validator.validate_request_params(
             request)
