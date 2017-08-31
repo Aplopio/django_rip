@@ -19,7 +19,8 @@ class DefaultHttpResponseBuilder(object):
             GET=200,
             PATCH=202,
             POST=201,
-            DELETE=204
+            DELETE=204,
+            PUT=200
         )
         self.http_response_mapping = {
             error_types.ObjectNotFound: HttpResponseNotFound,
