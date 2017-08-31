@@ -1,95 +1,96 @@
-from rip.crud.crud_actions import CrudActions
-from rip.generic_steps import error_types
-from tests import request_factory
+import json
+
+from django.conf.urls import url, include
+from django.core import urlresolvers
+from django.test import override_settings
+
 from tests.integration_tests.person_base_test_case import \
     PersonResourceBaseTestCase
-from tests.integration_tests.person_resource import PersonResource, PersonEntity
+from tests.integration_tests.resources_for_testing import \
+    PersonEntity, PersonDataManager, router
+
+urlpatterns = [
+    url(r'^hello/', include(router.urls)),
+]
 
 
+@override_settings(ROOT_URLCONF=__name__)
 class PutCrudResourceIntegrationTest(PersonResourceBaseTestCase):
     def test_should_update_fields(self):
-        resource = PersonResource()
-        data_manager = resource.data_manager
         expected_entity = PersonEntity(name='John', email="foo@bar.com",
                                        phone='1234',
                                        address={'city': 'bangalore',
                                                 'country': 'India'},
                                        company=None,
                                        nick_names=['Johnny', 'Papa'])
+        PersonDataManager.get_entity_list.return_value = [expected_entity]
+        PersonDataManager.update_entity.return_value = expected_entity
+        PersonDataManager.get_entity_list_total_count.return_value = 1
 
-        data_manager.get_entity_list.return_value = [expected_entity]
-        data_manager.update_entity.return_value = expected_entity
-        request = request_factory.get_request(user=object(),
-                                              data=expected_entity.__dict__)
+        response = self.client.put(
+            urlresolvers.reverse('person-detail', args=('John',)),
+            data=json.dumps(expected_entity.__dict__),
+            content_type="application/json")
 
-        response = resource.run_crud_action(
-            CrudActions.CREATE_OR_UPDATE_DETAIL, request)
-
-        assert response.is_success
+        assert response.status_code == 200
         expected_data = expected_entity.__dict__
-        assert response.data == expected_data
+        assert json.loads(response.content) == expected_data
 
         expected_update_kwargs = expected_data.copy()
         expected_update_kwargs.pop('phone')
         expected_update_kwargs['address'].pop('city')
-        data_manager.update_entity.assert_called_once_with(
-            request, expected_entity,
-            **expected_update_kwargs)
+        # assert readonly fields are ignored when calling update
+        call_args = PersonDataManager.update_entity.call_args[1]
+        assert call_args == expected_update_kwargs
 
     def test_success_when_nullable_fields_set_to_none(self):
-        resource = PersonResource()
-        data_manager = resource.data_manager
         expected_entity = PersonEntity(
-            name='John', email=None, phone='1234',address=None, company=None,
+            name='John', email=None, phone='1234', address=None, company=None,
             nick_names=['Johnny', 'Papa'])
 
-        data_manager.get_entity_list.return_value = [expected_entity]
-        data_manager.update_entity.return_value = expected_entity
-        request = request_factory.get_request(user=object(),
-                                              data=expected_entity.__dict__)
+        PersonDataManager.get_entity_list.return_value = [expected_entity]
+        PersonDataManager.update_entity.return_value = expected_entity
+        PersonDataManager.get_entity_list_total_count.return_value = 1
 
-        response = resource.run_crud_action(
-            CrudActions.CREATE_OR_UPDATE_DETAIL, request)
+        response = self.client.put(
+            urlresolvers.reverse('person-detail', args=('John',)),
+            data=json.dumps(expected_entity.__dict__),
+            content_type="application/json")
 
-        assert response.is_success
-        expected_data = expected_entity.__dict__
-        expected_data.update(email=None)
-        assert response.data == expected_data
+        assert response.status_code == 200
+        call_args = PersonDataManager.update_entity.call_args[1]
+        assert call_args['email'] is None
 
     def test_failure_when_required_fields_are_not_present(self):
-        resource = PersonResource()
-        data_manager = resource.data_manager
         expected_entity = PersonEntity(email=None,
                                        phone='1234',
                                        address=None, company=None,
                                        nick_names=['Johnny', 'Papa'])
+        PersonDataManager.get_entity_list.return_value = [expected_entity]
+        PersonDataManager.update_entity.return_value = expected_entity
+        PersonDataManager.get_entity_list_total_count.return_value = 1
 
-        data_manager.get_entity_list.return_value = [expected_entity]
-        data_manager.update_entity.return_value = expected_entity
-        request = request_factory.get_request(user=object(),
-                                              data=expected_entity.__dict__)
+        response = self.client.put(
+            urlresolvers.reverse('person-detail', args=('John',)),
+            data=json.dumps(expected_entity.__dict__),
+            content_type="application/json")
 
-        response = resource.run_crud_action(
-            CrudActions.CREATE_OR_UPDATE_DETAIL, request)
-
-        assert not response.is_success
-        assert response.reason == error_types.InvalidData
+        assert response.status_code == 400
+        assert 'name' in json.loads(response.content)
 
     def test_update_when_non_nullable_fields_are_set_to_none(self):
-        resource = PersonResource()
-        data_manager = resource.data_manager
         expected_entity = PersonEntity(name=None, email=None,
                                        phone='1234',
                                        address=None, company=None)
 
-        data_manager.get_entity_list.return_value = [expected_entity]
-        data_manager.update_entity.return_value = expected_entity
-        request = request_factory.get_request(user=object(),
-                                              data=expected_entity.__dict__)
+        PersonDataManager.get_entity_list.return_value = [expected_entity]
+        PersonDataManager.update_entity.return_value = expected_entity
+        PersonDataManager.get_entity_list_total_count.return_value = 1
 
-        response = resource.run_crud_action(
-            CrudActions.CREATE_OR_UPDATE_DETAIL, request)
+        response = self.client.put(
+            urlresolvers.reverse('person-detail', args=('John',)),
+            data=json.dumps(expected_entity.__dict__),
+            content_type="application/json")
 
-        assert not response.is_success
-        assert response.reason == error_types.InvalidData
-        assert 'name' in response.data
+        assert response.status_code == 400
+        assert 'name' in json.loads(response.content)

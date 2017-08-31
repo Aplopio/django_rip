@@ -1,90 +1,92 @@
-from mock import patch
+import json
 
-from rip.crud.crud_actions import CrudActions
-from tests import request_factory
-from tests.integration_tests.blank_test_resource import BlankTestResource
+from django.conf.urls import url, include
+from django.core import urlresolvers
+from django.test import override_settings
+
 from tests.integration_tests.person_base_test_case import \
     PersonResourceBaseTestCase
-from tests.integration_tests.person_resource import (
-    PersonResource, PersonEntity, )
+from tests.integration_tests.resources_for_testing import (
+    PersonEntity, router, PersonDataManager)
+
+urlpatterns = [
+    url(r'^hello/', include(router.urls)),
+]
 
 
+@override_settings(ROOT_URLCONF=__name__)
 class CrudResourceCreateActionIntegrationTest(PersonResourceBaseTestCase):
-    @patch.object(PersonResource._meta.data_manager_cls, 'create_entity')
-    def test_should_create(self, create_person_entity):
-        resource = PersonResource()
+    def test_should_create(self):
         expected_entity = PersonEntity(name='John', email="foo@bar.com",
                                        phone='1234',
                                        address={'city': 'bangalore',
                                                 'country': 'India'},
                                        nick_names=['Johnny', 'Papa'])
 
-        create_person_entity.return_value = expected_entity
-        request = request_factory.get_request(
-            user=object(), data=expected_entity.__dict__)
+        create_entity_fn = PersonDataManager.create_entity
+        create_entity_fn.return_value = expected_entity
 
-        response = resource.run_crud_action(CrudActions.CREATE_DETAIL, request)
+        response = self.client.post(urlresolvers.reverse('person-list'),
+                                    data=json.dumps(expected_entity.__dict__),
+                                    content_type="application/json")
 
-        assert response.is_success
+        assert response.status_code == 201
         expected_data = expected_entity.__dict__
-        assert response.data == expected_data
+        assert json.loads(response.content) == expected_data
         expected_update_kwargs = dict(
             name='John', email="foo@bar.com", address={'country': 'India'},
             nick_names=['Johnny', 'Papa'])
-        create_person_entity.assert_called_once_with(
-            request, **expected_update_kwargs)
+        assert create_entity_fn.call_count == 1
+        # first call arg is the request object, the rest of
+        # kwargs gets captured as second param
+        call_kwargs = create_entity_fn.call_args[1]
+        assert call_kwargs == expected_update_kwargs
 
     def test_create_with_missing_required_fields(self):
-        resource = PersonResource()
-        request = request_factory.get_request(
-            user=object(),
-            data={'email': 'foo@bar.com'})
+        post_data = {'email': 'foo@bar.com'}
+        response = self.client.post(urlresolvers.reverse('person-list'),
+                                    data=json.dumps(post_data),
+                                    content_type="application/json")
 
-        response = resource.run_crud_action(CrudActions.CREATE_DETAIL, request)
-
-        assert not response.is_success
-        assert response.data.get('name') == 'This field is required'
+        assert response.status_code == 400
+        response_data = json.loads(response.content)
+        assert response_data.get('name') == 'This field is required'
 
     def test_create_with_blank_fields(self):
-        resource = BlankTestResource()
-        request = request_factory.get_request(user=object(),
-                                              data={'name': ''})
+        post_data = {'name': ''}
+        response = self.client.post(urlresolvers.reverse('person-list'),
+                                    data=json.dumps(post_data),
+                                    content_type="application/json")
 
-        response = resource.run_crud_action(CrudActions.CREATE_DETAIL, request)
-
-        assert response.is_success is False
-        assert response.data['name'] == 'This field is required'
+        assert response.status_code == 400
+        response_data = json.loads(response.content)
+        assert response_data.get('name') == 'This field is required'
 
     def test_create_with_null_for_non_nullable_field(self):
-        resource = PersonResource()
-        request = request_factory.get_request(user=object(),
-                                              data={'name': None})
+        post_data = {'name': None}
+        response = self.client.post(urlresolvers.reverse('person-list'),
+                                    data=json.dumps(post_data),
+                                    content_type="application/json")
 
-        response = resource.run_crud_action(CrudActions.CREATE_DETAIL, request)
+        assert response.status_code == 400
+        response_data = json.loads(response.content)
+        assert response_data.get('name') == 'null is not a valid value'
 
-        assert not response.is_success
-        assert response.data.get('name') == 'null is not a valid value'
-
-    @patch.object(PersonResource._meta.data_manager_cls, 'create_entity')
-    def test_readonly_fields_are_skipped_when_calling_create_entity(
-            self, create_person_entity):
-        resource = PersonResource()
+    def test_readonly_fields_are_skipped_when_calling_create_entity(self):
         expected_entity = PersonEntity(
             name='John', email="foo@bar.com",
             phone='1234', address={'city': 'bangalore', 'country': 'India'},
             company='foo company', nick_names=['Johnny', 'Papa'])
 
-        create_person_entity.return_value = expected_entity
-        request = request_factory.get_request(user=object(),
-                                              data=expected_entity.__dict__)
+        PersonDataManager.create_entity.return_value = expected_entity
+        response = self.client.post(urlresolvers.reverse('person-list'),
+                                    data=json.dumps(expected_entity.__dict__),
+                                    content_type="application/json")
 
-        response = resource.run_crud_action(CrudActions.CREATE_DETAIL, request)
-
-        assert response.is_success
-
-        expected_update_kwargs = expected_entity.__dict__.copy()
-        expected_update_kwargs.pop('phone')
-        expected_update_kwargs['address'].pop('city')
-        create_person_entity.assert_called_once_with(
-            request,
-            **expected_update_kwargs)
+        assert response.status_code == 201
+        expected_kwargs = expected_entity.__dict__.copy()
+        expected_kwargs.pop('phone')
+        expected_kwargs['address'].pop('city')
+        assert PersonDataManager.create_entity.call_count == 1
+        call_kwargs = PersonDataManager.create_entity.call_args[1]
+        assert call_kwargs == expected_kwargs

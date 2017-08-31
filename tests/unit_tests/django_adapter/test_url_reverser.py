@@ -1,6 +1,4 @@
-from mock import patch
 from django.conf.urls import url, include
-from django.core import urlresolvers
 from django.test import TestCase
 from django.test import override_settings
 
@@ -18,7 +16,7 @@ class TestResource(DjangoResource):
 
     class Meta:
         resource_name = 'test'
-        allowed_actions = crud_actions.ALL_ACTIONS
+        allowed_actions = crud_actions.READ_WRITE_AGGREGATE_ACTIONS
 
 
 class ComplexResource(TestResource):
