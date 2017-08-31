@@ -47,7 +47,7 @@ class DefaultDataManager(object):
 
         request.context_params[self.list_property_name] = entities_response
 
-        # offset and limit don't make sense to get aggregates
+        # offset and limit don't make sense to get total count
         count_filters = request_filters.copy()
         count_filters.pop('offset', None)
         count_filters.pop('limit', None)
@@ -72,7 +72,6 @@ class DefaultDataManager(object):
         """
         request_filters = request.context_params.get(
             self.request_filters_property, {})
-
         entity_getter = get_entity_fn or self.get_entity
         entity_response = entity_getter(request, **request_filters)
 

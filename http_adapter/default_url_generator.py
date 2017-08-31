@@ -103,28 +103,32 @@ class DefaultUrlGenerator(object):
         ret = []
         allowed_actions = set(self.resource_cls.get_meta().allowed_actions)
 
-        detail_url_actions = {
-            CrudActions.READ_DETAIL, CrudActions.DELETE_DETAIL,
-            CrudActions.UPDATE_DETAIL, CrudActions.CREATE_OR_UPDATE_DETAIL}
-        if detail_url_actions.intersection(allowed_actions):
-            # detail url to be generated
-            detail_url_pattern = '%s/{id}%s' % (
-                self.url_pattern, self.trailing_slash)
-            ret.append(
-                self._generate_url(detail_url_pattern, UrlTypes.detail_url))
-
         list_url_actions = {CrudActions.CREATE_DETAIL, CrudActions.READ_LIST}
         if list_url_actions.intersection(allowed_actions):
             # list url to be generated
-            list_url_pattern = '%s%s' % (self.url_pattern, self.trailing_slash)
+            list_url_pattern = '%s%s$' % (self.url_pattern, self.trailing_slash)
             ret.append(
                 self._generate_url(list_url_pattern, UrlTypes.list_url))
 
         if CrudActions.GET_AGGREGATES in allowed_actions:
             # aggregates url to be generated
-            aggregates_url_pattern = '%s/aggregates%s' % \
+            aggregates_url_pattern = '%s/aggregates%s$' % \
                                      (self.url_pattern, self.trailing_slash)
             ret.append(self._generate_url(
                 aggregates_url_pattern, UrlTypes.aggregates_url))
+
+        # It is important that detail url patterns are after aggregates.
+        detail_url_actions = {
+            CrudActions.READ_DETAIL, CrudActions.DELETE_DETAIL,
+            CrudActions.UPDATE_DETAIL, CrudActions.CREATE_OR_UPDATE_DETAIL}
+        if detail_url_actions.intersection(allowed_actions):
+            # detail url to be generated
+            detail_url_pattern = '%s/{%s}%s$' % (
+                self.url_pattern,
+                self.resource_cls.get_meta().detail_identifier,
+                self.trailing_slash)
+            ret.append(
+                self._generate_url(detail_url_pattern, UrlTypes.detail_url))
+
 
         return ret
