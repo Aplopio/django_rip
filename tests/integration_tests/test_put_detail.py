@@ -4,8 +4,8 @@ from django.conf.urls import url, include
 from django.core import urlresolvers
 from django.test import override_settings
 
-from tests.integration_tests.person_base_test_case import \
-    PersonResourceBaseTestCase
+from tests.integration_tests.base_test_case import \
+    EndToEndBaseTestCase
 from tests.integration_tests.resources_for_testing import \
     PersonEntity, PersonDataManager, router
 
@@ -15,7 +15,7 @@ urlpatterns = [
 
 
 @override_settings(ROOT_URLCONF=__name__)
-class PutCrudResourceIntegrationTest(PersonResourceBaseTestCase):
+class PutCrudResourceIntegrationTest(EndToEndBaseTestCase):
     def test_should_update_fields(self):
         expected_entity = PersonEntity(name='John', email="foo@bar.com",
                                        phone='1234',

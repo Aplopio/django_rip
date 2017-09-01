@@ -50,6 +50,7 @@ class DefaultEntitySerializer(object):
         """
         attribute_getter = self.attribute_getter_cls(entity=entity)
         serialized = {}
+
         fields_to_serialize = self.get_fields_to_serialize(request)
         for field_name, field in fields_to_serialize.items():
             field_override = getattr(self, 'serialize_%s' % field_name, None)

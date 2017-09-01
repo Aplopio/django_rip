@@ -11,7 +11,9 @@ method_to_action_mapping = {
 
 
 class DefaultRipActionResolver(object):
-    def __init__(self, http_request, url_type, url_kwargs):
+    def __init__(self, http_request, url_type, url_kwargs,
+                 resource_detail_identifier='id'):
+        self.resource_detail_identifier = resource_detail_identifier
         self.url_kwargs = url_kwargs
         self.url_type = url_type
         self.http_request = http_request
@@ -20,7 +22,8 @@ class DefaultRipActionResolver(object):
         if self.http_request.method == 'POST' and \
                 self.url_type == UrlTypes.list_url:
             return True
-        return 'id' in self.url_kwargs and self.url_type == UrlTypes.detail_url
+        return self.resource_detail_identifier in self.url_kwargs and \
+            self.url_type == UrlTypes.detail_url
 
     def determine_end_point(self):
         """

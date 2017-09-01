@@ -95,7 +95,6 @@ class DefaultDataManager(object):
         entity_updater = update_entity_fn or self.update_entity
         entity_response = entity_updater(
                 request, entity, **request.context_params['data'])
-
         if entity_response is error_types.ActionForbidden:
             return ActionForbiddenResponse()
 

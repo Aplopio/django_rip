@@ -9,4 +9,4 @@ from rip.schema_fields.schema_field import SchemaField
 from rip.schema_fields.string_field import StringField
 from rip.schema_fields.choice_field import ChoiceField
 from rip.schema_fields.url_field import UrlField
-from http_adapter.resource_uri_field import ResourceUriField
+from http_adapter.url_fields import ResourceUriField

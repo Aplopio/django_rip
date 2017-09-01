@@ -4,8 +4,8 @@ from django.conf.urls import url, include
 from django.core import urlresolvers
 from django.test import override_settings
 
-from tests.integration_tests.person_base_test_case import \
-    PersonResourceBaseTestCase
+from tests.integration_tests.base_test_case import \
+    EndToEndBaseTestCase
 from tests.integration_tests.resources_for_testing import \
     PersonEntity, PersonDataManager, router
 
@@ -15,7 +15,7 @@ urlpatterns = [
 
 
 @override_settings(ROOT_URLCONF=__name__)
-class ListCrudResourceIntegrationTest(PersonResourceBaseTestCase):
+class ListCrudResourceIntegrationTest(EndToEndBaseTestCase):
 
     def test_should_get_list(self):
         expected_entities = [
@@ -93,3 +93,37 @@ class ListCrudResourceIntegrationTest(PersonResourceBaseTestCase):
         assert 'Johnny' in json.loads(response.content)['objects'][0]['nick_names']
         call_args = PersonDataManager.get_entity_list.call_args[1]
         assert call_args['nick_names'] == ['Johnny']
+
+    def test_should_filter_by_in(self):
+        expected_entities = [PersonEntity(
+            name='John', email=None, phone='1234',
+            address={'city': 'bangalore', 'country': 'India'},
+            company=None, nick_names=['Johnny', 'Papa'])]
+
+        PersonDataManager.get_entity_list.return_value = expected_entities
+        PersonDataManager.get_entity_list_total_count.return_value = 1
+
+        response = self.client.get(
+            urlresolvers.reverse('person-list'),
+            data={'nick_names__in': ['somename', 'someothername']})
+
+        assert response.status_code == 200
+        call_args = PersonDataManager.get_entity_list.call_args[1]
+        assert call_args['nick_names__in'] == ['somename', 'someothername']
+
+    def test_should_filter_by_gt(self):
+        expected_entities = [PersonEntity(
+            name='John', email=None, phone='1234',
+            address={'city': 'bangalore', 'country': 'India'},
+            company=None, nick_names=['Johnny', 'Papa'])]
+
+        PersonDataManager.get_entity_list.return_value = expected_entities
+        PersonDataManager.get_entity_list_total_count.return_value = 1
+
+        response = self.client.get(
+            urlresolvers.reverse('person-list'),
+            data={'name__gt': 'somename'})
+
+        assert response.status_code == 200
+        call_args = PersonDataManager.get_entity_list.call_args[1]
+        assert call_args['name__gt'] == 'somename'

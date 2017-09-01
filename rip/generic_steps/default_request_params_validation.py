@@ -104,7 +104,7 @@ class DefaultRequestParamsValidation(object):
                     {field_name: "Filtering not allowed"})
                 continue
 
-            allowed_filter_types = allowed_filters[filter_name]
+            allowed_filter_types = allowed_filters[field_name]
             if not isinstance(allowed_filter_types, (list, tuple, set)):
                 allowed_filter_types = (allowed_filter_types,)
 

@@ -1,8 +1,8 @@
 from rip.crud.crud_actions import CrudActions
 from rip.generic_steps import error_types
 from tests import request_factory
-from tests.integration_tests.person_base_test_case import \
-    PersonResourceBaseTestCase
+from tests.integration_tests.base_test_case import \
+    EndToEndBaseTestCase
 from tests.integration_tests.resources_for_testing import PersonResource, PersonEntity
 import json
 
@@ -10,8 +10,8 @@ from django.conf.urls import url, include
 from django.core import urlresolvers
 from django.test import override_settings
 
-from tests.integration_tests.person_base_test_case import \
-    PersonResourceBaseTestCase
+from tests.integration_tests.base_test_case import \
+    EndToEndBaseTestCase
 from tests.integration_tests.resources_for_testing import \
     PersonEntity, PersonDataManager, router
 
@@ -21,7 +21,7 @@ urlpatterns = [
 
 
 @override_settings(ROOT_URLCONF=__name__)
-class UpdateCrudResourceIntegrationTest(PersonResourceBaseTestCase):
+class UpdateCrudResourceIntegrationTest(EndToEndBaseTestCase):
     def test_should_update_fields(self):
         expected_entity = PersonEntity(name='John', email="foo@bar.com",
                                        phone='1234',
@@ -121,3 +121,23 @@ class UpdateCrudResourceIntegrationTest(PersonResourceBaseTestCase):
 
         assert response.status_code == 400
         assert 'name' in json.loads(response.content)
+
+    def test_update_resource_link_field(self):
+        expected_entity = PersonEntity(name=None, email=None,
+                                       phone='1234',
+                                       address=None,
+                                       company='1122212')
+        PersonDataManager.get_entity_list.return_value = [expected_entity]
+        PersonDataManager.update_entity.return_value = expected_entity
+
+        post_data = expected_entity.__dict__.copy()
+        post_data['company'] = '/hello/company/1124'
+        post_data.pop('name')
+        response = self.client.patch(
+            urlresolvers.reverse('person-detail', args=('John',)),
+            data=json.dumps(post_data),
+            content_type="application/json")
+
+        assert response.status_code == 202
+        call_args = PersonDataManager.update_entity.call_args[1]
+        assert call_args['company'] == '1124'

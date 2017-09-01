@@ -6,8 +6,8 @@ from django.test import override_settings
 
 from rip.crud.crud_actions import CrudActions
 from tests import request_factory
-from tests.integration_tests.person_base_test_case import \
-    PersonResourceBaseTestCase
+from tests.integration_tests.base_test_case import \
+    EndToEndBaseTestCase
 from tests.integration_tests.resources_for_testing import PersonResource, \
     PersonDataManager
 from tests.integration_tests.resources_for_testing import \
@@ -19,7 +19,7 @@ urlpatterns = [
 
 
 @override_settings(ROOT_URLCONF=__name__)
-class GetCountsCrudResourceIntegrationTest(PersonResourceBaseTestCase):
+class GetCountsCrudResourceIntegrationTest(EndToEndBaseTestCase):
     def test_should_get_aggregates_by_allowed_fields(self):
         PersonDataManager.get_entity_aggregates.return_value = \
             expected_aggregates = \

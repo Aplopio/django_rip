@@ -41,7 +41,8 @@ class DjangoResource(View, CrudResource):
         """
         url_type = url_kwargs.pop('url_type', None)
         action_resolver = self.get_meta().rip_action_resolver_cls(
-            http_request, url_type, url_kwargs)
+            http_request, url_type, url_kwargs,
+            resource_detail_identifier=self.get_meta().detail_identifier)
         action_name = action_resolver.get_action_name()
 
         rip_request_builder = self.get_meta().rip_request_builder_cls(

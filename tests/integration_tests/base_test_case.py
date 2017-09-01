@@ -10,7 +10,7 @@ from tests.integration_tests.resources_for_testing import PersonDataManager, \
 _sentinel = object()
 
 
-class PersonResourceBaseTestCase(TestCase):
+class EndToEndBaseTestCase(TestCase):
     def setUp(self):
         """
         Sets the methods of of all entity actions to MagicMocks
