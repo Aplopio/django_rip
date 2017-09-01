@@ -37,20 +37,20 @@ with open('requirements.txt') as f:
     requirements = [l.strip() for l in f.readlines()]
 
 setup(
-    name='rip',
-    version='0.0.95',
+    name='django_rip',
+    version='0.1.0',
     description='A python framework for writing restful APIs.',
     long_description=readme + '\n\n' + history,
     author='Aplopio developers',
     author_email='devs@aplopio.com',
-    url='https://github.com/aplopio/rip',
-    package_dir={'rip': 'rip'},
+    url='https://github.com/aplopio/django_rip',
+    package_dir={'django_rip': 'django_rip'},
     packages=find_packages(),
     include_package_data=True,
-    install_requires=requirements,
+    install_requires=[],
     license="MIT",
     zip_safe=False,
-    keywords='rip',
+    keywords='rip, django_rip',
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Developers',
