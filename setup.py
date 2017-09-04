@@ -5,6 +5,8 @@ try:
     from setuptools import setup, Command, find_packages
 except ImportError:
     from distutils.core import setup
+import pip
+from pip.req import parse_requirements
 
 
 class PyTest(Command):
@@ -35,20 +37,20 @@ with open('requirements.txt') as f:
     requirements = [l.strip() for l in f.readlines()]
 
 setup(
-    name='django_rip',
-    version='0.1.0',
+    name='rip',
+    version='0.0.95',
     description='A python framework for writing restful APIs.',
     long_description=readme + '\n\n' + history,
     author='Aplopio developers',
     author_email='devs@aplopio.com',
-    url='https://github.com/aplopio/django_rip',
-    package_dir={'django_rip': 'django_rip'},
+    url='https://github.com/aplopio/rip',
+    package_dir={'rip': 'rip'},
     packages=find_packages(),
     include_package_data=True,
-    install_requires=[],
+    install_requires=requirements,
     license="MIT",
     zip_safe=False,
-    keywords='rip, django_rip',
+    keywords='rip',
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Developers',

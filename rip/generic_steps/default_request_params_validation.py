@@ -1,18 +1,16 @@
-import collections
-
-from rip.crud.crud_actions import CrudActions
-from rip.generic_steps import error_types, filter_operators
+from rip import filter_operators
 from rip.response import Response
+from rip import error_types
+
 
 SPECIAL_FILTERS = ['offset', 'limit', 'aggregate_by', 'order_by']
 
-
 class DefaultRequestParamsValidation(object):
-    def __init__(self, resource):
-        self.resource = resource
-        self.aggregate_by_fields = resource.get_meta().aggregate_by_fields
-        self.order_by_fields = resource.get_meta().order_by_fields
-        self.filter_by_fields = resource.get_meta().filter_by_fields
+    def __init__(self, schema_cls, filter_by_fields, order_by_fields, aggregate_by_fields):
+        self.aggregate_by_fields = aggregate_by_fields
+        self.order_by_fields = order_by_fields
+        self.filter_by_fields = filter_by_fields
+        self.schema_cls = schema_cls
 
     def validate_order_by(self, request_params):
         order_by_params = request_params.get('order_by', [])
@@ -34,12 +32,8 @@ class DefaultRequestParamsValidation(object):
         aggregate_by_params = request_params.get('aggregate_by', [])
         aggregate_by_params = filter_operators.transform_to_list(
             aggregate_by_params)
+
         validation_errors = {}
-
-        if len(aggregate_by_params) == 0:
-            validation_errors.update(
-                    {'__all__': "Aggregating requires a field"})
-
         for field_name in aggregate_by_params:
             if field_name not in self.aggregate_by_fields:
                 validation_errors.update(
@@ -71,14 +65,12 @@ class DefaultRequestParamsValidation(object):
 
     def validate_request_params(self, request):
         request_params = request.request_params
-        crud_action = request.context_params['crud_action']
         validation_errors = self._validate_fields(request_params)
-        if validation_errors is None and crud_action == CrudActions.READ_LIST:
+        if validation_errors is None:
             validation_errors = self.validate_order_by(request_params)
-        if validation_errors is None and \
-                crud_action == CrudActions.GET_AGGREGATES:
+        if validation_errors is None:
             validation_errors = self.validate_aggregate_by(request_params)
-        if validation_errors is None and crud_action == CrudActions.READ_LIST:
+        if validation_errors is None:
             validation_errors = self.validate_limit(request_params) or \
                                 self.validate_offset(request_params)
 
@@ -94,26 +86,12 @@ class DefaultRequestParamsValidation(object):
         special_filters = SPECIAL_FILTERS
         validation_errors = {}
         for filter_name in request_params:
-            if filter_name in special_filters:
-                continue
-
             field_name, filter_type = filter_operators. \
                 split_to_field_and_filter_type(filter_name)
-            if field_name not in allowed_filters:
+            if field_name not in allowed_filters and \
+                            field_name not in special_filters:
                 validation_errors.update(
                     {field_name: "Filtering not allowed"})
-                continue
-
-            allowed_filter_types = allowed_filters[field_name]
-            if not isinstance(allowed_filter_types, (list, tuple, set)):
-                allowed_filter_types = (allowed_filter_types,)
-
-            if field_name in allowed_filters and filter_type and \
-                    filter_type not in allowed_filter_types:
-                validation_errors.update(
-                    {field_name: "Operator {} on field {} not allowed".
-                        format(filter_type, field_name)})
-                continue
 
         if validation_errors:
             return validation_errors

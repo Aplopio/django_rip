@@ -1,8 +1,8 @@
 
 class DefaultPostActionHooks(object):
 
-    def __init__(self, resource):
-        self.resource = resource
+    def __init__(self, schema_cls):
+        self.schema_cls = schema_cls
 
     def read_list_hook(self, request):
         return request

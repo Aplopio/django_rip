@@ -10,11 +10,9 @@ class Request(object):
         self.user = user or None
         self.request_params = request_params or {}
         self.data = data or {}
+        self.context_params = context_params or {}
         self.request_headers = request_headers or {}
         self.request_body = request_body
-
-        # computed data or contextual information like api name etc.
-        self.context_params = context_params or {}
 
     def __eq__(self, val):
         return self.user == val.user and \

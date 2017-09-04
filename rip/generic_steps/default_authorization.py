@@ -1,3 +1,4 @@
+
 class DefaultAuthorization(object):
     """
     This class defines the interface of how an authorization class
@@ -9,18 +10,20 @@ class DefaultAuthorization(object):
     for all users
     """
 
-    def __init__(self, resource):
-        self.resource = resource
+    def __init__(self, schema_cls):
+        self.schema_cls = schema_cls
 
     def add_read_list_filters(self, request):
         """
         This step is called before read_list entity action
         Override this to add request filters to return objects accessible to the
         user.
+
         :param request:
         :return: request if success, response if unauthorized
         """
         return request
+
 
     def authorize_read_detail(self, request):
         """

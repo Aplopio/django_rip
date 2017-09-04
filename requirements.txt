@@ -1,5 +1,5 @@
 wheel==0.23.0
-django==1.11.4
+django==1.4.16
 six==1.8.0
 simplejson==3.6.5
 pytz==2014.10

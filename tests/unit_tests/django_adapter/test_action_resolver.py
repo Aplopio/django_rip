@@ -1,119 +1,128 @@
 import unittest
+
+from hamcrest import assert_that, equal_to
 from mock import MagicMock
 
-from http_adapter.default_rip_action_resolver import DefaultRipActionResolver
-from http_adapter.url_types import UrlTypes
-from rip.crud.crud_actions import CrudActions
+from rip.api_schema import ApiSchema
+from rip.crud.crud_resource import CrudResource
+from rip.django_adapter import action_resolver
+from rip.view.view_resource import ViewResource
 
-__all__ = ["TestDefaultRipActionResolver"]
+__all__ = ["TestActionResolver"]
 
 
-class TestEndPoint(unittest.TestCase):
-    def test_any_request_with_id_eq_detail(self):
-        for method in ['PATCH', 'PUT', 'DELETE', 'GET', 'POST']:
-            mock_http_request = MagicMock()
-            mock_http_request.method = method
-            url_kwargs = {'id': 1}
+class MockSchema(ApiSchema):
+    class Meta:
+        schema_name = 'mock'
 
-            action_resolver = DefaultRipActionResolver(
-                http_request=mock_http_request, url_type=UrlTypes.detail_url,
-                url_kwargs=url_kwargs)
 
-            assert action_resolver.determine_end_point() == 'detail'
+class MockResource(CrudResource):
+    schema_cls = MockSchema()
 
-    def test_request_with_on_list_eq_none(self):
+class MockViewResource(ViewResource):
+    schema_cls = MockSchema()
+
+
+class TestActionResolver(unittest.TestCase):
+    def test_resolve_update_action_on_api(self):
         mock_http_request = MagicMock()
-        mock_http_request.method = 'GET'
-        url_kwargs = {'id': 1}
+        mock_http_request.method = 'PATCH'
+        mock_api = MagicMock()
+        mock_resource = MockResource()
+        mock_api.resolve_resource.return_value = mock_resource
+        mock_resource.update_detail = expected_action = MagicMock()
 
-        action_resolver = DefaultRipActionResolver(
-            http_request=mock_http_request, url_type=UrlTypes.list_url,
-            url_kwargs=url_kwargs)
+        action = action_resolver.resolve_action(mock_http_request, api=mock_api,
+                                                url='foo/1')
+        assert_that(action, equal_to(expected_action))
 
-        assert action_resolver.determine_end_point() == 'list'
+    def test_resolve_put_action_on_api(self):
+        mock_http_request = MagicMock()
+        mock_http_request.method = 'PUT'
+        mock_api = MagicMock()
+        mock_resource = MockResource()
+        mock_api.resolve_resource.return_value = mock_resource
+        mock_resource.create_or_update_detail = expected_action = MagicMock()
 
-    def test_post_on_list_eq_detail(self):
+        action = action_resolver.resolve_action(mock_http_request, api=mock_api,
+                                                url='foo/1')
+        assert_that(action, equal_to(expected_action))
+
+    def test_resolve_detail_action_on_api(self):
+        mock_http_request = MagicMock()
+        mock_http_request.method = 'DELETE'
+        mock_api = MagicMock()
+        mock_resource = MockResource()
+        mock_api.resolve_resource.return_value = mock_resource
+        mock_resource.delete_detail = expected_delete_action = MagicMock()
+
+        action = action_resolver.resolve_action(mock_http_request, api=mock_api,
+                                                url='foo/1')
+        assert_that(action, equal_to(expected_delete_action))
+
+    def test_resolve_post_on_list_as_create_detail(self):
         mock_http_request = MagicMock()
         mock_http_request.method = 'POST'
-        url_kwargs = {'sdaf': 1}
+        mock_api = MagicMock()
+        mock_resource = MockResource()
+        mock_api.resolve_resource.return_value = mock_resource
+        mock_resource.create_detail = expected_create_action = MagicMock()
 
-        action_resolver = DefaultRipActionResolver(
-            http_request=mock_http_request, url_type=UrlTypes.list_url,
-            url_kwargs=url_kwargs)
+        action = action_resolver.resolve_action(mock_http_request, api=mock_api,
+                                                url='foo')
+        assert_that(action, equal_to(expected_create_action))
 
-        assert action_resolver.determine_end_point() == 'detail'
+    def test_resolve_non_existing_endpoint(self):
+        mock_http_request = MagicMock()
+        mock_http_request.method = 'DELETE'
+        mock_api = MagicMock(
+            spec_set=[])
 
-    def test_get_on_list_eq_list(self):
+        action = action_resolver.resolve_action(mock_http_request, api=mock_api,
+                                                url='foo')
+        assert_that(action, equal_to(None))
+
+    def test_resolve_non_existing_action_delete(self):
+        mock_http_request = MagicMock()
+        mock_http_request.method = 'DELETE'
+        mock_api = MagicMock()
+        mock_resource = object()
+        mock_api.resolve_resource.return_value = mock_resource
+
+        action = action_resolver.resolve_action(mock_http_request, api=mock_api,
+                                                url='foo')
+        assert_that(action, equal_to(None))
+
+    def test_resolve_non_existing_action_put(self):
+        mock_http_request = MagicMock()
+        mock_http_request.method = 'PUT'
+        mock_api = MagicMock()
+        mock_resource = object()
+        mock_api.resolve_resource.return_value = mock_resource
+
+        action = action_resolver.resolve_action(mock_http_request, api=mock_api,
+                                                url='foo')
+        assert_that(action, equal_to(None))
+
+    def test_resolve_non_existing_action_options(self):
+        mock_http_request = MagicMock()
+        mock_http_request.method = 'OPTIONS'
+        mock_api = MagicMock()
+        mock_resource = object()
+        mock_api.resolve_resource.return_value = mock_resource
+
+        action = action_resolver.resolve_action(mock_http_request, api=mock_api,
+                                                url='foo')
+        assert_that(action, equal_to(None))
+
+    def test_resolve_view_action(self):
         mock_http_request = MagicMock()
         mock_http_request.method = 'GET'
-        url_kwargs = {'sdaf': 1}
+        mock_api = MagicMock()
+        mock_resource = MockViewResource()
+        mock_api.resolve_resource.return_value = mock_resource
+        mock_resource.read = expected_read_action = MagicMock()
 
-        action_resolver = DefaultRipActionResolver(
-            http_request=mock_http_request, url_type=UrlTypes.list_url,
-            url_kwargs=url_kwargs)
-
-        assert action_resolver.determine_end_point() == 'list'
-
-    def test_unallowed_actions_on_list_ret_none(self):
-        for method in ['PATCH', 'PUT', 'DELETE']:
-            mock_http_request = MagicMock()
-            mock_http_request.method = method
-            url_kwargs = {}
-
-            action_resolver = DefaultRipActionResolver(
-                http_request=mock_http_request, url_type=UrlTypes.list_url,
-                url_kwargs=url_kwargs)
-
-            assert action_resolver.determine_end_point() is None
-
-
-class TestActionName(unittest.TestCase):
-
-    def test_aggregates_on_get(self):
-        mock_http_request = MagicMock()
-        mock_http_request.method = "GET"
-
-        action_resolver = DefaultRipActionResolver(
-            http_request=mock_http_request, url_type=UrlTypes.aggregates_url,
-            url_kwargs={})
-
-        assert action_resolver.get_action_name() == CrudActions.GET_AGGREGATES
-
-    def test_aggregates_on_post(self):
-        mock_http_request = MagicMock()
-        mock_http_request.method = "POST"
-
-        action_resolver = DefaultRipActionResolver(
-            http_request=mock_http_request, url_type=UrlTypes.aggregates_url,
-            url_kwargs={})
-
-        assert action_resolver.get_action_name() is None
-
-    def test_create_action(self):
-        mock_http_request = MagicMock()
-        mock_http_request.method = "POST"
-
-        action_resolver = DefaultRipActionResolver(
-            http_request=mock_http_request, url_type=UrlTypes.list_url,
-            url_kwargs={})
-
-        assert action_resolver.get_action_name() == CrudActions.CREATE_DETAIL
-
-    def test_patch_request_on_detail(self):
-        mock_http_request = MagicMock()
-        mock_http_request.method = "PATCH"
-
-        action_resolver = DefaultRipActionResolver(
-            http_request=mock_http_request, url_type=UrlTypes.detail_url,
-            url_kwargs={'id': 1})
-
-        assert action_resolver.get_action_name() == CrudActions.UPDATE_DETAIL
-
-    def test_patch_request_on_list(self):
-        mock_http_request = MagicMock()
-        mock_http_request.method = "PATCH"
-
-        action_resolver = DefaultRipActionResolver(
-            http_request=mock_http_request, url_type=UrlTypes.list_url,
-            url_kwargs={'id': 1})
-        assert action_resolver.get_action_name() is None
+        action = action_resolver.resolve_action(mock_http_request, api=mock_api,
+                                                url='foo')
+        assert_that(action, equal_to(expected_read_action))
