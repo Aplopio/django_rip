@@ -5,8 +5,6 @@ try:
     from setuptools import setup, Command, find_packages
 except ImportError:
     from distutils.core import setup
-import pip
-from pip.req import parse_requirements
 
 
 class PyTest(Command):
